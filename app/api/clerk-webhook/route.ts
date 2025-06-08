@@ -75,148 +75,204 @@ async function getUniqueUsername(baseUsername: string): Promise<string> {
 }
 
 export async function POST(req: Request) {
-  const payload = await req.text();
-  const headersList = await headers();
-  const headerPayload = Object.fromEntries(headersList.entries());
+  console.log("🔔 Webhook received");
 
-  const wh = new Webhook(WEBHOOK_SECRET);
-
-  let evt: WebhookEvent;
   try {
-    evt = wh.verify(payload, headerPayload) as WebhookEvent;
-  } catch (err) {
-    console.error("Webhook verification failed:", err);
-    return new NextResponse("Invalid webhook", { status: 400 });
-  }
+    const payload = await req.text();
+    const headersList = await headers();
 
-  const eventType = evt.type;
-  const data = evt.data;
+    // Convert headers to a plain object that svix expects
+    const heads: Record<string, string> = {};
+    headersList.forEach((value, key) => {
+      heads[key] = value;
+    });
 
-  if (eventType === "user.created") {
-    const {
-      id,
-      email_addresses,
-      first_name,
-      last_name,
-      username,
-      image_url,
-      profile_image_url,
-    } = data;
+    console.log("📋 Webhook headers:", heads);
+    console.log("📦 Webhook payload length:", payload.length);
 
-    const email = email_addresses[0]?.email_address;
-
-    if (!email) {
-      console.error("No email found for user:", id);
-      return new NextResponse("No email found", { status: 400 });
+    if (!WEBHOOK_SECRET) {
+      console.error("❌ CLERK_WEBHOOK_SECRET not found");
+      return new NextResponse("Webhook secret not configured", { status: 500 });
     }
 
+    const wh = new Webhook(WEBHOOK_SECRET);
+
+    let evt: WebhookEvent;
     try {
-      // Generate username if not provided by Clerk
-      let finalUsername = username;
-      if (!username || username.trim() === "") {
-        const generatedUsername = generateUsername(
-          first_name,
-          last_name,
-          username,
-          email
-        );
-        finalUsername = await getUniqueUsername(generatedUsername);
-      } else {
-        // Even if username exists, ensure it's unique in our database
-        finalUsername = await getUniqueUsername(username);
+      evt = wh.verify(payload, heads) as WebhookEvent;
+      console.log("✅ Webhook verification successful");
+      console.log("📧 Event type:", evt.type);
+    } catch (err) {
+      console.error("❌ Webhook verification failed:", err);
+      return new NextResponse("Invalid webhook signature", { status: 400 });
+    }
+
+    const eventType = evt.type;
+    const data = evt.data;
+
+    if (eventType === "user.created") {
+      console.log("👤 Processing user.created event");
+
+      const {
+        id,
+        email_addresses,
+        first_name,
+        last_name,
+        username,
+        image_url,
+        profile_image_url,
+      } = data;
+
+      const email = email_addresses[0]?.email_address;
+
+      if (!email) {
+        console.error("❌ No email found for user:", id);
+        return new NextResponse("No email found", { status: 400 });
       }
 
-      // Create full name, handling null values
-      const fullName =
-        [first_name, last_name]
-          .filter((name) => name && name.trim() !== "")
-          .join(" ") || "Comic Fan"; // Fallback name
+      console.log("📧 Processing user:", {
+        id,
+        email,
+        first_name,
+        last_name,
+        username,
+      });
 
-      // Get profile photo from social auth providers
-      const photoUrl = image_url || profile_image_url || null;
+      try {
+        // Check if user already exists
+        const existingUser = await prisma.user.findUnique({
+          where: { clerkId: id },
+        });
 
-      await prisma.user.create({
-        data: {
+        if (existingUser) {
+          console.log("👤 User already exists in database:", id);
+          return new NextResponse("User already exists", { status: 200 });
+        }
+
+        // Generate username if not provided by Clerk
+        let finalUsername = username;
+        if (!username || username.trim() === "") {
+          const generatedUsername = generateUsername(
+            first_name,
+            last_name,
+            username,
+            email
+          );
+          finalUsername = await getUniqueUsername(generatedUsername);
+        } else {
+          // Even if username exists, ensure it's unique in our database
+          finalUsername = await getUniqueUsername(username);
+        }
+
+        // Create full name, handling null values
+        const fullName =
+          [first_name, last_name]
+            .filter((name) => name && name.trim() !== "")
+            .join(" ") || "Comic Fan"; // Fallback name
+
+        // Get profile photo from social auth providers
+        const photoUrl = image_url || profile_image_url || null;
+
+        console.log("💾 Creating user in database:", {
           clerkId: id,
           email,
-          fullname: fullName,
           username: finalUsername,
+          fullname: fullName,
           photo: photoUrl,
-        },
-      });
+        });
 
-      console.log("User created successfully:", {
+        const newUser = await prisma.user.create({
+          data: {
+            clerkId: id,
+            email,
+            fullname: fullName,
+            username: finalUsername,
+            photo: photoUrl,
+          },
+        });
+
+        console.log("✅ User created successfully:", newUser);
+
+        return new NextResponse("User created", { status: 200 });
+      } catch (error) {
+        console.error("❌ Failed to create user in database:", error);
+
+        // Check if it's a unique constraint error
+        if (
+          error instanceof Error &&
+          (error.message.includes("Unique constraint") ||
+            error.message.includes("unique constraint"))
+        ) {
+          console.error("❌ Username or email already exists in database");
+          return new NextResponse("User already exists", { status: 409 });
+        }
+
+        return new NextResponse("Database error", { status: 500 });
+      }
+    }
+
+    // Handle user updates (profile changes)
+    if (eventType === "user.updated") {
+      console.log("🔄 Processing user.updated event");
+
+      const {
         id,
-        email,
-        username: finalUsername,
-        fullname: fullName,
-        photo: photoUrl,
-      });
-    } catch (error) {
-      console.error("Failed to create user in database:", error);
+        email_addresses,
+        first_name,
+        last_name,
+        image_url,
+        profile_image_url,
+      } = data;
 
-      // Check if it's a unique constraint error
-      if (
-        error instanceof Error &&
-        error.message.includes("Unique constraint")
-      ) {
-        console.error("Username or email already exists in database");
-        return new NextResponse("User already exists", { status: 409 });
+      const email = email_addresses[0]?.email_address;
+
+      if (!email) {
+        console.error("❌ No email found for user:", id);
+        return new NextResponse("No email found", { status: 400 });
       }
 
-      return new NextResponse("Database error", { status: 500 });
+      try {
+        // Create full name, handling null values
+        const fullName =
+          [first_name, last_name]
+            .filter((name) => name && name.trim() !== "")
+            .join(" ") || "Comic Fan";
+
+        // Get profile photo from social auth providers
+        const photoUrl = image_url || profile_image_url || null;
+
+        const updatedUser = await prisma.user.update({
+          where: { clerkId: id },
+          data: {
+            email,
+            fullname: fullName,
+            photo: photoUrl,
+            // Don't update username to avoid breaking references
+          },
+        });
+
+        console.log("✅ User updated successfully:", updatedUser);
+
+        return new NextResponse("User updated", { status: 200 });
+      } catch (error) {
+        console.error("❌ Failed to update user in database:", error);
+
+        if (
+          error instanceof Error &&
+          error.message.includes("Record to update not found")
+        ) {
+          console.error("❌ User not found in database for update:", id);
+          return new NextResponse("User not found", { status: 404 });
+        }
+
+        return new NextResponse("Database error", { status: 500 });
+      }
     }
+
+    console.log("ℹ️ Unhandled event type:", eventType);
+    return new NextResponse("Event processed", { status: 200 });
+  } catch (error) {
+    console.error("❌ Webhook processing error:", error);
+    return new NextResponse("Internal server error", { status: 500 });
   }
-
-  // Handle user updates (profile changes)
-  if (eventType === "user.updated") {
-    const {
-      id,
-      email_addresses,
-      first_name,
-      last_name,
-      image_url,
-      profile_image_url,
-    } = data;
-
-    const email = email_addresses[0]?.email_address;
-
-    if (!email) {
-      console.error("No email found for user:", id);
-      return new NextResponse("No email found", { status: 400 });
-    }
-
-    try {
-      // Create full name, handling null values
-      const fullName =
-        [first_name, last_name]
-          .filter((name) => name && name.trim() !== "")
-          .join(" ") || "Comic Fan";
-
-      // Get profile photo from social auth providers
-      const photoUrl = image_url || profile_image_url || null;
-
-      await prisma.user.update({
-        where: { clerkId: id },
-        data: {
-          email,
-          fullname: fullName,
-          photo: photoUrl,
-          // Don't update username to avoid breaking references
-        },
-      });
-
-      console.log("User updated successfully:", {
-        id,
-        email,
-        fullname: fullName,
-        photo: photoUrl,
-      });
-    } catch (error) {
-      console.error("Failed to update user in database:", error);
-      return new NextResponse("Database error", { status: 500 });
-    }
-  }
-
-  return new NextResponse("OK", { status: 200 });
 }
