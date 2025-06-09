@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   Star,
   Users,
@@ -102,10 +103,13 @@ const ComicLandingPage = () => {
                       : "translate-x-2 rotate-3 z-30"
                   }`}
                 >
-                  <img
+                  <Image
                     src="/ultimate-spider-man.webp"
-                    alt="Comic Cover 1"
+                    alt="Ultimate Spider-Man Comic Cover"
+                    width={160}
+                    height={240}
                     className="w-full h-full object-cover rounded-lg shadow-lg"
+                    priority
                   />
                 </div>
 
@@ -117,10 +121,13 @@ const ComicLandingPage = () => {
                       : "translate-x-0 rotate-0 z-20"
                   }`}
                 >
-                  <img
+                  <Image
                     src="/batman-year-one.jpg"
-                    alt="Comic Cover 2"
+                    alt="Batman Year One Comic Cover"
+                    width={160}
+                    height={240}
                     className="w-full h-full object-cover rounded-lg shadow-lg"
+                    priority
                   />
                 </div>
 
@@ -132,10 +139,13 @@ const ComicLandingPage = () => {
                       : "-translate-x-2 -rotate-3 z-10"
                   }`}
                 >
-                  <img
+                  <Image
                     src="/spawn.jpg"
-                    alt="Comic Cover 3"
+                    alt="Spawn Comic Cover"
+                    width={160}
+                    height={240}
                     className="w-full h-full object-cover rounded-lg shadow-lg"
+                    priority
                   />
                 </div>
 
