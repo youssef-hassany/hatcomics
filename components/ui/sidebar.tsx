@@ -112,14 +112,14 @@ export default function Sidebar() {
             <nav className="flex-1 px-4 py-6">
               <div className="space-y-2">
                 <a
-                  href="/dashboard"
+                  href="/home"
                   className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
                 >
                   <Home
                     size={20}
                     className="group-hover:text-orange-500 transition-colors"
                   />
-                  <span>Dashboard</span>
+                  <span>Home</span>
                 </a>
 
                 <a
@@ -130,7 +130,7 @@ export default function Sidebar() {
                     size={20}
                     className="group-hover:text-orange-500 transition-colors"
                   />
-                  <span>My Comics</span>
+                  <span>Comics</span>
                 </a>
 
                 <a
@@ -145,14 +145,14 @@ export default function Sidebar() {
                 </a>
 
                 <a
-                  href="/favorites"
+                  href="/reviews"
                   className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
                 >
                   <Star
                     size={20}
                     className="group-hover:text-orange-500 transition-colors"
                   />
-                  <span>Favorites</span>
+                  <span>Reviews</span>
                 </a>
 
                 <a
