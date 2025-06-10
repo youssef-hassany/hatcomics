@@ -3,6 +3,7 @@ import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/ui/sidebar";
+import Providers from "@/components/common/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,21 +35,21 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-900 text-white`}
         >
-          <Sidebar />
+          <Providers>
+            <Sidebar />
 
-          <main>
-            {/* For signed out users - add top padding for header */}
-            <SignedOut>
-              <div className="pt-20">{children}</div>
-            </SignedOut>
+            <main>
+              <SignedOut>
+                <div className="pt-20">{children}</div>
+              </SignedOut>
 
-            {/* For signed in users - add left margin for sidebar */}
-            <SignedIn>
-              <div className="ml-0 md:ml-64 min-h-screen">
-                <div className="">{children}</div>
-              </div>
-            </SignedIn>
-          </main>
+              <SignedIn>
+                <div className="ml-0 md:ml-64 min-h-screen">
+                  <div>{children}</div>
+                </div>
+              </SignedIn>
+            </main>
+          </Providers>
         </body>
       </html>
     </ClerkProvider>
