@@ -1,11 +1,48 @@
 "use client";
 
 import { useGetComicVineComics } from "@/hooks/comic-vine/useGetComicVineComics";
-import React from "react";
-import { Calendar, Book, ExternalLink } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { Calendar, Book, ExternalLink, Filter } from "lucide-react";
+import { useDebounce } from "@/hooks/common/useDebounce";
+import ComicCardSkeleton from "@/components/comics/ComicCardSekelton";
 
 const ComicsPage = () => {
-  const { data: comicsList } = useGetComicVineComics("spider-man");
+  const [searchQuery, setSearchQuery] = useState("spider-man");
+  const [resourceType, setResourceType] = useState("issue");
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  const searchDebounce = useDebounce(searchQuery);
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    error,
+  } = useGetComicVineComics(searchDebounce, resourceType);
+
+  // Flatten all pages of results
+  const allComics = data?.pages.flatMap((page) => page.results) ?? [];
+  const totalResults = data?.pages[0]?.totalResults ?? 0;
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "Unknown";
@@ -19,17 +56,16 @@ const ComicsPage = () => {
 
   const stripHtmlTags = (html: string) => {
     if (!html) return "";
-    // Remove HTML tags using regex
     return html
-      .replace(/<[^>]*>/g, "") // Remove all HTML tags
-      .replace(/&nbsp;/g, " ") // Replace &nbsp; with regular spaces
-      .replace(/&amp;/g, "&") // Replace &amp; with &
-      .replace(/&lt;/g, "<") // Replace &lt; with <
-      .replace(/&gt;/g, ">") // Replace &gt; with >
-      .replace(/&quot;/g, '"') // Replace &quot; with "
-      .replace(/&#39;/g, "'") // Replace &#39; with '
-      .replace(/\s+/g, " ") // Replace multiple whitespace with single space
-      .trim(); // Remove leading/trailing whitespace
+      .replace(/<[^>]*>/g, "")
+      .replace(/&nbsp;/g, " ")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/\s+/g, " ")
+      .trim();
   };
 
   const truncateText = (text: string, maxLength: number) => {
@@ -40,6 +76,21 @@ const ComicsPage = () => {
       : cleanText.substring(0, maxLength) + "...";
   };
 
+  const resourceOptions = [
+    { value: "issue", label: "Issues" },
+    { value: "volume", label: "Volumes" },
+    { value: "character", label: "Characters" },
+    { value: "story_arc", label: "Story Arcs" },
+    { value: "publisher", label: "Publishers" },
+    { value: "person", label: "People" },
+    { value: "team", label: "Teams" },
+  ];
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    // The query will automatically refetch due to dependency change
+  };
+
   return (
     <div className="min-h-screen bg-zinc-900">
       {/* Header Section */}
@@ -47,28 +98,70 @@ const ComicsPage = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <Book className="w-8 h-8 text-orange-400" />
-            <h1 className="text-4xl font-bold">Batman Comics</h1>
+            <h1 className="text-4xl font-bold">Comic Discovery</h1>
           </div>
-          <p className="text-zinc-200 text-lg max-w-2xl">
-            Discover the world of Batman through this curated collection of
-            comic issues. From classic storylines to modern adventures.
+          <p className="text-zinc-200 text-lg max-w-2xl mb-6">
+            Search and discover comics, characters, volumes, and more from the
+            Comic Vine database.
           </p>
+
+          {/* Search and Filter Controls */}
+          <div className="flex flex-col sm:flex-row gap-4 max-w-2xl">
+            <form onSubmit={handleSearch} className="flex-1">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search for comics, characters, volumes..."
+                className="w-full px-4 py-3 rounded-lg bg-zinc-800 border border-zinc-600 text-white placeholder-zinc-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+              />
+            </form>
+
+            <div className="flex items-center gap-2">
+              <Filter className="w-5 h-5 text-zinc-400" />
+              <select
+                value={resourceType}
+                onChange={(e) => setResourceType(e.target.value)}
+                className="px-4 py-3 rounded-lg bg-zinc-800 border border-zinc-600 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+              >
+                {resourceOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {!comicsList ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-              <p className="text-zinc-300">Loading comics...</p>
-            </div>
+        {error && (
+          <div className="bg-red-900/20 border border-red-500 text-red-200 px-4 py-3 rounded-lg mb-6">
+            <p>Error loading comics: {error.message}</p>
           </div>
-        ) : comicsList.length === 0 ? (
+        )}
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <ComicCardSkeleton key={index} />
+            ))}
+          </div>
+        ) : allComics.length === 0 ? (
           <div className="text-center py-20">
             <Book className="w-16 h-16 text-zinc-500 mx-auto mb-4" />
-            <p className="text-zinc-300 text-lg">No comics found</p>
+            <p className="text-zinc-300 text-lg">
+              No{" "}
+              {resourceOptions
+                .find((r) => r.value === resourceType)
+                ?.label.toLowerCase()}{" "}
+              found
+            </p>
+            <p className="text-zinc-400 text-sm mt-2">
+              Try a different search term or resource type
+            </p>
           </div>
         ) : (
           <>
@@ -76,16 +169,22 @@ const ComicsPage = () => {
               <p className="text-zinc-300">
                 Found{" "}
                 <span className="font-semibold text-orange-400">
-                  {comicsList.length}
+                  {totalResults.toLocaleString()}
                 </span>{" "}
-                comics
+                {resourceOptions
+                  .find((r) => r.value === resourceType)
+                  ?.label.toLowerCase()}{" "}
+                •{" "}
+                <span className="text-zinc-400">
+                  Showing {allComics.length}
+                </span>
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {comicsList.map((comic) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+              {allComics.map((comic, index) => (
                 <div
-                  key={comic.id}
+                  key={`${comic.id}-${index}`}
                   className="bg-zinc-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden border border-zinc-700"
                 >
                   {/* Comic Cover */}
@@ -115,7 +214,7 @@ const ComicsPage = () => {
                   {/* Comic Details */}
                   <div className="p-4">
                     <h3 className="font-bold text-lg text-white mb-2 line-clamp-2 leading-tight">
-                      {comic.name || "Untitled Issue"}
+                      {comic.name || "Untitled"}
                     </h3>
 
                     {/* Volume Info */}
@@ -160,6 +259,23 @@ const ComicsPage = () => {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Infinite Scroll Trigger */}
+            <div ref={loadMoreRef} className="mt-8">
+              {isFetchingNextPage && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+                  {Array.from({ length: 8 }).map((_, index) => (
+                    <ComicCardSkeleton key={index} />
+                  ))}
+                </div>
+              )}
+
+              {!hasNextPage && allComics.length > 0 && (
+                <div className="text-center py-8">
+                  <p className="text-zinc-500">You've reached the end!</p>
+                </div>
+              )}
             </div>
           </>
         )}
