@@ -8,6 +8,15 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum Role {
+  owner
+  admin
+  content_creator
+  translator
+  seller
+  user
+}
+
 model User {
   id         String    @id @default(cuid())
   clerkId    String    @unique
@@ -17,11 +26,14 @@ model User {
   photo      String?
   points     Int       @default(0)
   bio        String?   @default("Your friendly neighborhood user")
+  role       Role      @default(user)
   posts      Post[]
   comments   Comment[]
   likes      Like[]
   followers  Follow[]  @relation("UserFollowers")
   following  Follow[]  @relation("UserFollowing")
+  comics     Comic[]   @relation("ComicAddedBy")
+  reviews    Review[]
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   provider     String?   // "google", "facebook", "twitter"
@@ -37,6 +49,7 @@ model Post {
   content       String
   comments      Comment[]
   likes         Like[]
+  isDraft       Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -77,4 +90,46 @@ model Follow {
   createdAt    DateTime @default(now())
 
   @@unique([followerId, followingId])
+}
+
+model Comic {
+  id                  String   @id @default(cuid())
+  name                String
+  publisher           String
+  authors             String[] // Array of author names
+  characters          String[] // Array of character names
+  numberOfIssues      Int
+  image               String?
+  isBeginnerFriendly  Boolean  @default(false)
+  readingLinks        String[] // Array of links for reading
+  addedById           String
+  addedBy             User     @relation("ComicAddedBy", fields: [addedById], references: [id])
+  reviews             Review[]
+  
+  // Calculated fields for performance
+  totalReviews        Int      @default(0)
+  averageRating       Float?   // Will be null if no reviews
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([publisher])
+  @@index([isBeginnerFriendly])
+  @@index([averageRating])
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  userId      String
+  comicId     String
+  user        User     @relation(fields: [userId], references: [id])
+  comic       Comic    @relation(fields: [comicId], references: [id], onDelete: Cascade)
+  rating      Int      // 1 to 5
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, comicId]) // Prevents duplicate reviews from same user for same comic
+  @@index([comicId])
+  @@index([rating])
 }

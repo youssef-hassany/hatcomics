@@ -5,6 +5,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { Calendar, Book, ExternalLink, Filter } from "lucide-react";
 import { useDebounce } from "@/hooks/common/useDebounce";
 import ComicCardSkeleton from "@/components/comics/ComicCardSekelton";
+import Link from "next/link";
+import { Modal } from "@/components/ui/modal";
+import { ComicIssue } from "@/types/comic-vine";
+import { Button } from "@/components/ui/button";
+import AddComicForm from "@/components/comics/AddComicForm";
 
 const ComicsPage = () => {
   const [searchQuery, setSearchQuery] = useState("spider-man");
@@ -90,6 +95,8 @@ const ComicsPage = () => {
     e.preventDefault();
     // The query will automatically refetch due to dependency change
   };
+
+  const [selectedComic, setSelectedComic] = useState<ComicIssue | null>(null);
 
   return (
     <div className="min-h-screen bg-zinc-900">
@@ -248,10 +255,8 @@ const ComicsPage = () => {
 
                     {/* Action Button */}
                     <button
-                      onClick={() =>
-                        window.open(comic.site_detail_url, "_blank")
-                      }
-                      className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-sm font-medium"
+                      onClick={() => setSelectedComic(comic)}
+                      className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-sm font-medium cursor-pointer"
                     >
                       <span>View Details</span>
                       <ExternalLink className="w-3 h-3" />
@@ -280,6 +285,13 @@ const ComicsPage = () => {
           </>
         )}
       </div>
+
+      <Modal isOpen={!!selectedComic} onClose={() => setSelectedComic(null)}>
+        <AddComicForm
+          selectedComic={selectedComic}
+          onSuccess={() => setSelectedComic(null)}
+        />
+      </Modal>
     </div>
   );
 };
