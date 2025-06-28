@@ -6,6 +6,7 @@ import { ComicIssue } from "@/types/comic-vine";
 import RichTextEditor from "../ui/RichTextEditor";
 import { useRouter } from "next/navigation";
 import { createComic } from "@/app/actions/actions";
+import { toast } from "sonner";
 
 interface Props {
   selectedComic: ComicIssue | null;
@@ -103,6 +104,18 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
 
       if (result.success) {
         onSuccess();
+        toast.success("comic added successfully");
+        setFormFields({
+          name: "",
+          description: "",
+          image: "",
+          publisher: "",
+          authors: [""],
+          numberOfIssues: 0,
+          isBeginnerFriendly: false,
+          characters: ["spider-man"],
+          readingLinks: [""],
+        });
       } else {
       }
     } catch (error) {

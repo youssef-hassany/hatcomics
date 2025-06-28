@@ -18,8 +18,10 @@ import {
   Star,
   Settings,
 } from "lucide-react";
+import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 
 export default function Sidebar() {
+  const { data: user } = useGetLoggedInUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -182,7 +184,7 @@ export default function Sidebar() {
             {/* User section at bottom */}
             <div className="p-4 border-t border-zinc-700">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-zinc-400">Signed in</span>
+                <span className="text-sm text-zinc-400">{user?.username}</span>
                 <UserButton
                   appearance={{
                     elements: {
