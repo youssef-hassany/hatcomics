@@ -17,6 +17,7 @@ import {
   BookOpen,
   Star,
   Settings,
+  Newspaper,
 } from "lucide-react";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 
@@ -155,6 +156,17 @@ export default function Sidebar() {
                     className="group-hover:text-orange-500 transition-colors"
                   />
                   <span>Reviews</span>
+                </a>
+
+                <a
+                  href="/blogs"
+                  className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
+                >
+                  <Newspaper
+                    size={20}
+                    className="group-hover:text-orange-500 transition-colors"
+                  />
+                  <span>Blogs</span>
                 </a>
 
                 <a

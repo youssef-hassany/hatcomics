@@ -5,10 +5,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Calendar, Book, ExternalLink, Filter } from "lucide-react";
 import { useDebounce } from "@/hooks/common/useDebounce";
 import ComicCardSkeleton from "@/components/comics/ComicCardSekelton";
-import Link from "next/link";
 import { Modal } from "@/components/ui/modal";
 import { ComicIssue } from "@/types/comic-vine";
-import { Button } from "@/components/ui/button";
 import AddComicForm from "@/components/comics/AddComicForm";
 
 const ComicsPage = () => {

@@ -25,7 +25,7 @@ const fetchComics = async ({
   page = 1,
   limit = 20,
 }: FetchComicsParams): Promise<ComicResponse> => {
-  const response = await axios.get("/api/comics", {
+  const response = await axios.get("/api/comicvine", {
     params: {
       q: query,
       resource,

@@ -20,7 +20,7 @@ const fetchComicById = async ({
   id,
   resource,
 }: FetchComicByIdParams): Promise<ComicByIdResponse> => {
-  const response = await axios.get(`/api/comics/${resource}/${id}`);
+  const response = await axios.get(`/api/comicvine/${resource}/${id}`);
   return response.data;
 };
 

@@ -1,75 +1,101 @@
+import { prisma } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
-import { COMIC_VINE_API_KEY, comicVineBaseUrl } from "@/constants/comic-vine";
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const query = searchParams.get("q");
-  const resource = searchParams.get("resource") || "issue"; // Default to 'issue' instead of 'volume'
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "20");
+  // Get query parameters from the URL
+  const searchParams = req.nextUrl.searchParams;
+  const character = searchParams.get("character");
+  const publisher = searchParams.get("publisher");
+  const isUserFriendlyParam = searchParams.get("isUserFriendly");
+  const longevity = searchParams.get("longevity") as
+    | "short"
+    | "medium"
+    | "long"
+    | null;
 
-  if (!query) {
-    return NextResponse.json(
-      { error: "Missing search query parameter `q`." },
-      { status: 400 }
-    );
-  }
-
-  // Validate resource type
-  const validResources = [
-    "character",
-    "concept",
-    "location",
-    "issue",
-    "story_arc",
-    "volume",
-    "publisher",
-    "person",
-    "team",
-    "video",
-    "object",
-  ];
-
-  if (!validResources.includes(resource)) {
-    return NextResponse.json(
-      {
-        error: `Invalid resource type. Valid options: ${validResources.join(
-          ", "
-        )}`,
-      },
-      { status: 400 }
-    );
-  }
+  // Convert isUserFriendly string to boolean if present
+  const isUserFriendly = isUserFriendlyParam
+    ? isUserFriendlyParam === "true"
+    : undefined;
 
   try {
-    const offset = (page - 1) * limit;
+    const whereClause: any = {};
 
-    const response = await axios.get(`${comicVineBaseUrl}/search/`, {
-      params: {
-        api_key: COMIC_VINE_API_KEY,
-        format: "json",
-        query,
-        resources: resource,
-        limit,
-        offset,
+    if (character) {
+      whereClause.characters = {
+        has: character,
+        mode: "insensitive",
+      };
+    }
+
+    if (publisher) {
+      whereClause.publisher = {
+        contains: publisher,
+        mode: "insensitive",
+      };
+    }
+
+    if (isUserFriendly !== undefined) {
+      whereClause.isUserFriendly = isUserFriendly;
+    }
+
+    if (longevity) {
+      switch (longevity) {
+        case "short":
+          whereClause.numberOfIssues = {
+            gte: 1,
+            lte: 12,
+          };
+          break;
+        case "medium":
+          whereClause.numberOfIssues = {
+            gte: 13,
+            lte: 30,
+          };
+          break;
+        case "long":
+          whereClause.numberOfIssues = {
+            gt: 30,
+          };
+          break;
+      }
+    }
+
+    const comics = await prisma.comic.findMany({
+      where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
+      include: {
+        addedBy: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
       },
-      headers: {
-        "User-Agent": "hat-comics/1.0",
+      omit: {
+        addedById: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
 
-    return NextResponse.json({
-      results: response.data.results,
-      totalResults: response.data.number_of_total_results,
-      page,
-      limit,
-      hasMore: response.data.results.length === limit,
-      offset,
-    });
-  } catch (error: any) {
     return NextResponse.json(
-      { error: "Failed to fetch comics", details: error.message },
+      {
+        status: "success",
+        data: comics,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error fetching comics:", error);
+
+    return NextResponse.json(
+      {
+        status: "error",
+        error: "Failed to fetch comics",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }
