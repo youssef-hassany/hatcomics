@@ -2,15 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import { COMIC_VINE_API_KEY, comicVineBaseUrl } from "@/constants/comic-vine";
 
-interface RouteParams {
-  params: {
-    resource: string;
-    id: string;
-  };
-}
-
-export async function GET(req: NextRequest, { params }: RouteParams) {
-  const { resource, id } = params;
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ resource: string; id: string }> }
+) {
+  const { resource, id } = await params;
 
   // Validate resource type
   const validResources = ["issue", "volume"];

@@ -51,7 +51,7 @@ const RichTextEditor: React.FC<Props> = ({
     if (editor && value) {
       editor.commands.setContent(value, false);
     }
-  }, [editor]);
+  }, [editor, value]);
 
   if (!editor) {
     return null;

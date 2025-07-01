@@ -7,8 +7,8 @@ import React from "react";
 const Comic = () => {
   const { id } = useParams();
 
-  // @ts-ignore
-  const { data } = useGetComicVineComicById(id);
+  // @ts-expect-error: useGetComicVineComicById expects a string, but id may be undefined
+  useGetComicVineComicById(id);
 
   return <div>Comic</div>;
 };

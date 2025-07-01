@@ -20,6 +20,7 @@ import {
   Newspaper,
 } from "lucide-react";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
+import Link from "next/link";
 
 export default function Sidebar() {
   const { data: user } = useGetLoggedInUser();
@@ -125,7 +126,7 @@ export default function Sidebar() {
                   <span>Home</span>
                 </a>
 
-                <a
+                <Link
                   href="/comics"
                   className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
                 >
@@ -134,7 +135,7 @@ export default function Sidebar() {
                     className="group-hover:text-orange-500 transition-colors"
                   />
                   <span>Comics</span>
-                </a>
+                </Link>
 
                 <a
                   href="/community"

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { Plus, X } from "lucide-react";
 import { ComicIssue } from "@/types/comic-vine";
 import RichTextEditor from "../ui/RichTextEditor";
-import { useRouter } from "next/navigation";
 import { createComic } from "@/app/actions/actions";
 import { toast } from "sonner";
 
@@ -14,7 +13,6 @@ interface Props {
 }
 
 const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
-  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formFields, setFormFields] = useState({
     name: "",
@@ -128,7 +126,7 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
 
   useEffect(() => {
     if (selectedComic) {
-      // @ts-ignore
+      // @ts-expect-error: selectedComic may have extra fields not in formFields
       setFormFields((prev) => ({
         ...prev, // Preserve existing fields including arrays
         name: selectedComic.name || "",

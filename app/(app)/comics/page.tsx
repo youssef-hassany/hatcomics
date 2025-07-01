@@ -276,7 +276,7 @@ const ComicsPage = () => {
 
               {!hasNextPage && allComics.length > 0 && (
                 <div className="text-center py-8">
-                  <p className="text-zinc-500">You've reached the end!</p>
+                  <p className="text-zinc-500">You&#39;ve reached the end!</p>
                 </div>
               )}
             </div>
