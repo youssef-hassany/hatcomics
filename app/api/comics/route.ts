@@ -6,26 +6,24 @@ export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const character = searchParams.get("character");
   const publisher = searchParams.get("publisher");
-  const isUserFriendlyParam = searchParams.get("isUserFriendly");
+  const isBeginnerFriendlyParam = searchParams.get("isBeginnerFriendly");
   const longevity = searchParams.get("longevity") as
     | "short"
     | "medium"
     | "long"
     | null;
 
-  // Convert isUserFriendly string to boolean if present
-  const isUserFriendly = isUserFriendlyParam
-    ? isUserFriendlyParam === "true"
+  // Convert isBeginnerFriendly string to boolean if present
+  const isBeginnerFriendly = isBeginnerFriendlyParam
+    ? isBeginnerFriendlyParam === "true"
     : undefined;
 
   try {
     const whereClause: any = {};
 
     if (character) {
-      whereClause.characters = {
-        has: character,
-        mode: "insensitive",
-      };
+      // For partial matching within PostgreSQL arrays, we need to use a different approach
+      // We'll filter the results after fetching them
     }
 
     if (publisher) {
@@ -35,8 +33,8 @@ export async function GET(req: NextRequest) {
       };
     }
 
-    if (isUserFriendly !== undefined) {
-      whereClause.isUserFriendly = isUserFriendly;
+    if (isBeginnerFriendly !== undefined) {
+      whereClause.isBeginnerFriendly = isBeginnerFriendly;
     }
 
     if (longevity) {
@@ -61,7 +59,7 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    const comics = await prisma.comic.findMany({
+    let comics = await prisma.comic.findMany({
       where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
       include: {
         addedBy: {
@@ -79,6 +77,15 @@ export async function GET(req: NextRequest) {
         createdAt: "desc",
       },
     });
+
+    // Filter by character if specified (for partial matching)
+    if (character) {
+      comics = comics.filter((comic) =>
+        comic.characters.some((char) =>
+          char.toLowerCase().includes(character.toLowerCase())
+        )
+      );
+    }
 
     return NextResponse.json(
       {
