@@ -269,6 +269,36 @@ export async function POST(req: Request) {
       }
     }
 
+    // Handle user deletion
+    if (eventType === "user.deleted") {
+      console.log("🗑️ Processing user.deleted event");
+
+      const { id } = data;
+
+      try {
+        // Delete the user from the database
+        const deletedUser = await prisma.user.delete({
+          where: { clerkId: id },
+        });
+
+        console.log("✅ User deleted successfully:", deletedUser);
+
+        return new NextResponse("User deleted", { status: 200 });
+      } catch (error) {
+        console.error("❌ Failed to delete user from database:", error);
+
+        if (
+          error instanceof Error &&
+          error.message.includes("Record to delete does not exist")
+        ) {
+          console.error("❌ User not found in database for deletion:", id);
+          return new NextResponse("User not found", { status: 404 });
+        }
+
+        return new NextResponse("Database error", { status: 500 });
+      }
+    }
+
     console.log("ℹ️ Unhandled event type:", eventType);
     return new NextResponse("Event processed", { status: 200 });
   } catch (error) {
