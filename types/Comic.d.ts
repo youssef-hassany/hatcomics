@@ -7,6 +7,7 @@ interface AddedBy {
 export interface ComicPreview {
   id: string;
   name: string;
+  description?: string;
   publisher: string;
   authors: string;
   characters: string;

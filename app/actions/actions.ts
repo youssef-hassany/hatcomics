@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 
 export interface CreateComicData {
   name: string;
+  description?: string;
   publisher: string;
   authors: string[];
   characters: string[];
@@ -66,6 +67,7 @@ export async function createComic(data: CreateComicData) {
     const comic = await prisma.comic.create({
       data: {
         name: data.name.trim(),
+        description: data.description?.trim() || null,
         publisher: data.publisher.trim(),
         authors: data.authors.map((author) => author.trim()).filter(Boolean),
         characters: data.characters.map((char) => char.trim()).filter(Boolean),
@@ -115,6 +117,7 @@ export async function createComicFromFormData(formData: FormData) {
   try {
     // Extract and parse form data
     const name = formData.get("name") as string;
+    const description = formData.get("description") as string;
     const publisher = formData.get("publisher") as string;
     const authorsString = formData.get("authors") as string;
     const charactersString = formData.get("characters") as string;
@@ -145,6 +148,7 @@ export async function createComicFromFormData(formData: FormData) {
 
     const data: CreateComicData = {
       name,
+      description: description || undefined,
       publisher,
       authors,
       characters,

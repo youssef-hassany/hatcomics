@@ -95,6 +95,7 @@ model Follow {
 model Comic {
   id                  String   @id @default(cuid())
   name                String
+  description         String?  // HTML content from RichTextEditor
   publisher           String
   authors             String[] // Array of author names
   characters          String[] // Array of character names

@@ -76,6 +76,7 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
       // Filter out empty values from arrays
       const cleanedData = {
         name: formFields.name,
+        description: formFields.description || undefined,
         publisher: formFields.publisher,
         authors: formFields.authors.filter((author) => author.trim() !== ""),
         characters: formFields.characters.filter((char) => char.trim() !== ""),
