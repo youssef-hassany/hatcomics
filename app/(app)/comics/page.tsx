@@ -204,7 +204,7 @@ const ComicsPage = () => {
                         target.nextElementSibling?.classList.remove("hidden");
                       }}
                     />
-                    <div className="absolute inset-0 flex items-center justify-center bg-zinc-700">
+                    <div className="hidden absolute inset-0 flex items-center justify-center bg-zinc-700">
                       <Book className="w-12 h-12 text-zinc-500" />
                     </div>
 
