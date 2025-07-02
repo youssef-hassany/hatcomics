@@ -10,8 +10,8 @@ const HomePage = async () => {
 
   const pages = [
     {
-      name: "Blogs",
-      route: "/blogs",
+      name: "Posts",
+      route: "/posts",
       icon: <Newspaper />,
       description:
         "Read the latest articles, insights, and stories from the comic book world",
@@ -25,7 +25,7 @@ const HomePage = async () => {
     },
     {
       name: "Comics Recommendations",
-      route: "/recommendations",
+      route: "/comics",
       icon: <BookOpen />,
       description:
         "Get personalized comic suggestions based on your interests and reading history",

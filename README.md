@@ -1,4 +1,23 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HatComics - Comic Community Platform
+
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app) that serves as a comic book community platform where users can create, share, and discuss posts about comics.
+
+## Features
+
+### Post Management
+
+- **Create Posts**: Rich text editor with image upload support
+- **Edit Posts**: In-place editing with 3-dots menu (owner only)
+- **Delete Posts**: Secure deletion with confirmation (owner only)
+- **Draft Support**: Save posts as drafts and publish later
+- **Rich Content**: Support for headings, bold, italic, lists, quotes, and images
+
+### User Interface
+
+- **Dark Theme**: Modern dark UI with orange accents
+- **Responsive Design**: Works on desktop and mobile devices
+- **Dropdown Menus**: Shadcn UI components for consistent UX
+- **Loading States**: Skeleton components for better UX
 
 ## Getting Started
 

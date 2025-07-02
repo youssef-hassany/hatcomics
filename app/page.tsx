@@ -27,7 +27,7 @@ const ComicLandingPage = () => {
       icon: <Pen className="w-6 h-6" />,
       title: "Write & Share",
       description:
-        "Create engaging blogs about your favorite comics and share your thoughts with the community",
+        "Create engaging Posts about your favorite comics and share your thoughts with the community",
     },
     {
       icon: <Star className="w-6 h-6" />,

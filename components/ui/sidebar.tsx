@@ -160,14 +160,14 @@ export default function Sidebar() {
                 </a>
 
                 <a
-                  href="/blogs"
+                  href="/posts"
                   className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
                 >
                   <Newspaper
                     size={20}
                     className="group-hover:text-orange-500 transition-colors"
                   />
-                  <span>Blogs</span>
+                  <span>Posts</span>
                 </a>
 
                 <a

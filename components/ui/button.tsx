@@ -15,8 +15,9 @@ export const Button: React.FC<ButtonProps> = ({
   className = "",
   ...props
 }) => {
-  const baseStyles =
-    "inline-flex items-center justify-center px-4 py-2 rounded-xl text-white font-medium transition-all duration-200 focus:outline-none cursor-pointer";
+  const baseStyles = `inline-flex items-center justify-center px-4 py-2 rounded-xl text-white font-medium transition-all duration-200 focus:outline-none ${
+    disabled ? "cursor-not-allowed" : "cursor-pointer"
+  }`;
 
   const variantStyles = {
     primary: "bg-orange-600 hover:bg-orange-700",

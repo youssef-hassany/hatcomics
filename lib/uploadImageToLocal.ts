@@ -1,34 +1,29 @@
-import formidable from "formidable";
 import fs from "fs";
 import path from "path";
-import { NextRequest } from "next/server";
 
 export async function uploadImageToLocal(
-  req: NextRequest,
+  req: Request,
   folder: string
 ): Promise<{ fileUrl: string }> {
   const uploadDir = path.join(process.cwd(), "public/uploads", folder);
   fs.mkdirSync(uploadDir, { recursive: true });
 
-  const form = formidable({
-    keepExtensions: true,
-    filename: (name: string, ext: string) => `${name}-${Date.now()}${ext}`,
-  });
+  const formData = await req.formData();
+  const file = formData.get("file") as File | null;
+  if (!file) throw new Error("No file uploaded");
 
-  const { files } = await new Promise<{ fields: any; files: any }>(
-    (resolve, reject) => {
-      form.parse(req as any, (err, fields, files) => {
-        if (err) reject(err);
-        else resolve({ fields, files });
-      });
-    }
-  );
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
 
-  const file = files.file[0] || files.file;
-  const fileName = path.basename(file.filepath);
-  const newFilePath = path.join(uploadDir, fileName);
+  // Generate a unique filename
+  const timestamp = Date.now();
+  const originalName = file.name || "upload";
+  const ext = path.extname(originalName);
+  const base = path.basename(originalName, ext);
+  const fileName = `${base}-${timestamp}${ext}`;
+  const filePath = path.join(uploadDir, fileName);
 
-  fs.renameSync(file.filepath, newFilePath);
+  fs.writeFileSync(filePath, buffer);
 
   const fileUrl = `/uploads/${folder}/${fileName}`;
   return { fileUrl };
