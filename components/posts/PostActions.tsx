@@ -18,7 +18,7 @@ interface PostActionsProps {
   isOwner: boolean;
 }
 
-const PostActions = ({ postId, onEdit }: PostActionsProps) => {
+const PostActions = ({ postId, onEdit, isOwner }: PostActionsProps) => {
   const { mutateAsync: deletePost, isPending: isDeleting } = useDeletePost();
   const router = useRouter();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -32,6 +32,8 @@ const PostActions = ({ postId, onEdit }: PostActionsProps) => {
       console.error("Error deleting post:", error);
     }
   };
+
+  if (!isOwner) return;
 
   return (
     <>

@@ -18,6 +18,7 @@ import {
   Star,
   Settings,
   Newspaper,
+  User,
 } from "lucide-react";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import Link from "next/link";
@@ -168,6 +169,17 @@ export default function Sidebar() {
                     className="group-hover:text-orange-500 transition-colors"
                   />
                   <span>Posts</span>
+                </Link>
+
+                <Link
+                  href={`/profile/${user?.username}`}
+                  className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
+                >
+                  <User
+                    size={20}
+                    className="group-hover:text-orange-500 transition-colors"
+                  />
+                  <span>Profile</span>
                 </Link>
 
                 <Link
