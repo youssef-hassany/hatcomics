@@ -281,6 +281,20 @@ export async function POST(req: Request) {
           where: { clerkId: id },
         });
 
+        // Delete the user posts
+        await prisma.post.deleteMany({
+          where: {
+            userId: deletedUser.id,
+          },
+        });
+
+        // Delete the user Reviews
+        await prisma.review.deleteMany({
+          where: {
+            userId: deletedUser.id,
+          },
+        });
+
         console.log("✅ User deleted successfully:", deletedUser);
 
         return new NextResponse("User deleted", { status: 200 });

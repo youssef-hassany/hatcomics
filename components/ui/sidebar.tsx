@@ -139,17 +139,6 @@ export default function Sidebar() {
                 </Link>
 
                 <Link
-                  href="/community"
-                  className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
-                >
-                  <Users
-                    size={20}
-                    className="group-hover:text-orange-500 transition-colors"
-                  />
-                  <span>Community</span>
-                </Link>
-
-                <Link
                   href="/reviews"
                   className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
                 >
@@ -169,6 +158,17 @@ export default function Sidebar() {
                     className="group-hover:text-orange-500 transition-colors"
                   />
                   <span>Posts</span>
+                </Link>
+
+                <Link
+                  href="/community"
+                  className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
+                >
+                  <Users
+                    size={20}
+                    className="group-hover:text-orange-500 transition-colors"
+                  />
+                  <span>Community</span>
                 </Link>
 
                 <Link

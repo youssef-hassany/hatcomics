@@ -1,19 +1,33 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { User, Settings, Edit3, Award, Shield, Plus } from "lucide-react";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { Button } from "@/components/ui/button";
+import { useGetUserByUsername } from "@/hooks/user/useGetUserByUsername";
+import { useParams } from "next/navigation";
+import ProfilePageSkeleton from "@/components/profile/ProfilePageSkeleton";
 
 const ProfilePage = () => {
-  const { data: user, isLoading, error } = useGetLoggedInUser();
+  const { username } = useParams();
+
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useGetUserByUsername(username as string);
+  const { data: loggedInUser } = useGetLoggedInUser();
+
+  const [isLoggedInUser, setIsLoggedInUser] = useState(
+    user?.id === loggedInUser?.id
+  );
+
+  useEffect(() => {
+    setIsLoggedInUser(user?.id === loggedInUser?.id);
+  }, [user, loggedInUser]);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
-      </div>
-    );
+    return <ProfilePageSkeleton />;
   }
 
   if (error || !user) {
@@ -65,17 +79,21 @@ const ProfilePage = () => {
       <div className="bg-zinc-800 border-b border-zinc-700">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold">Profile</h1>
-            <div className="flex gap-3">
-              <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
-                <Edit3 className="w-4 h-4" />
-                Edit Profile
-              </button>
-              <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
-                <Settings className="w-4 h-4" />
-                Settings
-              </button>
-            </div>
+            <h1 className="text-2xl font-bold">
+              {user.fullname}&apos;s Profile
+            </h1>
+            {isLoggedInUser && (
+              <div className="flex gap-3">
+                <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                  <Edit3 className="w-4 h-4" />
+                  Edit Profile
+                </button>
+                <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                  <Settings className="w-4 h-4" />
+                  Settings
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -135,12 +153,14 @@ const ProfilePage = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-3">
-              <Button className="flex items-center gap-1">
-                Follow
-                <Plus />
-              </Button>
-            </div>
+            {!isLoggedInUser && (
+              <div className="flex flex-col gap-3">
+                <Button className="flex items-center gap-1">
+                  Follow
+                  <Plus />
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 
