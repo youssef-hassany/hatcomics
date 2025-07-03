@@ -7,6 +7,7 @@ import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import PostContentSkeleton from "./PostContentSkeleton";
 import PostActions from "./PostActions";
 import EditPostForm from "./EditPostForm";
+import CommentsSection from "../comments/CommentsSection";
 import { useState } from "react";
 
 interface PostContentProps {
@@ -30,7 +31,7 @@ const PostContent = ({ initialPost }: PostContentProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-zinc-800">
       {/* Header Section */}
       <div className="bg-zinc-900 border-b border-zinc-800 shadow-sm">
         <div className="max-w-4xl mx-auto px-6 py-8">
@@ -75,7 +76,7 @@ const PostContent = ({ initialPost }: PostContentProps) => {
 
       {/* Content Section */}
       <div className="max-w-4xl mx-auto px-6 py-12">
-        <article className="bg-zinc-900 rounded-2xl shadow-xl border border-zinc-800 overflow-hidden">
+        <article className="bg-zinc-900 rounded-2xl shadow-xl border border-zinc-800 overflow-hidden mb-8">
           <div className="p-8 lg:p-12">
             <div
               className="prose prose-lg prose-invert max-w-none
@@ -96,6 +97,9 @@ const PostContent = ({ initialPost }: PostContentProps) => {
             />
           </div>
         </article>
+
+        {/* Comments Section */}
+        <CommentsSection postId={post?.id || ""} />
       </div>
     </div>
   );

@@ -112,7 +112,7 @@ const page = async ({ params }: Props) => {
 
   if (!post) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-zinc-950">
+      <div className="min-h-screen flex items-center justify-center bg-zinc-800">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-zinc-100 mb-4">
             Post Not Found
