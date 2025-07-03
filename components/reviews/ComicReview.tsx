@@ -3,6 +3,7 @@
 import { Star, Eye, EyeOff, Calendar, Book } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import ReviewActions from "./ReviewActions";
 
 interface ReviewUser {
   id: string;
@@ -19,6 +20,7 @@ interface Comic {
 }
 
 interface ComicReviewProps {
+  id: string;
   user: ReviewUser;
   comic: Comic;
   rating: number;
@@ -26,15 +28,20 @@ interface ComicReviewProps {
   hasSpoilers?: boolean;
   createdAt: string;
   updatedAt?: string;
+  isOwner?: boolean;
+  onDeleteSuccess?: () => void;
 }
 
 const ComicReview = ({
+  id,
   user,
   comic,
   rating,
   content,
   hasSpoilers = false,
   createdAt,
+  isOwner = false,
+  onDeleteSuccess,
 }: ComicReviewProps) => {
   const [showSpoilers, setShowSpoilers] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -135,12 +142,20 @@ const ComicReview = ({
           </div>
         </div>
 
-        {/* Date */}
-        <div className="flex items-center gap-1 text-xs text-zinc-500">
-          <Calendar className="w-3 h-3" />
-          <time dateTime={new Date(createdAt).toISOString()}>
-            {formatDate(new Date(createdAt))}
-          </time>
+        {/* Date and Actions */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 text-xs text-zinc-500">
+            <Calendar className="w-3 h-3" />
+            <time dateTime={new Date(createdAt).toISOString()}>
+              {formatDate(new Date(createdAt))}
+            </time>
+          </div>
+
+          <ReviewActions
+            reviewId={id}
+            isOwner={isOwner}
+            onSuccess={onDeleteSuccess}
+          />
         </div>
       </div>
 

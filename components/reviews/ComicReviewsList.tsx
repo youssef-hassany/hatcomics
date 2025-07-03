@@ -1,6 +1,7 @@
 "use client";
 
 import { useGetComicReviews } from "@/hooks/reviews/useGetComicReviews";
+import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import React from "react";
 import ComicReviewSkeleton from "./ComicReviewSkeleton";
 import ComicReview from "./ComicReview";
@@ -11,6 +12,7 @@ interface Props {
 
 const ComicReviewsList = ({ comicId }: Props) => {
   const { data: reviews, isPending } = useGetComicReviews(comicId);
+  const { data: loggedInUser } = useGetLoggedInUser();
 
   return (
     <div className="space-y-6">
@@ -19,6 +21,7 @@ const ComicReviewsList = ({ comicId }: Props) => {
 
       {reviews?.map((review) => (
         <ComicReview
+          id={review.id}
           rating={review.rating}
           user={review.user}
           content={review.description}
@@ -26,6 +29,7 @@ const ComicReviewsList = ({ comicId }: Props) => {
           hasSpoilers={review.spoiler}
           updatedAt={review.updatedAt}
           createdAt={review.createdAt}
+          isOwner={loggedInUser?.id === review.user.id}
           key={review.id}
         />
       ))}

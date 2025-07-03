@@ -2,34 +2,6 @@ import { prisma } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-
-    const review = await prisma.review.findMany({
-      where: { comicId: id },
-      include: {
-        comic: true,
-        user: true,
-      },
-    });
-
-    return NextResponse.json(
-      { status: "success", data: review },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { status: "error", message: "Internal server error" },
-      { status: 500 }
-    );
-  }
-}
-
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -49,12 +21,27 @@ export async function DELETE(
     // Get the review before deleting to access its rating and comicId
     const reviewToDelete = await prisma.review.findFirst({
       where: { id },
+      include: {
+        user: true,
+      },
     });
 
     if (!reviewToDelete) {
       return NextResponse.json(
         { status: "error", message: "Review not found" },
         { status: 404 }
+      );
+    }
+
+    // Check if the user is the owner of the review
+    const currentUser = await prisma.user.findFirst({
+      where: { clerkId: userId },
+    });
+
+    if (!currentUser || currentUser.id !== reviewToDelete.userId) {
+      return NextResponse.json(
+        { status: "error", message: "You can only delete your own reviews" },
+        { status: 403 }
       );
     }
 
@@ -96,14 +83,10 @@ export async function DELETE(
     }
 
     // Deduct points from the user
-    const user = await prisma.user.findFirst({
-      where: { clerkId: userId },
-    });
-
-    if (user) {
+    if (currentUser) {
       await prisma.user.update({
         data: {
-          points: Math.max(0, (user.points || 0) - 2),
+          points: Math.max(0, (currentUser.points || 0) - 2),
         },
         where: {
           clerkId: userId,

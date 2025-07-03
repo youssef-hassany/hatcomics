@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const getComicReviews = async (comicId: string) => {
   try {
-    const response = await fetch(`/api/reviews/${comicId}`);
+    const response = await fetch(`/api/reviews/comic/${comicId}`);
     const data = await response.json();
     return data.data as Review[];
   } catch (error) {

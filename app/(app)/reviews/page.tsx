@@ -3,10 +3,12 @@
 import ComicReview from "@/components/reviews/ComicReview";
 import ComicReviewSkeleton from "@/components/reviews/ComicReviewSkeleton";
 import { useGetAllReviews } from "@/hooks/reviews/useGetAllReview";
+import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import React from "react";
 
 const page = () => {
   const { data: reviews, isPending } = useGetAllReviews();
+  const { data: loggedInUser } = useGetLoggedInUser();
 
   return (
     <div className="min-h-screen bg-zinc-900 p-6">
@@ -25,6 +27,7 @@ const page = () => {
 
           {reviews?.map((review) => (
             <ComicReview
+              id={review.id}
               rating={review.rating}
               user={review.user}
               content={review.description}
@@ -32,6 +35,7 @@ const page = () => {
               hasSpoilers={review.spoiler}
               updatedAt={review.updatedAt}
               createdAt={review.createdAt}
+              isOwner={loggedInUser?.id === review.user.id}
               key={review.id}
             />
           ))}
