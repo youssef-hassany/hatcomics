@@ -35,7 +35,10 @@ export const Button: React.FC<ButtonProps> = ({
       {...props}
     >
       {isLoading ? (
-        <Loader2 className="w-5 h-5 animate-spin text-white" />
+        <>
+          {children}
+          <Loader2 className="w-5 h-5 animate-spin text-white ml-1" />
+        </>
       ) : (
         children
       )}

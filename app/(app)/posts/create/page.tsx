@@ -43,7 +43,7 @@ const CreatePostsPage = () => {
 
       setTitle("");
       setContent("");
-      toast.success("Post Published Successfully");
+      toast.success("Post Published, You Got 5 points!");
     } catch (error) {
       console.error("Error publishing post:", error);
       toast.error("Error publishing post, Try Again");

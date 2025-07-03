@@ -9,8 +9,8 @@ export interface ComicPreview {
   name: string;
   description?: string;
   publisher: string;
-  authors: string;
-  characters: string;
+  authors: string[];
+  characters: string[];
   numberOfIssues: number;
   image: string;
   isBeginnerFriendly: boolean;

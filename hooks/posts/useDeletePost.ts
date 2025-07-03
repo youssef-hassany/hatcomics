@@ -7,7 +7,7 @@ const deletePost = async (postId: string) => {
       method: "DELETE",
     });
 
-    toast.success("Post deleted successfully");
+    toast.success("Post deleted, You Lost 5 points.");
   } catch (error) {
     console.error(error);
     toast.error("failed deleting post");

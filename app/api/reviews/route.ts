@@ -3,16 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const posts = await prisma.post.findMany({
-      where: {
-        isDraft: false,
-      },
-      select: {
-        id: true,
-        title: true,
+    const review = await prisma.review.findMany({
+      include: {
+        comic: true,
         user: true,
-        likes: true,
-        comments: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -20,7 +14,7 @@ export async function GET() {
     });
 
     return NextResponse.json(
-      { status: "success", data: posts },
+      { status: "success", data: review },
       { status: 200 }
     );
   } catch (error) {
@@ -34,9 +28,9 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, content, title, isDraft } = await req.json();
+    const { userId, comicId, rating, description, spoiler } = await req.json();
 
-    if (!userId || !content || !title) {
+    if (!userId || !rating || !comicId) {
       return NextResponse.json(
         {
           status: "error",
@@ -57,25 +51,52 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const post = await prisma.post.create({
+    const review = await prisma.review.create({
       data: {
-        title,
-        content,
+        rating,
+        description,
+        spoiler: !!spoiler,
         userId,
-        isDraft: !!isDraft,
+        comicId,
       },
     });
 
-    // give the user 5 points
+    // get the comic first
+    const comic = await prisma.comic.findFirst({
+      where: { id: comicId },
+    });
+
+    // get the comic stats
+    const avgRate = comic?.averageRating ? comic.averageRating : 0;
+    const reviewsNum = comic?.totalReviews ? comic.totalReviews : 0;
+
+    // calculate the new stats
+    const newReviewsNum = reviewsNum + 1;
+    const newAvgRate = (avgRate * reviewsNum + rating) / newReviewsNum;
+
+    // set updated stats
+    await prisma.comic.update({
+      data: {
+        averageRating: newAvgRate,
+        totalReviews: newReviewsNum,
+      },
+      where: {
+        id: comicId,
+      },
+    });
+
+    // add points to the user
     await prisma.user.update({
       data: {
-        points: user.points + 5,
+        points: user.points + 2,
       },
-      where: { id: userId },
+      where: {
+        id: userId,
+      },
     });
 
     return NextResponse.json(
-      { status: "success", data: post },
+      { status: "success", data: review },
       { status: 201 }
     );
   } catch (error) {

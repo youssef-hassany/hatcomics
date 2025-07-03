@@ -15,6 +15,7 @@ import {
 import ComicCardSkeleton from "@/components/comics/ComicCardSekelton";
 import { ComicPreview } from "@/types/Comic";
 import { useDebounce } from "@/hooks/common/useDebounce";
+import Link from "next/link";
 
 const StoredComicsPage = () => {
   const [characterFilter, setCharacterFilter] = useState("");
@@ -330,48 +331,14 @@ const StoredComicsPage = () => {
                       </p>
                     )}
 
-                    {/* Description */}
-                    <p className="text-zinc-300 text-sm mb-4 leading-relaxed">
-                      {truncateText(comic.description || "", 120) ||
-                        "No description available."}
-                    </p>
-
                     {/* Metadata */}
                     <div className="space-y-2 mb-4">
-                      {/* Authors */}
-                      {comic.authors && (
-                        <div className="flex items-center gap-2 text-zinc-400 text-xs">
-                          <User className="w-3 h-3" />
-                          <span className="truncate">{comic.authors}</span>
-                        </div>
-                      )}
-
-                      {/* Characters */}
-                      {comic.characters && (
-                        <div className="flex items-center gap-2 text-zinc-400 text-xs">
-                          <Book className="w-3 h-3" />
-                          <span className="truncate">{comic.characters}</span>
-                        </div>
-                      )}
-
                       {/* Number of Issues */}
                       {comic.numberOfIssues > 0 && (
                         <div className="flex items-center gap-2 text-zinc-400 text-xs">
                           <span>📚 {comic.numberOfIssues} issues</span>
                         </div>
                       )}
-
-                      {/* Added Date */}
-                      <div className="flex items-center gap-2 text-zinc-400 text-xs">
-                        <Calendar className="w-3 h-3" />
-                        <span>Added: {formatDate(comic.createdAt)}</span>
-                      </div>
-
-                      {/* Added By */}
-                      <div className="flex items-center gap-2 text-zinc-400 text-xs">
-                        <User className="w-3 h-3" />
-                        <span>By: {comic.addedBy.username}</span>
-                      </div>
 
                       {/* Reviews */}
                       <div className="flex items-center gap-2 text-zinc-400 text-xs">
@@ -387,39 +354,13 @@ const StoredComicsPage = () => {
                     {/* Action Buttons */}
                     <div className="space-y-2">
                       {/* View Details Button */}
-                      <button className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-sm font-medium cursor-pointer">
+                      <Link
+                        href={`/comics/${comic.id}`}
+                        className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-sm font-medium cursor-pointer"
+                      >
                         <span>View Details</span>
                         <ExternalLink className="w-3 h-3" />
-                      </button>
-
-                      {/* Reading Links */}
-                      {comic.readingLinks && comic.readingLinks.length > 0 && (
-                        <div className="text-center">
-                          <p className="text-zinc-400 text-xs mb-1">
-                            Reading Links:
-                          </p>
-                          <div className="flex flex-wrap gap-1 justify-center">
-                            {comic.readingLinks
-                              .slice(0, 2)
-                              .map((link, index) => (
-                                <a
-                                  key={index}
-                                  href={link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-orange-400 hover:text-orange-300 text-xs underline"
-                                >
-                                  Link {index + 1}
-                                </a>
-                              ))}
-                            {comic.readingLinks.length > 2 && (
-                              <span className="text-zinc-500 text-xs">
-                                +{comic.readingLinks.length - 2} more
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      )}
+                      </Link>
                     </div>
                   </div>
                 </div>
