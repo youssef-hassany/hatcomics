@@ -203,6 +203,19 @@ export default function Sidebar() {
                   />
                   <span>About</span>
                 </Link>
+
+                {(user?.role === "owner" || user?.role === "admin") && (
+                  <Link
+                    href="/comic-vine"
+                    className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
+                  >
+                    <BookOpen
+                      size={20}
+                      className="group-hover:text-orange-500 transition-colors"
+                    />
+                    <span>Comic Vine</span>
+                  </Link>
+                )}
               </div>
             </nav>
 
