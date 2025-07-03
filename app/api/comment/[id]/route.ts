@@ -15,6 +15,10 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    const { userId } = await auth();
+    const user = userId
+      ? await prisma.user.findFirst({ where: { clerkId: userId } })
+      : null;
 
     const comments = await prisma.comment.findMany({
       where: {
@@ -41,8 +45,16 @@ export async function GET(
       },
     });
 
+    // Add isLikedByCurrentUser field to each comment
+    const commentsWithLikeStatus = comments.map((comment) => ({
+      ...comment,
+      isLikedByCurrentUser: user
+        ? comment.likes.some((like) => like.userId === user.id)
+        : false,
+    }));
+
     return NextResponse.json(
-      { status: "success", data: comments },
+      { status: "success", data: commentsWithLikeStatus },
       { status: 200 }
     );
   } catch (error) {

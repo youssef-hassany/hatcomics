@@ -3,6 +3,7 @@
 import { Comment as CommentType } from "@/types/Comment";
 import { useDeleteComment } from "@/hooks/comments/useDeleteComment";
 import { useUpdateComment } from "@/hooks/comments/useUpdateComment";
+import { useCommentLike } from "@/hooks/comments/useCommentLike";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -29,17 +30,25 @@ interface CommentProps {
 }
 
 const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(comment.likes?.length || 0);
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
   const deleteCommentMutation = useDeleteComment();
   const updateCommentMutation = useUpdateComment();
+  const likeCommentMutation = useCommentLike();
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
-    // TODO: Implement like functionality with API
+  // Use the like status from the API response
+  const isLiked = comment.isLikedByCurrentUser || false;
+  const likeCount = comment.likes?.length || 0;
+
+  const handleLike = async () => {
+    try {
+      await likeCommentMutation.mutateAsync({
+        commentId: comment.id,
+        isLiked: isLiked,
+      });
+    } catch (error) {
+      console.error("Failed to toggle like:", error);
+    }
   };
 
   const handleDelete = async () => {
@@ -206,19 +215,23 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
           <div className="flex items-center gap-6 pt-2">
             <button
               onClick={handleLike}
+              disabled={likeCommentMutation.isPending}
               className={`flex items-center gap-2 text-sm transition-colors ${
                 isLiked
-                  ? "text-red-500 hover:text-red-400"
+                  ? "text-orange-500 hover:text-orange-400"
                   : "text-zinc-500 hover:text-zinc-400"
+              } ${
+                likeCommentMutation.isPending
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
               }`}
             >
-              <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
+              {likeCommentMutation.isPending ? (
+                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
+              )}
               <span>{likeCount}</span>
-            </button>
-
-            <button className="flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-400 transition-colors">
-              <MessageCircle className="w-4 h-4" />
-              <span>Reply</span>
             </button>
           </div>
         </div>

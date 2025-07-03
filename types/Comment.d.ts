@@ -10,6 +10,7 @@ export interface Comment {
   updatedAt: Date;
   user?: User;
   likes?: Like[];
+  isLikedByCurrentUser?: boolean;
 }
 
 export interface Like {

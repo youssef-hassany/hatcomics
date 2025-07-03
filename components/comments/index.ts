@@ -9,3 +9,4 @@ export { useCreateComment } from "@/hooks/comments/useCreateComment";
 export { useDeleteComment } from "@/hooks/comments/useDeleteComment";
 export { useUpdateComment } from "@/hooks/comments/useUpdateComment";
 export { useGetPostComments } from "@/hooks/comments/useGetPostComments";
+export { useCommentLike } from "@/hooks/comments/useCommentLike";
