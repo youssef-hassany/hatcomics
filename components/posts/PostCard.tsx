@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { Heart, MessageCircle, User } from "lucide-react";
+import { Heart, MessageCircle } from "lucide-react";
 import { PostPreview } from "@/types/Post";
-import Image from "next/image";
 import Link from "next/link";
 
 const PostCard: React.FC<{ post: PostPreview }> = ({ post }) => {

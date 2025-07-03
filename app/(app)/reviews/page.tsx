@@ -6,7 +6,7 @@ import { useGetAllReviews } from "@/hooks/reviews/useGetAllReview";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import React from "react";
 
-const page = () => {
+const Page = () => {
   const { data: reviews, isPending } = useGetAllReviews();
   const { data: loggedInUser } = useGetLoggedInUser();
 
@@ -45,4 +45,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

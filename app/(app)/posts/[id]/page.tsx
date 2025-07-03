@@ -126,7 +126,7 @@ const page = async ({ params }: Props) => {
   }
 
   return (
-    // @ts-ignore
+    // @ts-expect-error: bla bla bla bla bla
     <PostContent initialPost={post} />
   );
 };

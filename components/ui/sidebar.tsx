@@ -44,24 +44,24 @@ export default function Sidebar() {
                 </div>
 
                 <div className="hidden md:flex space-x-8">
-                  <a
+                  <Link
                     href="#features"
                     className="text-zinc-300 hover:text-orange-500 transition-colors"
                   >
                     Features
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="#community"
                     className="text-zinc-300 hover:text-orange-500 transition-colors"
                   >
                     Community
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="#about"
                     className="text-zinc-300 hover:text-orange-500 transition-colors"
                   >
                     About
-                  </a>
+                  </Link>
                 </div>
 
                 <div className="flex space-x-3">
@@ -115,7 +115,7 @@ export default function Sidebar() {
             {/* Navigation links */}
             <nav className="flex-1 px-4 py-6">
               <div className="space-y-2">
-                <a
+                <Link
                   href="/home"
                   className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
                 >
@@ -124,7 +124,7 @@ export default function Sidebar() {
                     className="group-hover:text-orange-500 transition-colors"
                   />
                   <span>Home</span>
-                </a>
+                </Link>
 
                 <Link
                   href="/comics"
@@ -137,7 +137,7 @@ export default function Sidebar() {
                   <span>Comics</span>
                 </Link>
 
-                <a
+                <Link
                   href="/community"
                   className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
                 >
@@ -146,9 +146,9 @@ export default function Sidebar() {
                     className="group-hover:text-orange-500 transition-colors"
                   />
                   <span>Community</span>
-                </a>
+                </Link>
 
-                <a
+                <Link
                   href="/reviews"
                   className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
                 >
@@ -157,9 +157,9 @@ export default function Sidebar() {
                     className="group-hover:text-orange-500 transition-colors"
                   />
                   <span>Reviews</span>
-                </a>
+                </Link>
 
-                <a
+                <Link
                   href="/posts"
                   className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
                 >
@@ -168,9 +168,9 @@ export default function Sidebar() {
                     className="group-hover:text-orange-500 transition-colors"
                   />
                   <span>Posts</span>
-                </a>
+                </Link>
 
-                <a
+                <Link
                   href="/settings"
                   className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
                 >
@@ -179,9 +179,9 @@ export default function Sidebar() {
                     className="group-hover:text-orange-500 transition-colors"
                   />
                   <span>Settings</span>
-                </a>
+                </Link>
 
-                <a
+                <Link
                   href="/about"
                   className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
                 >
@@ -190,7 +190,7 @@ export default function Sidebar() {
                     className="group-hover:text-orange-500 transition-colors"
                   />
                   <span>About</span>
-                </a>
+                </Link>
               </div>
             </nav>
 

@@ -3,7 +3,6 @@
 import { Clock, User, BookOpen, Users, Star, ExternalLink } from "lucide-react";
 import { ComicPreview } from "@/types/Comic";
 import { useGetComic } from "@/hooks/comics/useGetComic";
-import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import ComicContentSkeleton from "./ComicContentSkeleton";
 
 interface ComicContentProps {
@@ -12,7 +11,6 @@ interface ComicContentProps {
 
 const ComicContent = ({ initialComic }: ComicContentProps) => {
   const { data: comic, isPending } = useGetComic(initialComic.id);
-  const { data: loggedInUser } = useGetLoggedInUser();
 
   const currentComic = comic || initialComic;
 
@@ -86,8 +84,10 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                     <div>
                       <span className="text-zinc-500 text-sm">Authors</span>
                       <p className="font-medium">
-                        {currentComic.authors.map((author) => (
-                          <span className="block">{author}</span>
+                        {currentComic.authors.map((author, idx) => (
+                          <span className="block" key={idx}>
+                            {author}
+                          </span>
                         ))}
                       </p>
                     </div>
@@ -131,8 +131,10 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                     Characters
                   </h3>
                   <p className="text-zinc-300">
-                    {currentComic.characters.map((char) => (
-                      <span className="mr-2">{char}</span>
+                    {currentComic.characters.map((char, idx) => (
+                      <span className="mr-2" key={(idx + 1) * 100}>
+                        {char}
+                      </span>
                     ))}
                   </p>
                 </div>
@@ -145,17 +147,17 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                     <h3 className="text-lg font-semibold text-zinc-100 mb-3">
                       Where to Read
                     </h3>
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-col flex-wrap gap-3">
                       {currentComic.readingLinks.map((link, index) => (
                         <a
                           key={index}
                           href={link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors duration-200"
+                          className="text-orange-500 hover:text-orange-600 flex items-center gap-2"
                         >
                           <ExternalLink className="w-4 h-4" />
-                          Read Online
+                          {link.length > 50 ? `${link.slice(0, 50)}...` : link}
                         </a>
                       ))}
                     </div>

@@ -52,12 +52,12 @@ const PostContent = ({ initialPost }: PostContentProps) => {
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
-                    {/* @ts-ignore */}
-                    {new Date(post?.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {post &&
+                      new Date(post.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
                   </span>
                 </div>
               </div>

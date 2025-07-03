@@ -116,7 +116,7 @@ const page = async ({ params }: Props) => {
 
   return (
     <>
-      {/* @ts-ignore */}
+      {/* @ts-expect-error: bla bla bla bla bla */}
       <ComicContent initialComic={comic} />
       <ComicReviewForm comicId={comic.id} />
 

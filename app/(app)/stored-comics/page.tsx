@@ -2,16 +2,7 @@
 
 import { useGetComicsList } from "@/hooks/comics/useGetComicsList";
 import React, { useState } from "react";
-import {
-  Book,
-  Star,
-  User,
-  Calendar,
-  ExternalLink,
-  Filter,
-  Search,
-  X,
-} from "lucide-react";
+import { Book, Star, ExternalLink, Filter, Search, X } from "lucide-react";
 import ComicCardSkeleton from "@/components/comics/ComicCardSekelton";
 import { ComicPreview } from "@/types/Comic";
 import { useDebounce } from "@/hooks/common/useDebounce";
@@ -40,22 +31,22 @@ const StoredComicsPage = () => {
 
   const { data: comicsList, isLoading, error } = useGetComicsList(filters);
 
-  const formatDate = (dateString: string | Date) => {
-    if (!dateString) return "Unknown";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
+  // const formatDate = (dateString: string | Date) => {
+  //   if (!dateString) return "Unknown";
+  //   const date = new Date(dateString);
+  //   return date.toLocaleDateString("en-US", {
+  //     year: "numeric",
+  //     month: "short",
+  //     day: "numeric",
+  //   });
+  // };
 
-  const truncateText = (text: string, maxLength: number) => {
-    if (!text) return "";
-    return text.length <= maxLength
-      ? text
-      : text.substring(0, maxLength) + "...";
-  };
+  // const truncateText = (text: string, maxLength: number) => {
+  //   if (!text) return "";
+  //   return text.length <= maxLength
+  //     ? text
+  //     : text.substring(0, maxLength) + "...";
+  // };
 
   const renderStars = (rating: number | null) => {
     if (rating === null)

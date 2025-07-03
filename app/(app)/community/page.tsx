@@ -11,18 +11,6 @@ import { communityAccounts } from "@/constants/community-accounts";
 // Type definitions
 type AccountType = "content_creator" | "translator" | "social_media" | "store";
 
-interface CommunityAccount {
-  id: number;
-  name: string;
-  type: AccountType;
-  description: string;
-  platform: string;
-  followers: string;
-  avatar: string;
-  link: string;
-  verified: boolean;
-}
-
 const CommunityPage: React.FC = () => {
   const getTypeIcon = (type: AccountType) => {
     switch (type) {
@@ -161,14 +149,14 @@ const CommunityPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-full border ${getTypeColor(
-                    // @ts-ignore
+                    // @ts-expect-error: bla bla bla bla bla
                     account.type
                   )}`}
                 >
-                  {/* @ts-ignore */}
+                  {/* @ts-expect-error: bla bla bla bla bla */}
                   {getTypeIcon(account.type)}
                   <span className="text-sm font-medium">
-                    {/* @ts-ignore */}
+                    {/* @ts-expect-error: bla bla bla bla bla */}
                     {getTypeLabel(account.type)}
                   </span>
                 </div>

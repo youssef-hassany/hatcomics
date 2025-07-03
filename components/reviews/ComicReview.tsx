@@ -120,7 +120,6 @@ const ComicReview = ({
               <h4 className="font-semibold text-zinc-100 truncate">
                 {user.fullname}
               </h4>
-              <span className="text-zinc-500 text-sm">@{user.username}</span>
             </div>
 
             {/* Star Rating */}

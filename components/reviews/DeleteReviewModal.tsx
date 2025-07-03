@@ -2,7 +2,6 @@
 
 import { Modal } from "@/components/ui/modal";
 import { useDeleteReview } from "@/hooks/reviews/useDeleteReview";
-import { useState } from "react";
 
 interface DeleteReviewModalProps {
   isOpen: boolean;

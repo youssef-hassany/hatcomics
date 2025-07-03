@@ -6,6 +6,6 @@ export async function POST(req: NextRequest) {
     const { fileUrl } = await uploadImageToLocal(req, "post-images");
     return Response.json({ fileUrl });
   } catch (error) {
-    return Response.json({ error: "Upload failed" }, { status: 500 });
+    return Response.json({ error: `Upload failed ${error}` }, { status: 500 });
   }
 }
