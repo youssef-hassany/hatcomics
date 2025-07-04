@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Sidebar() {
   const { data: user } = useGetLoggedInUser();
@@ -36,9 +37,13 @@ export default function Sidebar() {
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center py-4">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center font-bold text-zinc-900">
-                    H
-                  </div>
+                  <Image
+                    src="/hatcomics-logo.png"
+                    width={48}
+                    height={48}
+                    className="w-12 h-12"
+                    alt="HatComics"
+                  />
                   <span className="text-xl font-bold text-white">
                     HatComics
                   </span>
@@ -107,9 +112,13 @@ export default function Sidebar() {
           <div className="flex flex-col h-full">
             {/* Logo section */}
             <div className="flex items-center space-x-3 p-6 border-b border-zinc-700">
-              <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-white" />
-              </div>
+              <Image
+                src="/hatcomics-logo.png"
+                width={48}
+                height={48}
+                className="w-12 h-12"
+                alt="HatComics"
+              />
               <span className="text-xl font-bold text-white">HatComics</span>
             </div>
 

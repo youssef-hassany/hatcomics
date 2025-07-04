@@ -271,10 +271,13 @@ const ComicLandingPage = () => {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-zinc-100">HatComics</span>
+              <Image
+                src="/hatcomics-logo.png"
+                width={80}
+                height={80}
+                className="w-20 h-20"
+                alt="HatComics"
+              />
             </div>
             <div className="flex space-x-6 text-zinc-400">
               <a href="#" className="hover:text-zinc-100 transition-colors">

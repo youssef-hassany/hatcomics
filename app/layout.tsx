@@ -18,6 +18,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "HatComics - Comic Community",
   description: "The ultimate community for comic book enthusiasts",
+  icons: {
+    icon: {
+      url: "/hatcomics.png",
+      type: "image/png",
+    },
+  },
 };
 
 export default function RootLayout({
