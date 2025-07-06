@@ -28,6 +28,89 @@ export default function Sidebar() {
   const { data: user } = useGetLoggedInUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const links = [
+    {
+      title: "Home",
+      url: "/home",
+      icon: (
+        <Home
+          size={20}
+          className="group-hover:text-orange-500 transition-colors"
+        />
+      ),
+    },
+    {
+      title: "Comics",
+      url: "/comics",
+      icon: (
+        <BookOpen
+          size={20}
+          className="group-hover:text-orange-500 transition-colors"
+        />
+      ),
+    },
+    {
+      title: "Reviews",
+      url: "/reviews",
+      icon: (
+        <Star
+          size={20}
+          className="group-hover:text-orange-500 transition-colors"
+        />
+      ),
+    },
+    {
+      title: "Posts",
+      url: "/posts",
+      icon: (
+        <Newspaper
+          size={20}
+          className="group-hover:text-orange-500 transition-colors"
+        />
+      ),
+    },
+    {
+      title: "Community",
+      url: "/community",
+      icon: (
+        <Users
+          size={20}
+          className="group-hover:text-orange-500 transition-colors"
+        />
+      ),
+    },
+    {
+      title: "Profile",
+      url: `/profile/${user?.username}`,
+      icon: (
+        <User
+          size={20}
+          className="group-hover:text-orange-500 transition-colors"
+        />
+      ),
+    },
+    {
+      title: "Settings",
+      url: `/settings`,
+      icon: (
+        <Settings
+          size={20}
+          className="group-hover:text-orange-500 transition-colors"
+        />
+      ),
+    },
+    {
+      title: "About",
+      url: `/about`,
+      icon: (
+        <Info
+          size={20}
+          className="group-hover:text-orange-500 transition-colors"
+        />
+      ),
+    },
+  ];
+
   return (
     <>
       {/* Top Header for signed out users */}
@@ -125,96 +208,20 @@ export default function Sidebar() {
             {/* Navigation links */}
             <nav className="flex-1 px-4 py-6">
               <div className="space-y-2">
-                <Link
-                  href="/home"
-                  className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
-                >
-                  <Home
-                    size={20}
-                    className="group-hover:text-orange-500 transition-colors"
-                  />
-                  <span>Home</span>
-                </Link>
-
-                <Link
-                  href="/comics"
-                  className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
-                >
-                  <BookOpen
-                    size={20}
-                    className="group-hover:text-orange-500 transition-colors"
-                  />
-                  <span>Comics</span>
-                </Link>
-
-                <Link
-                  href="/reviews"
-                  className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
-                >
-                  <Star
-                    size={20}
-                    className="group-hover:text-orange-500 transition-colors"
-                  />
-                  <span>Reviews</span>
-                </Link>
-
-                <Link
-                  href="/posts"
-                  className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
-                >
-                  <Newspaper
-                    size={20}
-                    className="group-hover:text-orange-500 transition-colors"
-                  />
-                  <span>Posts</span>
-                </Link>
-
-                <Link
-                  href="/community"
-                  className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
-                >
-                  <Users
-                    size={20}
-                    className="group-hover:text-orange-500 transition-colors"
-                  />
-                  <span>Community</span>
-                </Link>
-
-                <Link
-                  href={`/profile/${user?.username}`}
-                  className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
-                >
-                  <User
-                    size={20}
-                    className="group-hover:text-orange-500 transition-colors"
-                  />
-                  <span>Profile</span>
-                </Link>
-
-                <Link
-                  href="/settings"
-                  className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
-                >
-                  <Settings
-                    size={20}
-                    className="group-hover:text-orange-500 transition-colors"
-                  />
-                  <span>Settings</span>
-                </Link>
-
-                <Link
-                  href="/about"
-                  className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
-                >
-                  <Info
-                    size={20}
-                    className="group-hover:text-orange-500 transition-colors"
-                  />
-                  <span>About</span>
-                </Link>
+                {links.map((link) => (
+                  <Link
+                    onClick={() => setSidebarOpen(false)}
+                    href={link.url}
+                    className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
+                  >
+                    {link.icon}
+                    <span>{link.title}</span>
+                  </Link>
+                ))}
 
                 {(user?.role === "owner" || user?.role === "admin") && (
                   <Link
+                    onClick={() => setSidebarOpen(false)}
                     href="/comic-vine"
                     className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
                   >
