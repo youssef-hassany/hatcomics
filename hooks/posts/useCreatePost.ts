@@ -1,10 +1,11 @@
 import { Post } from "@/types/Post";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Params {
   title: string;
   content: string;
   userId: string;
+  postId?: string;
 }
 
 const createPost = async (params: Params, isDraft = false): Promise<Post> => {
@@ -33,9 +34,11 @@ const createPost = async (params: Params, isDraft = false): Promise<Post> => {
 };
 
 export const useCreatePost = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["create-post"],
     mutationFn: (params: Params & { isDraft?: boolean }) =>
       createPost(params, params.isDraft),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["drafts"] }),
   });
 };

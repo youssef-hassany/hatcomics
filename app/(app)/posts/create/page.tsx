@@ -1,5 +1,6 @@
 "use client";
 
+import DraftsModal from "@/components/posts/DarftsModal";
 import { Button } from "@/components/ui/button";
 import RichTextEditor from "@/components/ui/RichTextEditor";
 import { useCreatePost } from "@/hooks/posts/useCreatePost";
@@ -12,6 +13,8 @@ const CreatePostsPage = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isDraft, setIsDraft] = useState(false);
+  const [postId, setPostId] = useState<string | undefined>();
+  const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
 
   const { mutateAsync: createPost, isPending: isLoading } = useCreatePost();
 
@@ -36,6 +39,7 @@ const CreatePostsPage = () => {
       content,
       userId: loggedInUser?.id as string,
       isDraft: false,
+      postId,
     };
 
     try {
@@ -58,6 +62,7 @@ const CreatePostsPage = () => {
       content,
       userId: loggedInUser?.id as string,
       isDraft: true,
+      postId,
     };
 
     try {
@@ -72,12 +77,36 @@ const CreatePostsPage = () => {
     }
   };
 
+  const handleSelectDraft = (
+    title: string,
+    content: string,
+    postId: string
+  ) => {
+    setTitle(title);
+    setContent(content);
+    setIsDraftModalOpen(false);
+    setPostId(postId);
+  };
+
   return (
     <div className="min-h-screen bg-zinc-900 px-4 py-8">
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Create Post</h1>
-          <p className="text-zinc-400">Write and publish your thoughts</p>
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">
+                Create Post
+              </h1>
+              <p className="text-zinc-400">Write and publish your thoughts</p>
+            </div>
+
+            <Button
+              variant="secondary"
+              onClick={() => setIsDraftModalOpen(true)}
+            >
+              Drafts
+            </Button>
+          </div>
         </div>
 
         <div className="bg-zinc-800 rounded-lg p-6 space-y-6">
@@ -128,6 +157,12 @@ const CreatePostsPage = () => {
           </div>
         </div>
       </div>
+
+      <DraftsModal
+        isOpen={isDraftModalOpen}
+        onClose={() => setIsDraftModalOpen(false)}
+        onSelectDraft={handleSelectDraft}
+      />
     </div>
   );
 };

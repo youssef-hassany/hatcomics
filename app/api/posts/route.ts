@@ -34,7 +34,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, content, title, isDraft } = await req.json();
+    const { userId, content, title, isDraft, postId } = await req.json();
 
     if (!userId || !content || !title) {
       return NextResponse.json(
@@ -57,14 +57,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const post = await prisma.post.create({
-      data: {
-        title,
-        content,
-        userId,
-        isDraft: !!isDraft,
-      },
-    });
+    let post;
+
+    // if there is a postId then the post was a draft so now we can make it not a draft
+    if (postId) {
+      post = await prisma.post.update({
+        where: {
+          id: postId,
+        },
+        data: {
+          isDraft: false,
+        },
+      });
+    } else {
+      post = await prisma.post.create({
+        data: {
+          title,
+          content,
+          userId,
+          isDraft: !!isDraft,
+        },
+      });
+    }
 
     // give the user 5 points
     await prisma.user.update({

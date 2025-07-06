@@ -52,3 +52,10 @@ export interface UpdatePostData {
   content?: string;
   isDraft?: boolean;
 }
+
+export interface DraftPreview {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: Date;
+}
