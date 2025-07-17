@@ -15,3 +15,17 @@ export interface User {
   role: Role;
   email: string;
 }
+
+export interface UserProfile {
+  id: string;
+  fullname: string;
+  username: string;
+  photo: string;
+  points: number;
+  role: Role;
+  email: string;
+  isOwnProfile: boolean;
+  isFollowed: boolean;
+  followersCount: number;
+  followingCount;
+}

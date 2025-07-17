@@ -183,6 +183,7 @@ export async function POST(req: Request) {
 
         const newUser = await prisma.user.create({
           data: {
+            id: id,
             clerkId: id,
             email,
             fullname: fullName,

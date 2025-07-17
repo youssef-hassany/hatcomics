@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -6,8 +7,17 @@ export async function GET(
   { params }: { params: Promise<{ username: string }> }
 ) {
   try {
+    const { userId } = await auth();
     const { username } = await params;
 
+    if (!username) {
+      return NextResponse.json(
+        { status: "error", message: "Username is required" },
+        { status: 400 }
+      );
+    }
+
+    // Find the user by username with follower/following counts
     const user = await prisma.user.findFirst({
       where: {
         username,
@@ -20,18 +30,79 @@ export async function GET(
         points: true,
         role: true,
         email: true,
+        _count: {
+          select: {
+            followers: true, // Count of users following this user
+            following: true, // Count of users this user is following
+          },
+        },
       },
     });
 
+    if (!user) {
+      return NextResponse.json(
+        { status: "error", message: "User not found" },
+        { status: 404 }
+      );
+    }
+
+    let isFollowed = false;
+
+    // Only check follow status if someone is logged in
+    if (userId) {
+      const loggedInUser = await prisma.user.findFirst({
+        where: {
+          clerkId: userId,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      // Only check if logged in user exists and is not the same as the profile user
+      if (loggedInUser && loggedInUser.id !== user.id) {
+        const followRelation = await prisma.follow.findFirst({
+          where: {
+            followerId: loggedInUser.id,
+            followingId: user.id,
+          },
+        });
+        isFollowed = !!followRelation;
+      }
+    }
+
     return NextResponse.json(
-      { status: "success", data: user },
+      {
+        status: "success",
+        data: {
+          ...user,
+          followersCount: user._count.followers,
+          followingCount: user._count.following,
+          isFollowed,
+          isOwnProfile: userId
+            ? await checkIfOwnProfile(userId, user.id)
+            : false,
+        },
+      },
       { status: 200 }
     );
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching user profile:", error);
     return NextResponse.json(
       { status: "error", message: "Internal server error" },
       { status: 500 }
     );
   }
+}
+
+// Helper function to check if viewing own profile
+async function checkIfOwnProfile(
+  clerkId: string,
+  profileUserId: string
+): Promise<boolean> {
+  const loggedInUser = await prisma.user.findFirst({
+    where: { clerkId },
+    select: { id: true },
+  });
+  return loggedInUser?.id === profileUserId;
 }

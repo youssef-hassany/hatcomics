@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { User, Settings, Edit3, Award, Shield, Plus } from "lucide-react";
-import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
-import { Button } from "@/components/ui/button";
+import { User, Settings, Edit3, Award, Shield } from "lucide-react";
 import { useGetUserByUsername } from "@/hooks/user/useGetUserByUsername";
 import { useParams } from "next/navigation";
 import ProfilePageSkeleton from "@/components/profile/ProfilePageSkeleton";
+import FollowHandler from "@/components/profile/FollowHandler";
 
 const ProfilePage = () => {
   const { username } = useParams();
@@ -16,15 +15,12 @@ const ProfilePage = () => {
     isLoading,
     error,
   } = useGetUserByUsername(username as string);
-  const { data: loggedInUser } = useGetLoggedInUser();
 
-  const [isLoggedInUser, setIsLoggedInUser] = useState(
-    user?.id === loggedInUser?.id
-  );
+  const [isFollowed, setIsFollowed] = useState(user?.isFollowed);
 
   useEffect(() => {
-    setIsLoggedInUser(user?.id === loggedInUser?.id);
-  }, [user, loggedInUser]);
+    setIsFollowed(user?.isFollowed);
+  }, [user]);
 
   if (isLoading) {
     return <ProfilePageSkeleton />;
@@ -82,7 +78,7 @@ const ProfilePage = () => {
             <h1 className="text-2xl font-bold">
               {user.fullname}&apos;s Profile
             </h1>
-            {isLoggedInUser && (
+            {user.isOwnProfile && (
               <div className="flex gap-3">
                 <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
                   <Edit3 className="w-4 h-4" />
@@ -143,22 +139,27 @@ const ProfilePage = () => {
                 </div>
                 <div className="bg-zinc-700 rounded-lg p-4 text-center">
                   <div className="text-sm text-zinc-400">Followers</div>
-                  <div className="text-xl font-bold text-white">1.2K</div>
+                  <div className="text-xl font-bold text-white">
+                    {user.followersCount}
+                  </div>
                 </div>
                 <div className="bg-zinc-700 rounded-lg p-4 text-center">
                   <div className="text-sm text-zinc-400">Following</div>
-                  <div className="text-xl font-bold text-white">847</div>
+                  <div className="text-xl font-bold text-white">
+                    {user.followingCount}
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Action Buttons */}
-            {!isLoggedInUser && (
+            {!user.isOwnProfile && (
               <div className="flex flex-col gap-3">
-                <Button className="flex items-center gap-1">
-                  Follow
-                  <Plus />
-                </Button>
+                <FollowHandler
+                  isFollowed={!!isFollowed}
+                  setIsFollowed={setIsFollowed}
+                  userId={user.id}
+                />
               </div>
             )}
           </div>
