@@ -208,8 +208,9 @@ export default function Sidebar() {
             {/* Navigation links */}
             <nav className="flex-1 px-4 py-6">
               <div className="space-y-2">
-                {links.map((link) => (
+                {links.map((link, idx) => (
                   <Link
+                    key={idx}
                     onClick={() => setSidebarOpen(false)}
                     href={link.url}
                     className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
