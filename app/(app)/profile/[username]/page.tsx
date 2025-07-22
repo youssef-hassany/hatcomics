@@ -6,9 +6,14 @@ import { useGetUserByUsername } from "@/hooks/user/useGetUserByUsername";
 import { useParams } from "next/navigation";
 import ProfilePageSkeleton from "@/components/profile/ProfilePageSkeleton";
 import FollowHandler from "@/components/profile/FollowHandler";
+import { useFollowModalStore } from "@/store/followListsStore";
+import FollowersListModal from "@/components/profile/FollowersListModal";
+import FollowingListModal from "@/components/profile/FollowingListModal";
 
 const ProfilePage = () => {
   const { username } = useParams();
+
+  const { openFollowersModal, openFollowingModal } = useFollowModalStore();
 
   const {
     data: user,
@@ -137,13 +142,21 @@ const ProfilePage = () => {
                     {user.points.toLocaleString()}
                   </div>
                 </div>
-                <div className="bg-zinc-700 rounded-lg p-4 text-center">
+
+                <div
+                  className="bg-zinc-700 rounded-lg p-4 text-center"
+                  onClick={() => openFollowersModal(user.username)}
+                >
                   <div className="text-sm text-zinc-400">Followers</div>
                   <div className="text-xl font-bold text-white">
                     {user.followersCount}
                   </div>
                 </div>
-                <div className="bg-zinc-700 rounded-lg p-4 text-center">
+
+                <div
+                  className="bg-zinc-700 rounded-lg p-4 text-center"
+                  onClick={() => openFollowingModal(user.username)}
+                >
                   <div className="text-sm text-zinc-400">Following</div>
                   <div className="text-xl font-bold text-white">
                     {user.followingCount}
@@ -180,6 +193,9 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+
+      <FollowersListModal />
+      <FollowingListModal />
     </div>
   );
 };
