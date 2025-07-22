@@ -4,6 +4,7 @@ import { Star, Eye, EyeOff, Calendar, Book } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import ReviewActions from "./ReviewActions";
+import Avatar from "../ui/avatar";
 
 interface ReviewUser {
   id: string;
@@ -107,19 +108,26 @@ const ComicReview = ({
         <div className="flex items-start gap-3">
           {/* User Avatar */}
           <div className="flex-shrink-0">
-            <img
-              src={user.photo || "/placeholder-avatar.png"}
-              alt={user.fullname}
+            <Avatar
+              url={user.photo || "/placeholder-avatar.png"}
+              username={user.username}
               className="w-12 h-12 rounded-full border-2 border-zinc-700"
             />
           </div>
 
           {/* User Info & Rating */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex flex-col md:flex-row gap-1 md:gap-2 mb-1">
               <h4 className="font-semibold text-zinc-100 truncate">
                 {user.fullname}
               </h4>
+
+              <div className="flex items-center gap-1 text-xs text-zinc-500">
+                <Calendar className="w-3 h-3" />
+                <time dateTime={new Date(createdAt).toISOString()}>
+                  {formatDate(new Date(createdAt))}
+                </time>
+              </div>
             </div>
 
             {/* Star Rating */}
@@ -143,13 +151,6 @@ const ComicReview = ({
 
         {/* Date and Actions */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 text-xs text-zinc-500">
-            <Calendar className="w-3 h-3" />
-            <time dateTime={new Date(createdAt).toISOString()}>
-              {formatDate(new Date(createdAt))}
-            </time>
-          </div>
-
           <ReviewActions
             reviewId={id}
             isOwner={isOwner}

@@ -21,6 +21,7 @@ import {
   Check,
 } from "lucide-react";
 import { useState } from "react";
+import Avatar from "../ui/avatar";
 
 interface CommentProps {
   comment: CommentType;
@@ -90,27 +91,24 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
       <div className="flex gap-4">
         {/* User Avatar */}
         <div className="flex-shrink-0">
-          <img
-            src={comment.user?.photo || "/placeholder-avatar.png"}
-            alt={comment.user?.fullname || "User"}
-            className="w-10 h-10 rounded-full"
+          <Avatar
+            url={comment.user?.photo || "/placeholder-avatar.png"}
+            username={comment.user?.username || "User"}
           />
         </div>
 
         {/* Comment Content */}
         <div className="flex-1 space-y-3">
-          {/* User Info and Timestamp */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+          <div className="flex justify-between flex-wrap gap-2">
+            {/* Left Side */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
               <span className="font-semibold text-zinc-100">
                 {comment.user?.fullname || "Anonymous"}
               </span>
               <span className="text-sm text-zinc-500">
                 @{comment.user?.username || "user"}
               </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1 text-sm text-zinc-500">
+              <span className="text-sm text-zinc-500 sm:ml-2 flex items-center gap-1">
                 <Clock className="w-3 h-3" />
                 {new Date(comment.createdAt).toLocaleDateString("en-US", {
                   year: "numeric",
@@ -119,38 +117,38 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}
-              </div>
-
-              {/* Actions Menu for comment owner */}
-              {isOwner && !isEditing && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="h-6 w-6 p-0 flex items-center justify-center text-zinc-500 hover:text-zinc-400 transition-colors">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="bg-zinc-800 border-zinc-700"
-                  >
-                    <DropdownMenuItem
-                      onClick={handleEdit}
-                      className="text-zinc-300 hover:text-zinc-100 hover:bg-zinc-700 cursor-pointer"
-                    >
-                      <Pencil className="w-4 h-4 mr-2" />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={handleDelete}
-                      className="text-red-400 hover:text-red-300 hover:bg-zinc-700 cursor-pointer"
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
+              </span>
             </div>
+
+            {/* Right Side (3 dots menu) */}
+            {isOwner && !isEditing && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="h-6 w-6 p-0 flex items-center justify-center text-zinc-500 hover:text-zinc-400 transition-colors">
+                    <MoreHorizontal className="w-4 h-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="bg-zinc-800 border-zinc-700"
+                >
+                  <DropdownMenuItem
+                    onClick={handleEdit}
+                    className="text-zinc-300 hover:text-zinc-100 hover:bg-zinc-700 cursor-pointer"
+                  >
+                    <Pencil className="w-4 h-4 mr-2" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={handleDelete}
+                    className="text-red-400 hover:text-red-300 hover:bg-zinc-700 cursor-pointer"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
 
           {/* Comment Text or Edit Form */}

@@ -9,6 +9,7 @@ import PostActions from "./PostActions";
 import EditPostForm from "./EditPostForm";
 import CommentsSection from "../comments/CommentsSection";
 import { useState } from "react";
+import Avatar from "../ui/avatar";
 
 interface PostContentProps {
   initialPost: Post;
@@ -37,10 +38,10 @@ const PostContent = ({ initialPost }: PostContentProps) => {
         <div className="max-w-4xl mx-auto px-6 py-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
-              <img
-                src={post?.user?.photo || "/placeholder-avatar.png"}
-                className="w-20 h-20 rounded-full"
-                alt={post?.user?.fullname}
+              <Avatar
+                url={post?.user?.photo || "/placeholder-avatar.png"}
+                className="w-20 h-20"
+                username={post?.user?.username || "username"}
               />
               <div>
                 <h1 className="text-3xl font-bold text-zinc-100 mb-2">

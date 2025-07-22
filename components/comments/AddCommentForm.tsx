@@ -118,7 +118,7 @@ const AddCommentForm = ({ postId }: AddCommentFormProps) => {
         )}
 
         {/* Actions */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <input
               ref={fileInputRef}
@@ -134,7 +134,7 @@ const AddCommentForm = ({ postId }: AddCommentFormProps) => {
               variant="secondary"
             >
               <Image className="w-4 h-4" />
-              <span>Add Image</span>
+              <span className="hidden md:block">Add Image</span>
             </Button>
           </div>
 
@@ -148,7 +148,7 @@ const AddCommentForm = ({ postId }: AddCommentFormProps) => {
             ) : (
               <Send className="w-4 h-4" />
             )}
-            <span>
+            <span className="hidden md:block">
               {createCommentMutation.isPending ? "Posting..." : "Post Comment"}
             </span>
           </button>
