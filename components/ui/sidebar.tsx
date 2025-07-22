@@ -16,17 +16,19 @@ import {
   Info,
   BookOpen,
   Star,
-  Settings,
   Newspaper,
   User,
+  Trophy,
 } from "lucide-react";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function Sidebar() {
   const { data: user } = useGetLoggedInUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
 
   const links = [
     {
@@ -90,15 +92,25 @@ export default function Sidebar() {
       ),
     },
     {
-      title: "Settings",
-      url: `/settings`,
+      title: "Top Users",
+      url: `/top-users`,
       icon: (
-        <Settings
+        <Trophy
           size={20}
           className="group-hover:text-orange-500 transition-colors"
         />
       ),
     },
+    // {
+    //   title: "Settings",
+    //   url: `/settings`,
+    //   icon: (
+    //     <Settings
+    //       size={20}
+    //       className="group-hover:text-orange-500 transition-colors"
+    //     />
+    //   ),
+    // },
     {
       title: "About",
       url: `/about`,
@@ -110,6 +122,18 @@ export default function Sidebar() {
       ),
     },
   ];
+
+  // Function to check if a link is active
+  const isActive = (url: string) => {
+    if (url === "/home") {
+      return pathname === "/home" || pathname === "/";
+    }
+    // For profile links, check if pathname starts with /profile
+    if (url.startsWith("/profile/")) {
+      return pathname.startsWith("/profile/");
+    }
+    return pathname === url;
+  };
 
   return (
     <>
@@ -208,29 +232,54 @@ export default function Sidebar() {
             {/* Navigation links */}
             <nav className="flex-1 px-4 py-6">
               <div className="space-y-2">
-                {links.map((link, idx) => (
-                  <Link
-                    key={idx}
-                    onClick={() => setSidebarOpen(false)}
-                    href={link.url}
-                    className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
-                  >
-                    {link.icon}
-                    <span>{link.title}</span>
-                  </Link>
-                ))}
+                {links.map((link, idx) => {
+                  const active = isActive(link.url);
+                  return (
+                    <Link
+                      key={idx}
+                      onClick={() => setSidebarOpen(false)}
+                      href={link.url}
+                      className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-all group ${
+                        active
+                          ? "bg-orange-500/10 text-orange-500 border-r-2 border-orange-500"
+                          : "text-zinc-300 hover:text-white hover:bg-zinc-800"
+                      }`}
+                    >
+                      <span className={active ? "text-orange-500" : ""}>
+                        {link.icon}
+                      </span>
+                      <span className={active ? "font-medium" : ""}>
+                        {link.title}
+                      </span>
+                    </Link>
+                  );
+                })}
 
                 {(user?.role === "owner" || user?.role === "admin") && (
                   <Link
                     onClick={() => setSidebarOpen(false)}
                     href="/comic-vine"
-                    className="flex items-center space-x-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors group"
+                    className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-all group ${
+                      isActive("/comic-vine")
+                        ? "bg-orange-500/10 text-orange-500 border-r-2 border-orange-500"
+                        : "text-zinc-300 hover:text-white hover:bg-zinc-800"
+                    }`}
                   >
-                    <BookOpen
-                      size={20}
-                      className="group-hover:text-orange-500 transition-colors"
-                    />
-                    <span>Comic Vine</span>
+                    <span
+                      className={
+                        isActive("/comic-vine") ? "text-orange-500" : ""
+                      }
+                    >
+                      <BookOpen
+                        size={20}
+                        className="group-hover:text-orange-500 transition-colors"
+                      />
+                    </span>
+                    <span
+                      className={isActive("/comic-vine") ? "font-medium" : ""}
+                    >
+                      Comic Vine
+                    </span>
                   </Link>
                 )}
               </div>
