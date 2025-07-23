@@ -122,7 +122,7 @@ const page = async ({ params }: Props) => {
 
       <div className="bg-zinc-900 p-4">
         <h3 className="mb-4 font-bold text-2xl">Comic Reviews:</h3>
-        <ComicReviewsList comicId={comic.id} />
+        {comic && <ComicReviewsList comicId={comic.id} />}
       </div>
     </>
   );

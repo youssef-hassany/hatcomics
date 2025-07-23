@@ -61,18 +61,6 @@ export async function GET(req: NextRequest) {
 
     let comics = await prisma.comic.findMany({
       where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
-      include: {
-        addedBy: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-          },
-        },
-      },
-      omit: {
-        addedById: true,
-      },
       orderBy: {
         createdAt: "desc",
       },

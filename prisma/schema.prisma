@@ -32,7 +32,7 @@ model User {
   likes      Like[]
   followers  Follow[]  @relation("UserFollowers")
   following  Follow[]  @relation("UserFollowing")
-  comics     Comic[]   @relation("ComicAddedBy")
+  bookmarks  Bookmark[]
   reviews    Review[]
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -49,6 +49,7 @@ model Post {
   content       String
   comments      Comment[]
   likes         Like[]
+  bookmarks     Bookmark[]
   isDraft       Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -103,8 +104,6 @@ model Comic {
   image               String?
   isBeginnerFriendly  Boolean  @default(false)
   readingLinks        String[] // Array of links for reading
-  addedById           String
-  addedBy             User     @relation("ComicAddedBy", fields: [addedById], references: [id])
   reviews             Review[]
   
   // Calculated fields for performance
@@ -134,4 +133,15 @@ model Review {
   @@unique([userId, comicId]) // Prevents duplicate reviews from same user for same comic
   @@index([comicId])
   @@index([rating])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
 }

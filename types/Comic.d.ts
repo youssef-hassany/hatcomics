@@ -1,9 +1,3 @@
-interface AddedBy {
-  id: string;
-  username: string;
-  email: string;
-}
-
 export interface ComicPreview {
   id: string;
   name: string;
@@ -15,7 +9,6 @@ export interface ComicPreview {
   image: string;
   isBeginnerFriendly: boolean;
   readingLinks: string[];
-  addedBy: AddedBy;
   totalReviews: number;
   averageRating: number | null;
   createdAt: Date;

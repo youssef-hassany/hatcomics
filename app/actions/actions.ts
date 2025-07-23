@@ -77,19 +77,8 @@ export async function createComic(data: CreateComicData) {
         readingLinks: data.readingLinks
           .map((link) => link.trim())
           .filter(Boolean),
-        addedById: user.id,
         totalReviews: 0,
         averageRating: null,
-      },
-      include: {
-        addedBy: {
-          select: {
-            id: true,
-            username: true,
-            fullname: true,
-            photo: true,
-          },
-        },
       },
     });
 
