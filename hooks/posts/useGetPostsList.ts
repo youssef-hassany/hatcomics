@@ -1,19 +1,32 @@
 import { PostPreview } from "@/types/Post";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-const getPosts = async () => {
+interface PostsResponse {
+  status: string;
+  data: PostPreview[];
+  hasNextPage: boolean;
+  currentPage: number;
+  totalPages: number;
+}
+
+const getPosts = async ({ pageParam = 1 }): Promise<PostsResponse> => {
   try {
-    const response = await fetch("/api/posts");
+    const response = await fetch(`/api/posts?page=${pageParam}`);
     const data = await response.json();
-    return data.data as PostPreview[];
+    return data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
 export const useGetPostsList = () => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ["posts"],
     queryFn: getPosts,
+    getNextPageParam: (lastPage) => {
+      return lastPage.hasNextPage ? lastPage.currentPage + 1 : undefined;
+    },
+    initialPageParam: 1,
   });
 };

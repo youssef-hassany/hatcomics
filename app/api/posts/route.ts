@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/db";
+import paginator from "@/lib/pagination";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const page = request.nextUrl.searchParams.get("page");
+
   try {
     const posts = await prisma.post.findMany({
       where: {
@@ -19,8 +22,19 @@ export async function GET() {
       },
     });
 
+    const { paginatedData, hasNextPage, currentPage, totalPages } = paginator(
+      posts,
+      page
+    );
+
     return NextResponse.json(
-      { status: "success", data: posts },
+      {
+        status: "success",
+        data: paginatedData,
+        hasNextPage,
+        currentPage,
+        totalPages,
+      },
       { status: 200 }
     );
   } catch (error) {

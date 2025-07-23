@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/db";
+import paginate from "@/lib/pagination";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const page = request.nextUrl.searchParams.get("page");
+
   try {
     const review = await prisma.review.findMany({
       include: {
@@ -13,8 +16,19 @@ export async function GET() {
       },
     });
 
+    const { paginatedData, hasNextPage, currentPage, totalPages } = paginate(
+      review,
+      page
+    );
+
     return NextResponse.json(
-      { status: "success", data: review },
+      {
+        status: "success",
+        data: paginatedData,
+        hasNextPage,
+        currentPage,
+        totalPages,
+      },
       { status: 200 }
     );
   } catch (error) {
