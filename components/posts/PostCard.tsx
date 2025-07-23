@@ -15,7 +15,10 @@ const PostCard: React.FC<{ post: PostPreview }> = ({ post }) => {
     <div className="bg-zinc-800 rounded-lg p-6 border border-zinc-700 hover:border-zinc-600 transition-colors">
       {/* User Info */}
       <div className="flex items-center mb-4">
-        <Avatar url={post.user.photo} username={post.user.username} />
+        <Avatar
+          url={post.user.photo || "/placeholder-avatar.png"}
+          username={post.user.username}
+        />
 
         <div className="ml-3">
           <h3 className="text-zinc-200 font-medium">{post.user.fullname}</h3>

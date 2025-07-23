@@ -18,7 +18,7 @@ enum Role {
 }
 
 model User {
-  id         String    @id @default(cuid())
+  id         String    @id
   clerkId    String    @unique
   username   String    @unique
   fullname   String

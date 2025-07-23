@@ -9,6 +9,7 @@ import FollowHandler from "@/components/profile/FollowHandler";
 import { useFollowModalStore } from "@/store/followListsStore";
 import FollowersListModal from "@/components/profile/FollowersListModal";
 import FollowingListModal from "@/components/profile/FollowingListModal";
+import ProfileContent from "@/components/profile/ProfileContent";
 
 const ProfilePage = () => {
   const { username } = useParams();
@@ -179,19 +180,7 @@ const ProfilePage = () => {
         </div>
 
         {/* Bottom Navigation Buttons */}
-        <div className="bg-zinc-800 rounded-xl p-6 border border-zinc-700">
-          <div className="flex justify-center gap-4">
-            <button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg transition-colors font-medium">
-              Reviews
-            </button>
-            <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-8 py-3 rounded-lg transition-colors font-medium">
-              Posts
-            </button>
-            <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-8 py-3 rounded-lg transition-colors font-medium">
-              Bookmarks
-            </button>
-          </div>
-        </div>
+        <ProfileContent username={username as string} />
       </div>
 
       <FollowersListModal />
