@@ -1,11 +1,18 @@
 import { prisma } from "@/lib/db";
 import paginate from "@/lib/pagination";
+import { NoUserError } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   const page = request.nextUrl.searchParams.get("page");
 
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      NoUserError();
+    }
+
     const review = await prisma.review.findMany({
       include: {
         comic: true,

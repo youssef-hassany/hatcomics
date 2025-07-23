@@ -1,11 +1,21 @@
 import { prisma } from "@/lib/db";
 import paginator from "@/lib/pagination";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   const page = request.nextUrl.searchParams.get("page");
 
   try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json(
+        { status: "error", message: "User not authenticated or doesn't exist" },
+        { status: 401 }
+      );
+    }
+
     const posts = await prisma.post.findMany({
       where: {
         isDraft: false,

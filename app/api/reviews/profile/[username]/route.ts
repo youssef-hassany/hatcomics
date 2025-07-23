@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/db";
+import { NoUserError } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -8,6 +10,11 @@ export async function GET(
   const { username } = await params;
 
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      NoUserError();
+    }
+
     const user = await prisma.user.findFirst({
       where: {
         username: username,

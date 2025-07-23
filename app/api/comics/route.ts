@@ -1,7 +1,17 @@
 import { prisma } from "@/lib/db";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json(
+      { status: "error", message: "User not authenticated or doesn't exist" },
+      { status: 401 }
+    );
+  }
+
   // Get query parameters from the URL
   const searchParams = req.nextUrl.searchParams;
   const character = searchParams.get("character");
