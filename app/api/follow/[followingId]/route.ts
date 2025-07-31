@@ -23,22 +23,9 @@ export async function POST(
       );
     }
 
-    const user = await prisma.user.findFirst({
-      where: {
-        clerkId: userId!,
-      },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { status: "error", message: "User not found" },
-        { status: 400 }
-      );
-    }
-
     await prisma.follow.create({
       data: {
-        followerId: user?.id,
+        followerId: userId,
         followingId: followingId,
       },
     });
@@ -70,6 +57,7 @@ export async function DELETE(
     }
 
     const { followingId } = await params;
+
     if (!followingId) {
       return NextResponse.json(
         { status: "error", message: "Missing following id" },
@@ -77,23 +65,10 @@ export async function DELETE(
       );
     }
 
-    const user = await prisma.user.findFirst({
-      where: {
-        clerkId: userId!,
-      },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { status: "error", message: "User not found" },
-        { status: 400 }
-      );
-    }
-
     await prisma.follow.delete({
       where: {
         followerId_followingId: {
-          followerId: user?.id,
+          followerId: userId,
           followingId: followingId,
         },
       },

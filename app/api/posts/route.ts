@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const posts = await prisma.post.findMany({
+    const data = await prisma.post.findMany({
       where: {
         isDraft: false,
       },
@@ -31,6 +31,11 @@ export async function GET(request: NextRequest) {
         createdAt: "desc",
       },
     });
+
+    const posts = data.map((post) => ({
+      ...post,
+      isLikedByCurrentUser: post.likes.some((like) => like.userId === userId),
+    }));
 
     const { paginatedData, hasNextPage, currentPage, totalPages } = paginator(
       posts,

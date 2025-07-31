@@ -7,7 +7,7 @@ export async function GET() {
     const { userId } = await auth();
 
     const user = await prisma.user.findFirst({
-      where: { clerkId: userId! },
+      where: { id: userId! },
     });
 
     if (!user || user.role !== "owner") {

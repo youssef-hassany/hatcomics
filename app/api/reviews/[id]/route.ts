@@ -35,7 +35,7 @@ export async function DELETE(
 
     // Check if the user is the owner of the review
     const currentUser = await prisma.user.findFirst({
-      where: { clerkId: userId },
+      where: { id: userId },
     });
 
     if (!currentUser || currentUser.id !== reviewToDelete.userId) {

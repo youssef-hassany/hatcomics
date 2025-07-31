@@ -8,9 +8,8 @@ export async function POST(
 ) {
   try {
     const { userId } = await auth();
-    const user = await prisma.user.findFirst({ where: { clerkId: userId! } });
 
-    if (!user) {
+    if (!userId) {
       return NextResponse.json(
         { status: "error", message: "User is not authorized!" },
         { status: 401 }
@@ -34,7 +33,7 @@ export async function POST(
     // Check if user already liked this comment
     const existingLike = await prisma.like.findFirst({
       where: {
-        userId: user.id,
+        userId: userId,
         commentId: commentId,
       },
     });
@@ -49,7 +48,7 @@ export async function POST(
     // Create the like
     await prisma.like.create({
       data: {
-        userId: user.id,
+        userId: userId,
         commentId: commentId,
       },
     });
@@ -73,9 +72,8 @@ export async function DELETE(
 ) {
   try {
     const { userId } = await auth();
-    const user = await prisma.user.findFirst({ where: { clerkId: userId! } });
 
-    if (!user) {
+    if (!userId) {
       return NextResponse.json(
         { status: "error", message: "User is not authorized!" },
         { status: 401 }
@@ -87,7 +85,7 @@ export async function DELETE(
     // Find and delete the like
     const like = await prisma.like.findFirst({
       where: {
-        userId: user.id,
+        userId: userId,
         commentId: commentId,
       },
     });

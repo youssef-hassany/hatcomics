@@ -6,6 +6,7 @@ export interface PostPreview {
   user: User;
   comments: Comment[];
   likes: Likes[];
+  isLikedByCurrentUser: boolean;
 }
 
 export interface Post {
@@ -17,6 +18,7 @@ export interface Post {
   createdAt: Date;
   updatedAt: Date;
   user?: User;
+  isLikedByCurrentUser: boolean;
 }
 
 export type PostWithUser = {
@@ -28,6 +30,7 @@ export type PostWithUser = {
   createdAt: Date;
   updatedAt: Date;
   user: User;
+  isLikedByCurrentUser: boolean;
 };
 
 export interface PostWithRelations extends Post {

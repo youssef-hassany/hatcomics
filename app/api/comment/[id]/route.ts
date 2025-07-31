@@ -16,9 +16,6 @@ export async function GET(
   try {
     const { id } = await params;
     const { userId } = await auth();
-    const user = userId
-      ? await prisma.user.findFirst({ where: { clerkId: userId } })
-      : null;
 
     const comments = await prisma.comment.findMany({
       where: {
@@ -48,8 +45,8 @@ export async function GET(
     // Add isLikedByCurrentUser field to each comment
     const commentsWithLikeStatus = comments.map((comment) => ({
       ...comment,
-      isLikedByCurrentUser: user
-        ? comment.likes.some((like) => like.userId === user.id)
+      isLikedByCurrentUser: userId
+        ? comment.likes.some((like) => like.userId === userId)
         : false,
     }));
 
@@ -72,9 +69,8 @@ export async function POST(
 ) {
   try {
     const { userId } = await auth();
-    const user = await prisma.user.findFirst({ where: { clerkId: userId! } });
 
-    if (!user) {
+    if (!userId) {
       return NextResponse.json(
         { status: "error", message: "User is not authorized or not found!" },
         { status: 401 }
@@ -102,7 +98,7 @@ export async function POST(
       data: {
         content,
         attachment: attachmentUrl || null,
-        userId: user.id,
+        userId: userId,
         postId: id,
       },
     });

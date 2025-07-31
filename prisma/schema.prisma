@@ -44,7 +44,7 @@ model User {
 model Post {
   id            String    @id @default(cuid())
   userId        String
-  user          User      @relation(fields: [userId], references: [id])
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   title         String
   content       String
   comments      Comment[]
@@ -59,8 +59,8 @@ model Comment {
   id            String    @id @default(cuid())
   userId        String
   postId        String
-  user          User      @relation(fields: [userId], references: [id])
-  post          Post      @relation(fields: [postId], references: [id])
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
   content       String
   attachment    String?
   likes         Like[]
@@ -73,8 +73,8 @@ model Like {
   userId      String
   postId      String?  // Nullable to allow liking either post or comment
   commentId   String?  // Nullable to allow liking either post or comment
-  user        User     @relation(fields: [userId], references: [id])
-  post        Post?    @relation(fields: [postId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post        Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
   comment     Comment? @relation(fields: [commentId], references: [id])
   createdAt   DateTime @default(now())
 
@@ -86,8 +86,8 @@ model Follow {
   id           String   @id @default(cuid())
   followerId   String
   followingId  String
-  follower     User     @relation("UserFollowing", fields: [followerId], references: [id])
-  following    User     @relation("UserFollowers", fields: [followingId], references: [id])
+  follower     User     @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following    User     @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now())
 
   @@unique([followerId, followingId])
@@ -122,7 +122,7 @@ model Review {
   id          String   @id @default(cuid())
   userId      String
   comicId     String
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   comic       Comic    @relation(fields: [comicId], references: [id], onDelete: Cascade)
   rating      Int      // 1 to 5
   description String?
@@ -139,8 +139,8 @@ model Bookmark {
   id        String   @id @default(cuid())
   postId    String
   userId    String
-  post      Post     @relation(fields: [postId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 
   @@unique([postId, userId])

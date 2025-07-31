@@ -10,7 +10,7 @@ export async function GET() {
     if (!userId) NoUserError();
 
     const user = await prisma.user.findFirst({
-      where: { clerkId: userId! },
+      where: { id: userId! },
     });
 
     const drafts = await prisma.post.findMany({

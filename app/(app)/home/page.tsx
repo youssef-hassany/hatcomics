@@ -6,7 +6,7 @@ import React from "react";
 
 const HomePage = async () => {
   const { userId } = await auth();
-  const user = await prisma.user.findUnique({ where: { clerkId: userId! } });
+  const user = await prisma.user.findUnique({ where: { id: userId! } });
 
   const pages = [
     {

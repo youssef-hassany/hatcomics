@@ -3,14 +3,9 @@ import { Heart, MessageCircle } from "lucide-react";
 import { PostPreview } from "@/types/Post";
 import Link from "next/link";
 import Avatar from "../ui/avatar";
+import PostLikeHandler from "./PostLikeHandler";
 
 const PostCard: React.FC<{ post: PostPreview }> = ({ post }) => {
-  const [isLiked, setIsLiked] = useState(false);
-
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-  };
-
   return (
     <div className="bg-zinc-800 rounded-lg p-6 border border-zinc-700 hover:border-zinc-600 transition-colors">
       {/* User Info */}
@@ -36,17 +31,7 @@ const PostCard: React.FC<{ post: PostPreview }> = ({ post }) => {
       {/* Engagement Stats */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-6">
-          <button
-            onClick={handleLike}
-            className={`flex items-center space-x-2 transition-colors ${
-              isLiked
-                ? "text-orange-400"
-                : "text-zinc-400 hover:text-orange-400"
-            }`}
-          >
-            <Heart size={20} fill={isLiked ? "currentColor" : "none"} />
-            <span className="text-sm">{post.likes.length}</span>
-          </button>
+          <PostLikeHandler post={post} />
 
           <div className="flex items-center space-x-2 text-zinc-400">
             <MessageCircle size={20} />
