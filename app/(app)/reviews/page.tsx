@@ -32,6 +32,8 @@ const Page = () => {
 
   // Set up intersection observer
   useEffect(() => {
+    if (!allReviews) return;
+
     const element = loadMoreRef.current;
     if (!element) return;
 
@@ -71,7 +73,7 @@ const Page = () => {
         {/* Reviews List */}
         {!isLoading && (
           <div className="space-y-6">
-            {allReviews.map((review) => (
+            {allReviews?.map((review) => (
               <ComicReview
                 id={review.id}
                 rating={review.rating}
@@ -89,7 +91,7 @@ const Page = () => {
         )}
 
         {/* Load more trigger */}
-        {hasNextPage && (
+        {allReviews && hasNextPage && (
           <div ref={loadMoreRef} className="flex justify-center py-8">
             {isFetchingNextPage ? (
               <div className="space-y-6 w-full">

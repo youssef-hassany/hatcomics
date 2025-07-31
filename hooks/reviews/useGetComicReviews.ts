@@ -13,7 +13,7 @@ const getComicReviews = async (comicId: string) => {
 
 export const useGetComicReviews = (comicId: string) => {
   return useQuery({
-    queryKey: ["reviews"],
+    queryKey: ["comic-reviews"],
     queryFn: () => getComicReviews(comicId),
   });
 };
