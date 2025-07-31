@@ -42,6 +42,8 @@ const PostContent = ({ initialPost }: PostContentProps) => {
                 url={post?.user?.photo || "/placeholder-avatar.png"}
                 className="w-20 h-20"
                 username={post?.user?.username || "username"}
+                height={80}
+                width={80}
               />
               <div>
                 <h1 className="text-3xl font-bold text-zinc-100 mb-2">

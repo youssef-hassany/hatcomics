@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { uploadImageToLocalFromServer } from "@/lib/uploadImageToLocal";
+import { uploadImageToR2FromServer } from "@/lib/upload-media";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -91,7 +91,7 @@ export async function POST(
     let attachmentUrl;
 
     if (attachment) {
-      const { fileUrl } = await uploadImageToLocalFromServer(
+      const { fileUrl } = await uploadImageToR2FromServer(
         attachment,
         "comment-images"
       );

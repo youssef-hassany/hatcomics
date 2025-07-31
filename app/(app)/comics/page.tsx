@@ -290,7 +290,7 @@ const StoredComicsPage = () => {
         )}
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
             {Array.from({ length: 8 }).map((_, index) => (
               <ComicCardSkeleton key={index} />
             ))}
@@ -321,7 +321,7 @@ const StoredComicsPage = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
               {comicsList.map((comic: ComicPreview) => (
                 <div
                   key={comic.id}
@@ -346,7 +346,8 @@ const StoredComicsPage = () => {
                     {/* Beginner Friendly Badge */}
                     {comic.isBeginnerFriendly && (
                       <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg">
-                        Beginner Friendly
+                        Beginner{" "}
+                        <span className="hidden md:inline">Friendly</span>
                       </div>
                     )}
 

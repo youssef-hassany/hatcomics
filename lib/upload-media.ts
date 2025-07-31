@@ -1,13 +1,11 @@
-import fs from "fs";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { r2 } from "./r2Client";
 import path from "path";
 
-export async function uploadImageToLocal(
+export async function uploadImageToR2(
   req: Request,
   folder: string
 ): Promise<{ fileUrl: string }> {
-  const uploadDir = path.join(process.cwd(), "public/uploads", folder);
-  fs.mkdirSync(uploadDir, { recursive: true });
-
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
   if (!file) throw new Error("No file uploaded");
@@ -21,21 +19,27 @@ export async function uploadImageToLocal(
   const ext = path.extname(originalName);
   const base = path.basename(originalName, ext);
   const fileName = `${base}-${timestamp}${ext}`;
-  const filePath = path.join(uploadDir, fileName);
+  const key = `${folder}/${fileName}`;
 
-  fs.writeFileSync(filePath, buffer);
+  // Upload to R2
+  const command = new PutObjectCommand({
+    Bucket: process.env.R2_BUCKET_NAME!,
+    Key: key,
+    Body: buffer,
+    ContentType: file.type || "application/octet-stream",
+  });
 
-  const fileUrl = `/uploads/${folder}/${fileName}`;
+  await r2.send(command);
+
+  // Construct the public URL
+  const fileUrl = `${process.env.R2_PUBLIC_URL}/${key}`;
   return { fileUrl };
 }
 
-export async function uploadImageToLocalFromServer(
+export async function uploadImageToR2FromServer(
   file: File,
   folder: string
 ): Promise<{ fileUrl: string }> {
-  const uploadDir = path.join(process.cwd(), "public/uploads", folder);
-  fs.mkdirSync(uploadDir, { recursive: true });
-
   if (!file) throw new Error("No file uploaded");
 
   const arrayBuffer = await file.arrayBuffer();
@@ -47,10 +51,19 @@ export async function uploadImageToLocalFromServer(
   const ext = path.extname(originalName);
   const base = path.basename(originalName, ext);
   const fileName = `${base}-${timestamp}${ext}`;
-  const filePath = path.join(uploadDir, fileName);
+  const key = `${folder}/${fileName}`;
 
-  fs.writeFileSync(filePath, buffer);
+  // Upload to R2
+  const command = new PutObjectCommand({
+    Bucket: process.env.R2_BUCKET_NAME!,
+    Key: key,
+    Body: buffer,
+    ContentType: file.type || "application/octet-stream",
+  });
 
-  const fileUrl = `/uploads/${folder}/${fileName}`;
+  await r2.send(command);
+
+  // Construct the public URL
+  const fileUrl = `${process.env.R2_PUBLIC_URL}/${key}`;
   return { fileUrl };
 }
