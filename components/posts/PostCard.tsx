@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Heart, MessageCircle } from "lucide-react";
+import React from "react";
+import { MessageCircle } from "lucide-react";
 import { PostPreview } from "@/types/Post";
 import Link from "next/link";
 import Avatar from "../ui/avatar";
