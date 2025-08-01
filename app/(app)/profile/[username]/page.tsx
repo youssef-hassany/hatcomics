@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { User, Settings, Edit3, Award, Shield } from "lucide-react";
+import { User, Edit3, Award, Shield } from "lucide-react";
 import { useGetUserByUsername } from "@/hooks/user/useGetUserByUsername";
 import { useParams } from "next/navigation";
 import ProfilePageSkeleton from "@/components/profile/ProfilePageSkeleton";
@@ -90,10 +90,10 @@ const ProfilePage = () => {
                   <Edit3 className="w-4 h-4" />
                   Edit Profile
                 </button>
-                <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                {/* <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
                   <Settings className="w-4 h-4" />
                   Settings
-                </button>
+                </button> */}
               </div>
             )}
           </div>

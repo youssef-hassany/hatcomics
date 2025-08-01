@@ -22,9 +22,8 @@ export const communityAccounts = [
     followers: "750+",
     avatar:
       "https://pbs.twimg.com/profile_images/1940148366458994688/8YS-Eo-9_400x400.jpg",
-    link: "mailto:maria@example.com",
     verified: true,
-    url: "https://x.com/YousifH76179820",
+    link: "https://x.com/YousifH76179820",
   },
   {
     id: 3,

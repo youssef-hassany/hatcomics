@@ -4,6 +4,7 @@ import { PostPreview } from "@/types/Post";
 import Link from "next/link";
 import Avatar from "../ui/avatar";
 import PostLikeHandler from "./PostLikeHandler";
+import BookmarkHandler from "./BookmarkHandler";
 
 const PostCard: React.FC<{ post: PostPreview }> = ({ post }) => {
   return (
@@ -35,8 +36,10 @@ const PostCard: React.FC<{ post: PostPreview }> = ({ post }) => {
 
           <div className="flex items-center space-x-2 text-zinc-400">
             <MessageCircle size={20} />
-            <span className="text-sm">{post.comments.length}</span>
+            <span className="text-sm">{post._count.comments}</span>
           </div>
+
+          <BookmarkHandler post={post} />
         </div>
 
         <Link

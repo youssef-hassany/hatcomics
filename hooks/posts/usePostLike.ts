@@ -42,21 +42,15 @@ export const usePostLike = () => {
             data: page.data.map((post: any) => {
               if (post.id === variables.postId) {
                 const newLikeCount = variables.isLiked
-                  ? (post.likes?.length || 0) - 1
-                  : (post.likes?.length || 0) + 1;
+                  ? post._count.likes - 1
+                  : post._count.likes + 1;
 
                 return {
                   ...post,
-                  likes: Array.isArray(post.likes)
-                    ? variables.isLiked
-                      ? post.likes.slice(0, -1) // Remove last like
-                      : [
-                          ...post.likes,
-                          {
-                            /* mock like object */
-                          },
-                        ] // Add mock like
-                    : { length: Math.max(0, newLikeCount) },
+                  _count: {
+                    ...["_count"],
+                    likes: newLikeCount,
+                  },
                   isLikedByCurrentUser: !variables.isLiked,
                 };
               }
@@ -65,6 +59,9 @@ export const usePostLike = () => {
           })),
         };
       });
+
+      // update the the bookmark states
+      queryClient.invalidateQueries({ queryKey: ["bookmarks"] });
     },
     onError: (error, variables) => {
       toast.error(`Failed to ${variables.isLiked ? "unlike" : "like"} post`);

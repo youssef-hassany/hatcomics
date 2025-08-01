@@ -24,8 +24,21 @@ export async function GET(request: NextRequest) {
         id: true,
         title: true,
         user: true,
-        likes: true,
-        comments: true,
+        likes: {
+          where: { userId }, // Only get current user's like
+          select: { userId: true },
+        },
+        bookmarks: {
+          where: { userId }, // Only get current user's bookmark
+          select: { userId: true },
+        },
+        _count: {
+          select: {
+            bookmarks: true,
+            likes: true,
+            comments: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
@@ -34,7 +47,8 @@ export async function GET(request: NextRequest) {
 
     const posts = data.map((post) => ({
       ...post,
-      isLikedByCurrentUser: post.likes.some((like) => like.userId === userId),
+      isLikedByCurrentUser: post.likes.length > 0,
+      isBookmarked: post.bookmarks.length > 0,
     }));
 
     const { paginatedData, hasNextPage, currentPage, totalPages } = paginator(

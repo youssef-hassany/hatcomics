@@ -9,6 +9,7 @@ import { Bookmark, Newspaper, Star } from "lucide-react";
 import ComicReviewSkeleton from "../reviews/ComicReviewSkeleton";
 import PostCardSkeleton from "../posts/PostCardSkeleton";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
+import BookmarksList from "./BookmarksList";
 
 interface Props {
   username: string;
@@ -98,6 +99,10 @@ const ProfileContent = ({ username }: Props) => {
             </div>
           ))
         ))}
+
+      {content === "bookmarks" && user?.username === username && (
+        <BookmarksList />
+      )}
     </div>
   );
 };

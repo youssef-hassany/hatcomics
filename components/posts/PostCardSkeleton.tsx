@@ -1,5 +1,5 @@
 import React from "react";
-import { Heart, MessageCircle } from "lucide-react";
+import { Bookmark, Heart, MessageCircle } from "lucide-react";
 
 const PostCardSkeleton: React.FC = () => {
   return (
@@ -28,6 +28,11 @@ const PostCardSkeleton: React.FC = () => {
 
           <div className="flex items-center space-x-2 text-zinc-600">
             <MessageCircle size={20} />
+            <div className="h-4 bg-zinc-600 rounded w-6"></div>
+          </div>
+
+          <div className="flex items-center space-x-2 text-zinc-600">
+            <Bookmark size={20} />
             <div className="h-4 bg-zinc-600 rounded w-6"></div>
           </div>
         </div>

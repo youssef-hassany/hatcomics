@@ -69,7 +69,7 @@ const ProfilePageSkeleton = () => {
 
         {/* Bottom Navigation Buttons Skeleton */}
         <div className="bg-zinc-800 rounded-xl p-6 border border-zinc-700">
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-between gap-4">
             <div className="h-12 w-24 bg-zinc-700 rounded-lg animate-pulse"></div>
             <div className="h-12 w-20 bg-zinc-700 rounded-lg animate-pulse"></div>
             <div className="h-12 w-28 bg-zinc-700 rounded-lg animate-pulse"></div>

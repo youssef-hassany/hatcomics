@@ -4,9 +4,14 @@ export interface PostPreview {
   id: string;
   title: string;
   user: User;
-  comments: Comment[];
   likes: Likes[];
   isLikedByCurrentUser: boolean;
+  isBookmarked: boolean;
+  _count: {
+    bookmarks: number;
+    likes: number;
+    comments: number;
+  };
 }
 
 export interface Post {
@@ -19,6 +24,12 @@ export interface Post {
   updatedAt: Date;
   user?: User;
   isLikedByCurrentUser: boolean;
+  _count?: {
+    comments: number;
+    likes: number;
+    bookmarks: number;
+  };
+  likes?: any[];
 }
 
 export type PostWithUser = {

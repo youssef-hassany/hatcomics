@@ -6,9 +6,8 @@ import React from "react";
 const PostLikeHandler: React.FC<{ post: PostPreview }> = ({ post }) => {
   const { mutateAsync: toggleLike, isPending } = usePostLike();
 
-  // Use the like status from the API response
   const isLiked = post.isLikedByCurrentUser || false;
-  const likeCount = post.likes?.length || 0;
+  const likeCount = post._count.likes || 0;
 
   const handleLike = async () => {
     try {
@@ -25,10 +24,10 @@ const PostLikeHandler: React.FC<{ post: PostPreview }> = ({ post }) => {
     <button
       onClick={handleLike}
       disabled={isPending}
-      className={`flex items-center gap-2 text-sm transition-colors ${
+      className={`flex items-center gap-2 text-sm transition-colors cursor-pointer ${
         isLiked
           ? "text-orange-500 hover:text-orange-400"
-          : "text-zinc-500 hover:text-zinc-400"
+          : "text-zinc-400 hover:text-zinc-500"
       } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
     >
       {isPending ? (
