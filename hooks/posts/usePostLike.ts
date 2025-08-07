@@ -48,7 +48,7 @@ export const usePostLike = () => {
                 return {
                   ...post,
                   _count: {
-                    ...["_count"],
+                    ...post._count,
                     likes: newLikeCount,
                   },
                   isLikedByCurrentUser: !variables.isLiked,

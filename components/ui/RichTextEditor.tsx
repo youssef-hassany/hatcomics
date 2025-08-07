@@ -7,6 +7,7 @@ import {
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import { Heading } from "@tiptap/extension-heading";
+import { TextAlign } from "@tiptap/extension-text-align";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Bold,
@@ -22,22 +23,32 @@ import {
   ImageIcon,
   Link,
   Trash2,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  ChevronDown,
+  X,
+  MoreHorizontal,
+  Languages,
 } from "lucide-react";
+import { DirectionExtension } from "@/lib/extensions";
 
 interface Props {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  onImageUpload?: (file: File) => Promise<string>; // Returns the uploaded image URL
+  onImageUpload?: (file: File) => Promise<string>;
 }
 
 // Custom React NodeView for Image with remove button overlay
 const ImageWithRemove: React.FC<any> = (props) => {
   const { node, editor, getPos } = props;
   const src = node.attrs.src;
+  const [showActions, setShowActions] = useState(false);
 
   const handleRemove = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (typeof getPos === "function") {
       const pos = getPos();
       if (typeof pos === "number") {
@@ -51,21 +62,50 @@ const ImageWithRemove: React.FC<any> = (props) => {
   };
 
   return (
-    <NodeViewWrapper className="relative group inline-block">
+    <NodeViewWrapper className="relative group inline-block my-2">
       <img
         src={src}
         alt=""
-        className="rounded-lg max-w-full h-auto"
+        className="rounded-lg max-w-full h-auto cursor-pointer"
         draggable={false}
+        onClick={() => setShowActions(!showActions)}
       />
+
+      {/* Desktop hover remove button */}
       <button
         type="button"
         onClick={handleRemove}
-        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 hover:bg-red-500 text-red-600 hover:text-white rounded-full p-1 shadow focus:outline-none cursor-pointer"
+        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 hover:bg-red-500 text-red-600 hover:text-white rounded-full p-1.5 shadow-lg focus:outline-none cursor-pointer hidden md:block"
         title="Remove image"
       >
         <Trash2 className="w-4 h-4" />
       </button>
+
+      {/* Mobile action overlay */}
+      {showActions && (
+        <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center md:hidden">
+          <div className="bg-zinc-800 rounded-lg p-4 shadow-xl flex gap-3">
+            <button
+              onClick={handleRemove}
+              className="flex items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+              Remove
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowActions(false);
+              }}
+              className="flex items-center gap-2 px-3 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
+            >
+              <X className="w-4 h-4" />
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </NodeViewWrapper>
   );
 };
@@ -79,11 +119,15 @@ const RichTextEditor: React.FC<Props> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [selectedImageNode, setSelectedImageNode] = useState<any>(null);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [activeSection, setActiveSection] = useState<
+    "format" | "align" | "media"
+  >("format");
 
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        heading: false, // Disable default heading
+        heading: false,
       }),
       Heading.extend({
         renderHTML({ node, HTMLAttributes }) {
@@ -98,6 +142,10 @@ const RichTextEditor: React.FC<Props> = ({
           ];
         },
       }),
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
+      DirectionExtension,
       Image.configure({
         inline: false,
         allowBase64: true,
@@ -115,7 +163,6 @@ const RichTextEditor: React.FC<Props> = ({
       onChange(editor.getHTML());
     },
     onSelectionUpdate: ({ editor }) => {
-      // Check if an image is selected
       const { selection } = editor.state;
       const node = selection.$from.node();
       if (node?.type.name === "image") {
@@ -126,8 +173,7 @@ const RichTextEditor: React.FC<Props> = ({
     },
     editorProps: {
       attributes: {
-        class:
-          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[120px] p-3 prose-zinc",
+        class: `prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[120px] p-3 prose-zinc`,
       },
       handleDrop: (view, event, slice, moved) => {
         if (!moved && event.dataTransfer?.files?.length) {
@@ -157,7 +203,6 @@ const RichTextEditor: React.FC<Props> = ({
     },
   });
 
-  // Update editor content when value prop changes
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
       editor.commands.setContent(value, false);
@@ -170,8 +215,6 @@ const RichTextEditor: React.FC<Props> = ({
     try {
       setIsUploading(true);
       const imageUrl = await onImageUpload(file);
-
-      // Insert image at current cursor position
       editor.chain().focus().setImage({ src: imageUrl }).run();
     } catch (error) {
       console.error("Failed to upload image:", error);
@@ -186,10 +229,10 @@ const RichTextEditor: React.FC<Props> = ({
     if (file && file.type.startsWith("image/")) {
       handleImageUpload(file);
     }
-    // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+    setShowMobileMenu(false);
   };
 
   const handleImageUrl = () => {
@@ -197,6 +240,7 @@ const RichTextEditor: React.FC<Props> = ({
     if (url && editor) {
       editor.chain().focus().setImage({ src: url }).run();
     }
+    setShowMobileMenu(false);
   };
 
   const deleteSelectedImage = () => {
@@ -204,6 +248,14 @@ const RichTextEditor: React.FC<Props> = ({
       editor.chain().focus().deleteSelection().run();
       setSelectedImageNode(null);
     }
+  };
+
+  // Get current block direction
+  const getCurrentDirection = () => {
+    if (!editor) return null;
+    const { selection } = editor.state;
+    const { $from } = selection;
+    return $from.node().attrs.dir || null;
   };
 
   if (!editor) {
@@ -216,12 +268,14 @@ const RichTextEditor: React.FC<Props> = ({
     children,
     title,
     disabled = false,
+    className = "",
   }: {
     onClick: () => void;
     isActive?: boolean;
     children: React.ReactNode;
     title: string;
     disabled?: boolean;
+    className?: string;
   }) => (
     <button
       type="button"
@@ -235,15 +289,430 @@ const RichTextEditor: React.FC<Props> = ({
         isActive
           ? "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400"
           : "text-zinc-600 dark:text-zinc-400"
-      } cursor-pointer`}
+      } cursor-pointer ${className}`}
     >
       {children}
     </button>
   );
 
+  const MobileSectionButton = ({
+    section,
+    title,
+    isActive,
+  }: {
+    section: "format" | "align" | "media";
+    title: string;
+    isActive: boolean;
+  }) => (
+    <button
+      onClick={() => setActiveSection(section)}
+      className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+        isActive
+          ? "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400"
+          : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+      }`}
+    >
+      {title}
+    </button>
+  );
+
+  const currentDirection = getCurrentDirection();
+
+  const renderDesktopToolbar = () => (
+    <div className="hidden md:flex border-b border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700 p-2 flex-wrap gap-1">
+      {/* Direction Controls */}
+      <ToolbarButton
+        onClick={() => editor.chain().focus().setDirection("ltr").run()}
+        isActive={currentDirection === "ltr"}
+        title="Set LTR Direction"
+        className="border border-zinc-300 dark:border-zinc-600"
+      >
+        <span className="text-xs font-mono">LTR</span>
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().setDirection("rtl").run()}
+        isActive={currentDirection === "rtl"}
+        title="Set RTL Direction"
+        className="border border-zinc-300 dark:border-zinc-600"
+      >
+        <span className="text-xs font-mono">RTL</span>
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().setDirection(null).run()}
+        isActive={currentDirection === null}
+        title="Auto Direction"
+        className="border border-zinc-300 dark:border-zinc-600"
+      >
+        <Languages className="w-4 h-4" />
+      </ToolbarButton>
+
+      <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-600 mx-1" />
+
+      {/* Text Formatting */}
+      <ToolbarButton
+        onClick={() => editor.chain().focus().toggleBold().run()}
+        isActive={editor.isActive("bold")}
+        title="Bold"
+      >
+        <Bold className="w-4 h-4" />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().toggleItalic().run()}
+        isActive={editor.isActive("italic")}
+        title="Italic"
+      >
+        <Italic className="w-4 h-4" />
+      </ToolbarButton>
+
+      <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-600 mx-1" />
+
+      {/* Headings */}
+      <ToolbarButton
+        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+        isActive={editor.isActive("heading", { level: 1 })}
+        title="Heading 1"
+      >
+        <Heading1 className="w-4 h-4" />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+        isActive={editor.isActive("heading", { level: 2 })}
+        title="Heading 2"
+      >
+        <Heading2 className="w-4 h-4" />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().setParagraph().run()}
+        isActive={editor.isActive("paragraph")}
+        title="Paragraph"
+      >
+        <Type className="w-4 h-4" />
+      </ToolbarButton>
+
+      <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-600 mx-1" />
+
+      {/* Text Alignment */}
+      <ToolbarButton
+        onClick={() => editor.chain().focus().setTextAlign("left").run()}
+        isActive={editor.isActive({ textAlign: "left" })}
+        title="Align Left"
+      >
+        <AlignLeft className="w-4 h-4" />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().setTextAlign("center").run()}
+        isActive={editor.isActive({ textAlign: "center" })}
+        title="Align Center"
+      >
+        <AlignCenter className="w-4 h-4" />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().setTextAlign("right").run()}
+        isActive={editor.isActive({ textAlign: "right" })}
+        title="Align Right"
+      >
+        <AlignRight className="w-4 h-4" />
+      </ToolbarButton>
+
+      <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-600 mx-1" />
+
+      {/* Lists */}
+      <ToolbarButton
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        isActive={editor.isActive("bulletList")}
+        title="Bullet List"
+      >
+        <List className="w-4 h-4" />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        isActive={editor.isActive("orderedList")}
+        title="Numbered List"
+      >
+        <ListOrdered className="w-4 h-4" />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().toggleBlockquote().run()}
+        isActive={editor.isActive("blockquote")}
+        title="Quote"
+      >
+        <Quote className="w-4 h-4" />
+      </ToolbarButton>
+
+      <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-600 mx-1" />
+
+      {/* Media */}
+      <ToolbarButton
+        onClick={() => fileInputRef.current?.click()}
+        title="Upload Image"
+        disabled={isUploading || !onImageUpload}
+      >
+        <ImageIcon className="w-4 h-4" />
+      </ToolbarButton>
+
+      <ToolbarButton onClick={handleImageUrl} title="Insert Image URL">
+        <Link className="w-4 h-4" />
+      </ToolbarButton>
+
+      {selectedImageNode && (
+        <ToolbarButton
+          onClick={deleteSelectedImage}
+          title="Delete Selected Image"
+        >
+          <Trash2 className="w-4 h-4 text-red-500" />
+        </ToolbarButton>
+      )}
+
+      <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-600 mx-1" />
+
+      {/* Undo/Redo */}
+      <ToolbarButton
+        onClick={() => editor.chain().focus().undo().run()}
+        title="Undo"
+      >
+        <Undo className="w-4 h-4" />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().redo().run()}
+        title="Redo"
+      >
+        <Redo className="w-4 h-4" />
+      </ToolbarButton>
+
+      {isUploading && (
+        <div className="flex items-center px-2 text-sm text-zinc-500">
+          Uploading...
+        </div>
+      )}
+    </div>
+  );
+
+  const renderMobileToolbar = () => (
+    <div className="md:hidden border-b border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700">
+      {/* Mobile Menu Toggle */}
+      <div className="p-2 flex justify-between items-center">
+        <div className="flex gap-2">
+          <ToolbarButton
+            onClick={() => editor.chain().focus().setDirection("ltr").run()}
+            isActive={currentDirection === "ltr"}
+            title="LTR"
+            className="border border-zinc-300 dark:border-zinc-600"
+          >
+            <span className="text-xs font-mono">LTR</span>
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().setDirection("rtl").run()}
+            isActive={currentDirection === "rtl"}
+            title="RTL"
+            className="border border-zinc-300 dark:border-zinc-600"
+          >
+            <span className="text-xs font-mono">RTL</span>
+          </ToolbarButton>
+        </div>
+
+        <button
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+          className="flex items-center gap-1 px-3 py-1 rounded-md bg-zinc-200 dark:bg-zinc-600 text-zinc-700 dark:text-zinc-300"
+        >
+          <MoreHorizontal className="w-4 h-4" />
+          <ChevronDown
+            className={`w-4 h-4 transition-transform ${
+              showMobileMenu ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {showMobileMenu && (
+        <div className="border-t border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-800">
+          {/* Section Tabs */}
+          <div className="p-2 border-b border-zinc-200 dark:border-zinc-600">
+            <div className="flex gap-1">
+              <MobileSectionButton
+                section="format"
+                title="Format"
+                isActive={activeSection === "format"}
+              />
+              <MobileSectionButton
+                section="align"
+                title="Align"
+                isActive={activeSection === "align"}
+              />
+              <MobileSectionButton
+                section="media"
+                title="Media"
+                isActive={activeSection === "media"}
+              />
+            </div>
+          </div>
+
+          {/* Section Content */}
+          <div className="p-2">
+            {activeSection === "format" && (
+              <div className="flex flex-wrap gap-2">
+                <ToolbarButton
+                  onClick={() => editor.chain().focus().toggleBold().run()}
+                  isActive={editor.isActive("bold")}
+                  title="Bold"
+                >
+                  <Bold className="w-4 h-4" />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() => editor.chain().focus().toggleItalic().run()}
+                  isActive={editor.isActive("italic")}
+                  title="Italic"
+                >
+                  <Italic className="w-4 h-4" />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() =>
+                    editor.chain().focus().toggleHeading({ level: 1 }).run()
+                  }
+                  isActive={editor.isActive("heading", { level: 1 })}
+                  title="Heading 1"
+                >
+                  <Heading1 className="w-4 h-4" />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() =>
+                    editor.chain().focus().toggleHeading({ level: 2 }).run()
+                  }
+                  isActive={editor.isActive("heading", { level: 2 })}
+                  title="Heading 2"
+                >
+                  <Heading2 className="w-4 h-4" />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() =>
+                    editor.chain().focus().toggleBulletList().run()
+                  }
+                  isActive={editor.isActive("bulletList")}
+                  title="Bullet List"
+                >
+                  <List className="w-4 h-4" />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() =>
+                    editor.chain().focus().toggleOrderedList().run()
+                  }
+                  isActive={editor.isActive("orderedList")}
+                  title="Numbered List"
+                >
+                  <ListOrdered className="w-4 h-4" />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() =>
+                    editor.chain().focus().toggleBlockquote().run()
+                  }
+                  isActive={editor.isActive("blockquote")}
+                  title="Quote"
+                >
+                  <Quote className="w-4 h-4" />
+                </ToolbarButton>
+              </div>
+            )}
+
+            {activeSection === "align" && (
+              <div className="flex flex-wrap gap-2">
+                <ToolbarButton
+                  onClick={() =>
+                    editor.chain().focus().setTextAlign("left").run()
+                  }
+                  isActive={editor.isActive({ textAlign: "left" })}
+                  title="Align Left"
+                >
+                  <AlignLeft className="w-4 h-4" />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() =>
+                    editor.chain().focus().setTextAlign("center").run()
+                  }
+                  isActive={editor.isActive({ textAlign: "center" })}
+                  title="Align Center"
+                >
+                  <AlignCenter className="w-4 h-4" />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() =>
+                    editor.chain().focus().setTextAlign("right").run()
+                  }
+                  isActive={editor.isActive({ textAlign: "right" })}
+                  title="Align Right"
+                >
+                  <AlignRight className="w-4 h-4" />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() => editor.chain().focus().undo().run()}
+                  title="Undo"
+                >
+                  <Undo className="w-4 h-4" />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() => editor.chain().focus().redo().run()}
+                  title="Redo"
+                >
+                  <Redo className="w-4 h-4" />
+                </ToolbarButton>
+              </div>
+            )}
+
+            {activeSection === "media" && (
+              <div className="space-y-2">
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading || !onImageUpload}
+                    className="flex items-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors disabled:opacity-50"
+                  >
+                    <ImageIcon className="w-4 h-4" />
+                    Upload Image
+                  </button>
+                  <button
+                    onClick={handleImageUrl}
+                    className="flex items-center gap-2 px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+                  >
+                    <Link className="w-4 h-4" />
+                    Image URL
+                  </button>
+                </div>
+
+                {selectedImageNode && (
+                  <button
+                    onClick={deleteSelectedImage}
+                    className="flex items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete Selected
+                  </button>
+                )}
+
+                {isUploading && (
+                  <div className="flex items-center gap-2 text-sm text-zinc-500">
+                    <div className="w-4 h-4 border-2 border-zinc-400 border-t-transparent rounded-full animate-spin"></div>
+                    Uploading...
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="border border-zinc-300 dark:border-zinc-600 rounded-lg overflow-hidden bg-white dark:bg-zinc-800">
-      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -252,131 +721,9 @@ const RichTextEditor: React.FC<Props> = ({
         className="hidden"
       />
 
-      {/* Toolbar */}
-      <div className="border-b border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700 p-2 flex flex-wrap gap-1">
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          isActive={editor.isActive("bold")}
-          title="Bold"
-        >
-          <Bold className="w-4 h-4" />
-        </ToolbarButton>
+      {renderDesktopToolbar()}
+      {renderMobileToolbar()}
 
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          isActive={editor.isActive("italic")}
-          title="Italic"
-        >
-          <Italic className="w-4 h-4" />
-        </ToolbarButton>
-
-        <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-600 mx-1" />
-
-        <ToolbarButton
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 1 }).run()
-          }
-          isActive={editor.isActive("heading", { level: 1 })}
-          title="Heading 1"
-        >
-          <Heading1 className="w-4 h-4" />
-        </ToolbarButton>
-
-        <ToolbarButton
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 2 }).run()
-          }
-          isActive={editor.isActive("heading", { level: 2 })}
-          title="Heading 2"
-        >
-          <Heading2 className="w-4 h-4" />
-        </ToolbarButton>
-
-        <ToolbarButton
-          onClick={() => editor.chain().focus().setParagraph().run()}
-          isActive={editor.isActive("paragraph")}
-          title="Paragraph"
-        >
-          <Type className="w-4 h-4" />
-        </ToolbarButton>
-
-        <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-600 mx-1" />
-
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          isActive={editor.isActive("bulletList")}
-          title="Bullet List"
-        >
-          <List className="w-4 h-4" />
-        </ToolbarButton>
-
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          isActive={editor.isActive("orderedList")}
-          title="Numbered List"
-        >
-          <ListOrdered className="w-4 h-4" />
-        </ToolbarButton>
-
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          isActive={editor.isActive("blockquote")}
-          title="Quote"
-        >
-          <Quote className="w-4 h-4" />
-        </ToolbarButton>
-
-        <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-600 mx-1" />
-
-        {/* Image Upload Button */}
-        <ToolbarButton
-          onClick={() => fileInputRef.current?.click()}
-          title="Upload Image"
-          disabled={isUploading || !onImageUpload}
-        >
-          <ImageIcon className="w-4 h-4" />
-        </ToolbarButton>
-
-        {/* Image URL Button */}
-        <ToolbarButton onClick={handleImageUrl} title="Insert Image URL">
-          <Link className="w-4 h-4" />
-        </ToolbarButton>
-
-        {/* Delete Image Button (only show when image is selected) */}
-        {selectedImageNode && (
-          <ToolbarButton
-            onClick={deleteSelectedImage}
-            title="Delete Selected Image"
-          >
-            <Trash2 className="w-4 h-4 text-red-500" />
-          </ToolbarButton>
-        )}
-
-        <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-600 mx-1" />
-
-        <ToolbarButton
-          onClick={() => editor.chain().focus().undo().run()}
-          title="Undo"
-        >
-          <Undo className="w-4 h-4" />
-        </ToolbarButton>
-
-        <ToolbarButton
-          onClick={() => editor.chain().focus().redo().run()}
-          title="Redo"
-        >
-          <Redo className="w-4 h-4" />
-        </ToolbarButton>
-
-        {/* Upload status */}
-        {isUploading && (
-          <div className="flex items-center px-2 text-sm text-zinc-500">
-            Uploading...
-          </div>
-        )}
-      </div>
-
-      {/* Editor Content */}
       <div className="relative">
         <EditorContent editor={editor} className="rich-text-editor" />
         {(!value || value === "") && (
@@ -386,10 +733,9 @@ const RichTextEditor: React.FC<Props> = ({
         )}
       </div>
 
-      {/* Help text */}
       <div className="px-3 py-2 text-xs text-zinc-500 border-t border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700">
-        💡 Tip: You can also drag & drop images or paste them directly into the
-        editor.
+        💡 Tip: Use LTR/RTL buttons to set direction per paragraph. Mixed
+        Arabic/English text will flow naturally. Ctrl+Shift+X toggles direction.
       </div>
     </div>
   );

@@ -36,17 +36,27 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
   const updateCommentMutation = useUpdateComment();
   const likeCommentMutation = useCommentLike();
 
-  // Use the like status from the API response
-  const isLiked = comment.isLikedByCurrentUser || false;
-  const likeCount = comment.likes?.length || 0;
+  // Local state for optimistic updates
+  const [isLiked, setIsLiked] = useState(comment.isLikedByCurrentUser || false);
+  const [optimisticLikeCount, setOptimisticLikeCount] = useState(
+    comment.likes?.length || 0
+  );
 
   const handleLike = async () => {
+    // Optimistic updates
+    const wasLiked = isLiked;
+    setIsLiked(!wasLiked);
+    setOptimisticLikeCount((prev) => (wasLiked ? prev - 1 : prev + 1));
+
     try {
       await likeCommentMutation.mutateAsync({
         commentId: comment.id,
-        isLiked: isLiked,
+        isLiked: wasLiked, // Pass the original state
       });
     } catch (error) {
+      // Revert optimistic updates on error
+      setIsLiked(wasLiked);
+      setOptimisticLikeCount((prev) => (wasLiked ? prev + 1 : prev - 1));
       console.error("Failed to toggle like:", error);
     }
   };
@@ -212,23 +222,14 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
           <div className="flex items-center gap-6 pt-2">
             <button
               onClick={handleLike}
-              disabled={likeCommentMutation.isPending}
               className={`flex items-center gap-2 text-sm transition-colors ${
                 isLiked
                   ? "text-orange-500 hover:text-orange-400"
                   : "text-zinc-500 hover:text-zinc-400"
-              } ${
-                likeCommentMutation.isPending
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
-              }`}
+              } `}
             >
-              {likeCommentMutation.isPending ? (
-                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
-              )}
-              <span>{likeCount}</span>
+              <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
+              <span>{optimisticLikeCount}</span>
             </button>
           </div>
         </div>

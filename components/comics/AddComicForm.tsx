@@ -24,6 +24,7 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
     isBeginnerFriendly: false,
     characters: ["spider-man"],
     readingLinks: [""],
+    isOnGoing: false,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,6 +85,7 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
         readingLinks: formFields.readingLinks.filter(
           (link) => link.trim() !== ""
         ),
+        isOnGoing: formFields.isOnGoing,
       };
 
       // Validate required fields
@@ -114,6 +116,7 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
           isBeginnerFriendly: false,
           characters: ["spider-man"],
           readingLinks: [""],
+          isOnGoing: false,
         });
       } else {
       }
@@ -244,6 +247,17 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
           required
           disabled={isSubmitting}
         />
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          name="isOnGoing"
+          checked={formFields.isOnGoing}
+          onChange={handleChange}
+          disabled={isSubmitting}
+        />
+        <label className="font-medium">Beginner Friendly?</label>
       </div>
 
       <div className="flex items-center space-x-2">

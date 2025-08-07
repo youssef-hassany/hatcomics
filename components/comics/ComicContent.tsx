@@ -101,6 +101,7 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                       <span className="text-zinc-500 text-sm">Issues</span>
                       <p className="font-medium">
                         {currentComic.numberOfIssues}
+                        {currentComic.ongoing && "+ (Ongoing)"}
                       </p>
                     </div>
                   </div>

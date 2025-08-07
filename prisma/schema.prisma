@@ -3,115 +3,104 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
-enum Role {
-  owner
-  admin
-  content_creator
-  translator
-  seller
-  user
-}
-
 model User {
-  id         String    @id
-  clerkId    String    @unique
-  username   String    @unique
-  fullname   String
-  email      String    @unique
-  photo      String?
-  points     Int       @default(0)
-  bio        String?   @default("Your friendly neighborhood user")
-  role       Role      @default(user)
-  posts      Post[]
-  comments   Comment[]
-  likes      Like[]
-  followers  Follow[]  @relation("UserFollowers")
-  following  Follow[]  @relation("UserFollowing")
-  bookmarks  Bookmark[]
-  reviews    Review[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  provider     String?   // "google", "facebook", "twitter"
-  providerId   String?   // Their ID on that platform
-  lastLoginAt  DateTime?
+  id          String     @id
+  clerkId     String     @unique
+  username    String     @unique
+  fullname    String
+  email       String     @unique
+  photo       String?
+  points      Int        @default(0)
+  bio         String?    @default("Your friendly neighborhood user")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  lastLoginAt DateTime?
+  provider    String?
+  providerId  String?
+  role        Role       @default(user)
+  bookmarks   Bookmark[]
+  comments    Comment[]
+  following   Follow[]   @relation("UserFollowing")
+  followers   Follow[]   @relation("UserFollowers")
+  likes       Like[]
+  posts       Post[]
+  reviews     Review[]
 }
 
 model Post {
-  id            String    @id @default(cuid())
-  userId        String
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title         String
-  content       String
-  comments      Comment[]
-  likes         Like[]
-  bookmarks     Bookmark[]
-  isDraft       Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id        String     @id @default(cuid())
+  userId    String
+  title     String
+  content   String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  isDraft   Boolean    @default(false)
+  bookmarks Bookmark[]
+  comments  Comment[]
+  likes     Like[]
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
-  id            String    @id @default(cuid())
-  userId        String
-  postId        String
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
-  content       String
-  attachment    String?
-  likes         Like[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id         String   @id @default(cuid())
+  userId     String
+  postId     String
+  content    String
+  attachment String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes      Like[]
 }
 
 model Like {
-  id          String   @id @default(cuid())
-  userId      String
-  postId      String?  // Nullable to allow liking either post or comment
-  commentId   String?  // Nullable to allow liking either post or comment
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post        Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
-  comment     Comment? @relation(fields: [commentId], references: [id])
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String?
+  commentId String?
+  createdAt DateTime @default(now())
+  comment   Comment? @relation(fields: [commentId], references: [id])
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, postId])
   @@unique([userId, commentId])
 }
 
 model Follow {
-  id           String   @id @default(cuid())
-  followerId   String
-  followingId  String
-  follower     User     @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
-  following    User     @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
-  createdAt    DateTime @default(now())
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  follower    User     @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@unique([followerId, followingId])
 }
 
 model Comic {
-  id                  String   @id @default(cuid())
-  name                String
-  description         String?  // HTML content from RichTextEditor
-  publisher           String
-  authors             String[] // Array of author names
-  characters          String[] // Array of character names
-  numberOfIssues      Int
-  image               String?
-  isBeginnerFriendly  Boolean  @default(false)
-  readingLinks        String[] // Array of links for reading
-  reviews             Review[]
-  
-  // Calculated fields for performance
-  totalReviews        Int      @default(0)
-  averageRating       Float?   // Will be null if no reviews
-  
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  name               String
+  publisher          String
+  authors            String[]
+  characters         String[]
+  numberOfIssues     Int
+  image              String?
+  isBeginnerFriendly Boolean  @default(false)
+  readingLinks       String[]
+  totalReviews       Int      @default(0)
+  averageRating      Float?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  description        String?
+  ongoing            Boolean  @default(false)
+  reviews            Review[]
 
   @@index([publisher])
   @@index([isBeginnerFriendly])
@@ -122,15 +111,15 @@ model Review {
   id          String   @id @default(cuid())
   userId      String
   comicId     String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  comic       Comic    @relation(fields: [comicId], references: [id], onDelete: Cascade)
-  rating      Int      // 1 to 5
+  rating      Int
   description String?
-  spoiler     Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  spoiler     Boolean  @default(false)
+  comic       Comic    @relation(fields: [comicId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, comicId]) // Prevents duplicate reviews from same user for same comic
+  @@unique([userId, comicId])
   @@index([comicId])
   @@index([rating])
 }
@@ -139,9 +128,18 @@ model Bookmark {
   id        String   @id @default(cuid())
   postId    String
   userId    String
+  createdAt DateTime @default(now())
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
 
   @@unique([postId, userId])
+}
+
+enum Role {
+  owner
+  admin
+  content_creator
+  translator
+  seller
+  user
 }

@@ -10,6 +10,7 @@ import { useFollowModalStore } from "@/store/followListsStore";
 import FollowersListModal from "@/components/profile/FollowersListModal";
 import FollowingListModal from "@/components/profile/FollowingListModal";
 import ProfileContent from "@/components/profile/ProfileContent";
+import { Button } from "@/components/ui/button";
 
 const ProfilePage = () => {
   const { username } = useParams();
@@ -86,10 +87,10 @@ const ProfilePage = () => {
             </h1>
             {user.isOwnProfile && (
               <div className="flex gap-3">
-                <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                <Button className="flex items-center gap-2">
                   <Edit3 className="w-4 h-4" />
                   Edit Profile
-                </button>
+                </Button>
                 {/* <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
                   <Settings className="w-4 h-4" />
                   Settings
@@ -145,7 +146,7 @@ const ProfilePage = () => {
                 </div>
 
                 <div
-                  className="bg-zinc-700 rounded-lg p-4 text-center"
+                  className="bg-zinc-700 rounded-lg p-4 text-center cursor-pointer"
                   onClick={() => openFollowersModal(user.username)}
                 >
                   <div className="text-sm text-zinc-400">Followers</div>
@@ -155,7 +156,7 @@ const ProfilePage = () => {
                 </div>
 
                 <div
-                  className="bg-zinc-700 rounded-lg p-4 text-center"
+                  className="bg-zinc-700 rounded-lg p-4 text-center cursor-pointer"
                   onClick={() => openFollowingModal(user.username)}
                 >
                   <div className="text-sm text-zinc-400">Following</div>

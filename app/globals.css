@@ -36,3 +36,196 @@ h2.heading-2 {
 h3.heading-3 {
   @apply text-xl font-bold mb-3 mt-5;
 }
+
+/* RTL/LTR Direction Styles for Rich Text Editor */
+
+/* Explicit RTL styling */
+.rich-text-editor p[dir="rtl"],
+.rich-text-editor h1[dir="rtl"],
+.rich-text-editor h2[dir="rtl"],
+.rich-text-editor h3[dir="rtl"],
+.rich-text-editor h4[dir="rtl"],
+.rich-text-editor h5[dir="rtl"],
+.rich-text-editor h6[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Explicit LTR styling */
+.rich-text-editor p[dir="ltr"],
+.rich-text-editor h1[dir="ltr"],
+.rich-text-editor h2[dir="ltr"],
+.rich-text-editor h3[dir="ltr"],
+.rich-text-editor h4[dir="ltr"],
+.rich-text-editor h5[dir="ltr"],
+.rich-text-editor h6[dir="ltr"] {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Auto bidirectional text handling */
+.rich-text-editor p:not([dir]),
+.rich-text-editor h1:not([dir]),
+.rich-text-editor h2:not([dir]),
+.rich-text-editor h3:not([dir]),
+.rich-text-editor h4:not([dir]),
+.rich-text-editor h5:not([dir]),
+.rich-text-editor h6:not([dir]) {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
+/* Better handling of mixed content */
+.rich-text-editor {
+  unicode-bidi: isolate;
+}
+
+/* Ensure proper spacing and alignment for mixed content */
+.rich-text-editor p,
+.rich-text-editor h1,
+.rich-text-editor h2,
+.rich-text-editor h3,
+.rich-text-editor h4,
+.rich-text-editor h5,
+.rich-text-editor h6 {
+  margin: 0.5em 0;
+}
+
+/* List handling for RTL */
+.rich-text-editor ul[dir="rtl"],
+.rich-text-editor ol[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+  padding-right: 1.5em;
+  padding-left: 0;
+  margin-right: 0;
+  margin-left: auto;
+}
+
+.rich-text-editor ul[dir="rtl"] li,
+.rich-text-editor ol[dir="rtl"] li {
+  direction: rtl;
+  text-align: right;
+}
+
+/* List handling for LTR */
+.rich-text-editor ul[dir="ltr"],
+.rich-text-editor ol[dir="ltr"] {
+  direction: ltr;
+  text-align: left;
+  padding-left: 1.5em;
+  padding-right: 0;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.rich-text-editor ul[dir="ltr"] li,
+.rich-text-editor ol[dir="ltr"] li {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Auto lists - let browser decide */
+.rich-text-editor ul:not([dir]),
+.rich-text-editor ol:not([dir]) {
+  unicode-bidi: plaintext;
+}
+
+.rich-text-editor ul:not([dir]) li,
+.rich-text-editor ol:not([dir]) li {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
+/* Blockquote handling for RTL */
+.rich-text-editor blockquote[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+  border-right: 4px solid #e5e7eb;
+  border-left: none;
+  padding-right: 1em;
+  padding-left: 0;
+  margin-right: 0;
+  margin-left: auto;
+}
+
+/* Blockquote handling for LTR */
+.rich-text-editor blockquote[dir="ltr"] {
+  direction: ltr;
+  text-align: left;
+  border-left: 4px solid #e5e7eb;
+  border-right: none;
+  padding-left: 1em;
+  padding-right: 0;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+/* Auto blockquote */
+.rich-text-editor blockquote:not([dir]) {
+  unicode-bidi: plaintext;
+  text-align: start;
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1em;
+}
+
+/* Dark mode support for borders */
+.dark .rich-text-editor blockquote[dir="rtl"] {
+  border-right-color: #4b5563;
+}
+
+.dark .rich-text-editor blockquote[dir="ltr"],
+.dark .rich-text-editor blockquote:not([dir]) {
+  border-left-color: #4b5563;
+}
+
+/* Ensure proper text flow in mixed content */
+.rich-text-editor * {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Better cursor positioning for RTL */
+.rich-text-editor [dir="rtl"] {
+  text-align: right;
+}
+
+.rich-text-editor [dir="ltr"] {
+  text-align: left;
+}
+
+/* Handle nested content properly */
+.rich-text-editor [dir="rtl"] * {
+  direction: rtl;
+}
+
+.rich-text-editor [dir="ltr"] * {
+  direction: ltr;
+}
+
+/* Exception for images and other inline content that shouldn't inherit direction */
+.rich-text-editor img,
+.rich-text-editor video,
+.rich-text-editor audio,
+.rich-text-editor canvas,
+.rich-text-editor svg {
+  direction: ltr;
+}
+
+/* Ensure proper alignment inheritance */
+.rich-text-editor [style*="text-align: left"] {
+  text-align: left !important;
+}
+
+.rich-text-editor [style*="text-align: center"] {
+  text-align: center !important;
+}
+
+.rich-text-editor [style*="text-align: right"] {
+  text-align: right !important;
+}
+
+/* Handle placeholder text direction */
+.rich-text-editor .ProseMirror-widget::before {
+  unicode-bidi: plaintext;
+}

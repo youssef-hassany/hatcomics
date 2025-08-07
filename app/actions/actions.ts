@@ -15,6 +15,7 @@ export interface CreateComicData {
   image?: string;
   isBeginnerFriendly?: boolean;
   readingLinks: string[];
+  isOnGoing: boolean;
 }
 
 export async function createComic(data: CreateComicData) {
@@ -114,6 +115,7 @@ export async function createComicFromFormData(formData: FormData) {
     const image = formData.get("image") as string;
     const isBeginnerFriendly = formData.get("isBeginnerFriendly") === "true";
     const readingLinksString = formData.get("readingLinks") as string;
+    const isOnGoing = formData.get("isOnGoing") === "false";
 
     // Parse arrays from comma-separated strings
     const authors = authorsString
@@ -145,6 +147,7 @@ export async function createComicFromFormData(formData: FormData) {
       image: image || undefined,
       isBeginnerFriendly,
       readingLinks,
+      isOnGoing: isOnGoing,
     };
 
     const result = await createComic(data);

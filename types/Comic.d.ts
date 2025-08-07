@@ -13,4 +13,5 @@ export interface ComicPreview {
   averageRating: number | null;
   createdAt: Date;
   updatedAt: Date;
+  ongoing: boolean;
 }

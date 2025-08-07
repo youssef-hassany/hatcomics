@@ -31,27 +31,61 @@ export const useCommentLike = () => {
     mutationKey: ["comment-like"],
     mutationFn: toggleCommentLike,
     onSuccess: (_, variables) => {
-      // Optimistically update the comments cache
+      // Update the comments cache
       queryClient.setQueriesData({ queryKey: ["comments"] }, (oldData: any) => {
         if (!oldData) return oldData;
 
-        return oldData.map((comment: any) => {
-          if (comment.id === variables.commentId) {
-            const newLikeCount = variables.isLiked
-              ? (comment.likes?.length || 0) - 1
-              : (comment.likes?.length || 0) + 1;
+        // Handle both array and paginated data structures
+        if (Array.isArray(oldData)) {
+          return oldData.map((comment: any) => {
+            if (comment.id === variables.commentId) {
+              const currentLikeCount = comment.likes?.length || 0;
+              const newLikeCount = variables.isLiked
+                ? Math.max(0, currentLikeCount - 1)
+                : currentLikeCount + 1;
 
-            return {
-              ...comment,
-              likes: {
-                ...comment.likes,
-                length: Math.max(0, newLikeCount),
-              },
-              isLikedByCurrentUser: !variables.isLiked, // Toggle the like status
-            };
-          }
-          return comment;
-        });
+              return {
+                ...comment,
+                likes: {
+                  ...comment.likes,
+                  length: newLikeCount,
+                },
+                isLikedByCurrentUser: !variables.isLiked,
+              };
+            }
+            return comment;
+          });
+        }
+
+        // Handle paginated structure if needed
+        if (oldData.pages) {
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              data: page.data.map((comment: any) => {
+                if (comment.id === variables.commentId) {
+                  const currentLikeCount = comment.likes?.length || 0;
+                  const newLikeCount = variables.isLiked
+                    ? Math.max(0, currentLikeCount - 1)
+                    : currentLikeCount + 1;
+
+                  return {
+                    ...comment,
+                    likes: {
+                      ...comment.likes,
+                      length: newLikeCount,
+                    },
+                    isLikedByCurrentUser: !variables.isLiked,
+                  };
+                }
+                return comment;
+              }),
+            })),
+          };
+        }
+
+        return oldData;
       });
     },
     onError: (error, variables) => {
