@@ -11,6 +11,7 @@ import FollowersListModal from "@/components/profile/FollowersListModal";
 import FollowingListModal from "@/components/profile/FollowingListModal";
 import ProfileContent from "@/components/profile/ProfileContent";
 import { Button } from "@/components/ui/button";
+import EditProfileModal from "@/components/profile/EditProfileModal";
 
 const ProfilePage = () => {
   const { username } = useParams();
@@ -23,6 +24,7 @@ const ProfilePage = () => {
     error,
   } = useGetUserByUsername(username as string);
 
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isFollowed, setIsFollowed] = useState(user?.isFollowed);
 
   useEffect(() => {
@@ -87,7 +89,10 @@ const ProfilePage = () => {
             </h1>
             {user.isOwnProfile && (
               <div className="flex gap-3">
-                <Button className="flex items-center gap-2">
+                <Button
+                  className="flex items-center gap-2"
+                  onClick={() => setIsEditProfileOpen(true)}
+                >
                   <Edit3 className="w-4 h-4" />
                   Edit Profile
                 </Button>
@@ -135,6 +140,8 @@ const ProfilePage = () => {
                   {user.role.replace("_", " ").toUpperCase()}
                 </div>
               </div>
+
+              <p className="text-zinc-400 text-lg mb-4">"{user.bio}"</p>
 
               {/* Stats */}
               <div className="flex justify-center md:justify-start gap-4">
@@ -186,6 +193,11 @@ const ProfilePage = () => {
 
       <FollowersListModal />
       <FollowingListModal />
+      <EditProfileModal
+        user={user}
+        isEditProfileOpen={isEditProfileOpen}
+        setIsEditProfileOpen={setIsEditProfileOpen}
+      />
     </div>
   );
 };

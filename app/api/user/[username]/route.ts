@@ -26,6 +26,7 @@ export async function GET(
         id: true,
         fullname: true,
         username: true,
+        bio: true,
         photo: true,
         points: true,
         role: true,
@@ -105,4 +106,36 @@ async function checkIfOwnProfile(
     select: { id: true },
   });
   return loggedInUser?.id === profileUserId;
+}
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ username: string }> }
+) {
+  try {
+    const { username } = await params;
+    const { newUsername, bio, fullName } = await request.json();
+
+    await prisma.user.update({
+      where: {
+        username,
+      },
+      data: {
+        username: newUsername,
+        bio,
+        fullname: fullName,
+      },
+    });
+
+    return NextResponse.json(
+      { status: "success", message: "User data updated successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    return NextResponse.json(
+      { status: "error", message: "Internal server error" },
+      { status: 500 }
+    );
+  }
 }

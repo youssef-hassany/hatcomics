@@ -27,5 +27,6 @@ export interface UserProfile {
   isOwnProfile: boolean;
   isFollowed: boolean;
   followersCount: number;
-  followingCount;
+  followingCount: number;
+  bio: string;
 }
