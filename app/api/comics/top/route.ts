@@ -10,7 +10,7 @@ export async function GET() {
 
     const topComics = await prisma.comic.findMany({
       orderBy: {
-        averageRating: "desc",
+        averageRating: "asc",
       },
       take: 5,
     });
