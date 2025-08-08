@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -8,7 +9,9 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const post = await prisma.post.findFirst({
+    const { userId } = await auth();
+
+    const data = await prisma.post.findFirst({
       where: { id },
       select: {
         id: true,
@@ -18,8 +21,31 @@ export async function GET(
         title: true,
         createdAt: true,
         isDraft: true,
+        likes: {
+          where: { userId: userId! }, // Only get current user's like
+          select: { userId: true },
+        },
+        bookmarks: {
+          where: { userId: userId! }, // Only get current user's bookmark
+          select: { userId: true },
+        },
+        _count: {
+          select: {
+            bookmarks: true,
+            likes: true,
+            comments: true,
+          },
+        },
       },
     });
+
+    const post = data
+      ? {
+          ...data,
+          isLikedByCurrentUser: data.likes.length > 0,
+          isBookmarked: data.bookmarks.length > 0,
+        }
+      : data;
 
     return NextResponse.json(
       { status: "success", data: post },

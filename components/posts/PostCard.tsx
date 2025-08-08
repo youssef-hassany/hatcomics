@@ -43,7 +43,7 @@ const PostCard: React.FC<{ post: PostPreview }> = ({ post }) => {
         </div>
 
         <Link
-          href={`posts/${post.id}`}
+          href={`/posts/${post.id}`}
           className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1"
         >
           <span className="hidden md:inline">Read More</span>

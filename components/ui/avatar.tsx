@@ -18,13 +18,13 @@ const Avatar = ({
   className,
 }: Props) => {
   return (
-    <Link href={`/profile/${username}`}>
+    <Link href={`/profile/${username}`} className="flex-shrink-0">
       <Image
         src={url}
         height={height}
         width={width}
         alt={username}
-        className={`w-10 h-10 rounded-full cursor-pointer ${className}`}
+        className={`w-20 h-20 rounded-full cursor-pointer object-cover ${className}`}
       />
     </Link>
   );

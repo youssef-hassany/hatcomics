@@ -17,7 +17,7 @@ const BookmarkHandler = ({ post }: { post: PostPreview }) => {
 
     try {
       await toggleBookmark({
-        isBookmarked: post.isBookmarked,
+        isBookmarked: wasBookmarked,
         postId: post.id,
       });
     } catch (error) {

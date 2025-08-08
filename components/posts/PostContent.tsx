@@ -10,6 +10,8 @@ import EditPostForm from "./EditPostForm";
 import CommentsSection from "../comments/CommentsSection";
 import { useState } from "react";
 import Avatar from "../ui/avatar";
+import PostLikeHandler from "./PostLikeHandler";
+import BookmarkHandler from "./BookmarkHandler";
 
 interface PostContentProps {
   initialPost: Post;
@@ -98,6 +100,14 @@ const PostContent = ({ initialPost }: PostContentProps) => {
                 prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8 prose-img:border prose-img:border-zinc-800"
               dangerouslySetInnerHTML={{ __html: post?.content || "" }}
             />
+          </div>
+
+          <div className="flex items-center gap-4 border-t border-zinc-700 p-4">
+            {/* @ts-expect-error: this is completely fine */}
+            <PostLikeHandler post={post} />
+
+            {/* @ts-expect-error: this is completely fine */}
+            <BookmarkHandler post={post} />
           </div>
         </article>
 
