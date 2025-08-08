@@ -94,7 +94,7 @@ const ProfilePage = () => {
                   onClick={() => setIsEditProfileOpen(true)}
                 >
                   <Edit3 className="w-4 h-4" />
-                  Edit Profile
+                  <span className="hidden md:inline">Edit Profile</span>
                 </Button>
                 {/* <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
                   <Settings className="w-4 h-4" />
