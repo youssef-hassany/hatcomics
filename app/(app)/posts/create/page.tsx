@@ -3,7 +3,7 @@
 import DraftsModal from "@/components/posts/DarftsModal";
 import { Button } from "@/components/ui/button";
 import RichTextEditor from "@/components/ui/RichTextEditor";
-import ThreadBuilder from "@/components/posts/ThreadBuilder"; // Import the new component
+import ThreadBuilder from "@/components/posts/ThreadBuilder";
 import { useCreatePost } from "@/hooks/posts/useCreatePost";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import React, { useState } from "react";
@@ -135,7 +135,7 @@ const CreatePostsPage = () => {
           </div>
         </div>
 
-        <div className="bg-zinc-800 rounded-lg p-6 space-y-6">
+        <div className="bg-zinc-800 rounded-lg p-3 md:p-6 space-y-6">
           <div>
             <label className="block text-sm font-medium text-zinc-300 mb-2">
               Title
@@ -190,7 +190,7 @@ const CreatePostsPage = () => {
                 />
               </div>
             ) : (
-              <div className="bg-zinc-700 rounded-md border border-zinc-600 p-4">
+              <div className="bg-zinc-700 rounded-md border border-zinc-600 py-4 px-1">
                 <ThreadBuilder onContentChange={handleThreadContentChange} />
               </div>
             )}

@@ -13,6 +13,8 @@ import {
   Zap,
   Globe,
 } from "lucide-react";
+import { SignUpButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 const ComicLandingPage = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -73,12 +75,12 @@ const ComicLandingPage = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button className="group bg-orange-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-orange-700 transition-all transform hover:scale-105 flex items-center justify-center">
-                  Start Your Journey
+                  <SignUpButton>Start Your Journey</SignUpButton>
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
-                <button className="border-2 border-zinc-600 text-zinc-300 px-8 py-3 rounded-lg text-lg font-medium hover:bg-zinc-800 transition-all">
+                {/* <button className="border-2 border-zinc-600 text-zinc-300 px-8 py-3 rounded-lg text-lg font-medium hover:bg-zinc-800 transition-all">
                   Explore Comics
-                </button>
+                </button> */}
               </div>
             </div>
 
@@ -238,7 +240,7 @@ const ComicLandingPage = () => {
           </div>
 
           <button className="group bg-orange-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-orange-700 transition-all transform hover:scale-105 flex items-center justify-center mx-auto">
-            Join the Community
+            <SignUpButton>Join the Community</SignUpButton>
             <Heart className="ml-2 w-5 h-5 group-hover:text-red-300 transition-colors" />
           </button>
         </div>
@@ -257,11 +259,14 @@ const ComicLandingPage = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-orange-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-orange-700 transition-all transform hover:scale-105">
-              Create Free Account
+              <SignUpButton>Create Free Account</SignUpButton>
             </button>
-            <button className="border-2 border-zinc-600 text-zinc-300 px-8 py-3 rounded-lg text-lg font-medium hover:bg-zinc-800 transition-all">
+            <Link
+              href="/about"
+              className="border-2 border-zinc-600 text-zinc-300 px-8 py-3 rounded-lg text-lg font-medium hover:bg-zinc-800 transition-all"
+            >
               Learn More
-            </button>
+            </Link>
           </div>
         </div>
       </section>

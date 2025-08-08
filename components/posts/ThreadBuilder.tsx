@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, X, Image as ImageIcon, Trash2 } from "lucide-react";
+import { Plus, X, Image as ImageIcon } from "lucide-react";
 
 interface ThreadBlock {
   id: string;
@@ -144,7 +144,7 @@ const ThreadBuilder: React.FC<ThreadBuilderProps> = ({ onContentChange }) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 md:space-y-4">
       {blocks.map((block, index) => (
         <ThreadBlockComponent
           key={block.id}
@@ -160,11 +160,11 @@ const ThreadBuilder: React.FC<ThreadBuilderProps> = ({ onContentChange }) => {
       ))}
 
       {/* Add Block Button */}
-      <div className="flex justify-center pt-2">
+      <div className="flex justify-center pt-3">
         <Button
           type="button"
           onClick={addBlock}
-          className="w-12 h-12 rounded-full"
+          style={{ padding: "1rem", borderRadius: "50%" }}
         >
           <Plus size={20} />
         </Button>
@@ -210,10 +210,10 @@ const ThreadBlockComponent: React.FC<ThreadBlockComponentProps> = ({
   };
 
   return (
-    <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-6 relative group">
+    <div className="bg-zinc-800/50 rounded-lg border border-zinc-700/50 p-3 md:p-4 relative group">
       {/* Block number and remove button */}
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-xs text-zinc-500 font-medium">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-xs text-zinc-400 font-medium">
           Thread {index + 1}
         </span>
 
@@ -221,33 +221,31 @@ const ThreadBlockComponent: React.FC<ThreadBlockComponentProps> = ({
           <Button
             type="button"
             onClick={onRemoveBlock}
-            className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-300 p-1 h-auto"
+            style={{ padding: "0.5rem", borderRadius: "50%" }}
           >
-            <Trash2 size={16} />
+            <X size={12} />
           </Button>
         )}
       </div>
 
       {/* Text Input */}
-      <div className="relative mb-4">
+      <div className="mb-3">
         <textarea
           value={block.text}
           onChange={(e) => onTextChange(e.target.value)}
-          placeholder={`What's happening ?`}
-          className="w-full min-h-[100px] p-4 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 placeholder-zinc-500 resize-none focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+          placeholder={`What's happening?`}
+          className="w-full min-h-[80px] md:min-h-[100px] p-3 bg-transparent border border-zinc-600/50 rounded-md text-zinc-100 placeholder-zinc-500 resize-none focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 transition-colors"
         />
       </div>
 
       {/* Image Preview */}
       {(getImageSrc() || isUploading) && (
-        <div className="relative mb-4">
+        <div className="mb-3">
           {isUploading ? (
-            <div className="flex items-center justify-center p-8 bg-zinc-800 rounded-lg border-2 border-dashed border-zinc-600">
+            <div className="flex items-center justify-center p-6 md:p-8 bg-zinc-900/30 rounded-md border border-dashed border-zinc-600">
               <div className="text-center">
-                <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                <span className="text-zinc-400 text-sm">
-                  Uploading image...
-                </span>
+                <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                <span className="text-zinc-400 text-sm">Uploading...</span>
               </div>
             </div>
           ) : (
@@ -255,14 +253,14 @@ const ThreadBlockComponent: React.FC<ThreadBlockComponentProps> = ({
               <img
                 src={getImageSrc()!}
                 alt="Thread attachment"
-                className="max-w-full h-auto rounded-lg max-h-48 object-cover"
+                className="max-w-full h-auto rounded-md max-h-40 md:max-h-48 object-cover"
               />
               <button
                 type="button"
                 onClick={onRemoveImage}
-                className="absolute top-2 right-2 p-1 bg-red-500 hover:bg-red-600 rounded-full text-white transition-colors"
+                className="absolute top-2 right-2 p-1 bg-black/60 hover:bg-black/80 rounded-full text-white transition-colors backdrop-blur-sm"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3 h-3 md:w-4 md:h-4" />
               </button>
             </div>
           )}
@@ -282,10 +280,10 @@ const ThreadBlockComponent: React.FC<ThreadBlockComponentProps> = ({
           <Button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-2 p-2"
+            className="flex items-center gap-2 hover:bg-zinc-700/50 h-8 px-2"
           >
             <ImageIcon className="w-4 h-4" />
-            <span className="hidden md:block text-sm">Add Image</span>
+            <span className="hidden sm:inline text-sm">Add Image</span>
           </Button>
         </div>
       )}
