@@ -1,6 +1,6 @@
 import { useUpdateUser } from "@/hooks/user/useUpdateUserData";
 import { UserProfile } from "@/types/User";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 import { Modal } from "../ui/modal";
 import { useDebounce } from "@/hooks/common/useDebounce";
@@ -30,11 +30,8 @@ const EditProfileModal = ({
   });
 
   const usernameDebounce = useDebounce(formFields.username);
-  const {
-    data,
-    refetch,
-    isLoading: isCheckingUsername,
-  } = useCheckUsername(usernameDebounce);
+  const { data, isLoading: isCheckingUsername } =
+    useCheckUsername(usernameDebounce);
 
   // Track if username has changed from original
   const isUsernameChanged = formFields.username !== user.username;
@@ -76,6 +73,7 @@ const EditProfileModal = ({
       router.replace(`/profile/${formFields.username}`);
     } catch (error) {
       toast.error("Something went wrong, please try again");
+      console.error(error);
     }
   };
 

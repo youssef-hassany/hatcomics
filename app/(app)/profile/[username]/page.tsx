@@ -141,7 +141,9 @@ const ProfilePage = () => {
                 </div>
               </div>
 
-              <p className="text-zinc-400 text-lg mb-4">"{user.bio}"</p>
+              <p className="text-zinc-400 text-lg mb-4">
+                &ldquo;{user.bio}&ldquo;
+              </p>
 
               {/* Stats */}
               <div className="flex justify-center md:justify-start gap-4">

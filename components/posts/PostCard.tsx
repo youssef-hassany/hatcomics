@@ -1,5 +1,5 @@
 import React from "react";
-import { MessageCircle } from "lucide-react";
+import { ChevronRight, MessageCircle } from "lucide-react";
 import { PostPreview } from "@/types/Post";
 import Link from "next/link";
 import Avatar from "../ui/avatar";
@@ -44,9 +44,10 @@ const PostCard: React.FC<{ post: PostPreview }> = ({ post }) => {
 
         <Link
           href={`posts/${post.id}`}
-          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1"
         >
-          Read More
+          <span className="hidden md:inline">Read More</span>
+          <ChevronRight />
         </Link>
       </div>
     </div>
