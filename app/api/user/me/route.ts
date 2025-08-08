@@ -12,7 +12,7 @@ export async function GET() {
       );
     }
 
-    const currentUser = await prisma.user.findUnique({
+    let currentUser = await prisma.user.findUnique({
       where: { clerkId: userId! },
       select: {
         id: true,
@@ -30,6 +30,22 @@ export async function GET() {
         { status: "error", message: "user not found" },
         { status: 404 }
       );
+    }
+
+    if (currentUser.role !== "owner" && currentUser.role !== "admin") {
+      // Calculate rank using Prisma's count method (more efficient)
+      const usersWithMorePoints = await prisma.user.count({
+        where: {
+          points: {
+            gt: currentUser.points,
+          },
+        },
+      });
+
+      const rank = usersWithMorePoints + 1;
+      currentUser = { ...currentUser, rank } as typeof currentUser & {
+        rank?: number;
+      };
     }
 
     return NextResponse.json(

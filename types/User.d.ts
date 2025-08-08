@@ -14,6 +14,7 @@ export interface User {
   points: number;
   role: Role;
   email: string;
+  rank?: number;
 }
 
 export interface UserProfile {

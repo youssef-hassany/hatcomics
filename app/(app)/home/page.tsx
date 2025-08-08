@@ -1,77 +1,226 @@
-import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
-import { BookOpen, Newspaper, Star, Users, ArrowRight } from "lucide-react";
-import Link from "next/link";
+"use client";
+
 import React from "react";
+import {
+  BookOpen,
+  TrendingUp,
+  Users,
+  Trophy,
+  Medal,
+  Award,
+} from "lucide-react";
+import ComicCard from "@/components/comics/ComicCard";
+import PostCard from "@/components/posts/PostCard";
+import Avatar from "@/components/ui/avatar";
+import { useGetTopComics } from "@/hooks/comics/useGetTopComics";
+import { useGetTopPosts } from "@/hooks/posts/useGetTopPosts";
+import { useGetTopUsers } from "@/hooks/user/useGetTopUsers";
+import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 
-const HomePage = async () => {
-  const { userId } = await auth();
-  const user = await prisma.user.findUnique({ where: { id: userId! } });
+const HomePage = () => {
+  const { data: topComics, isLoading: comicsLoading } = useGetTopComics();
+  const { data: topPosts, isLoading: postsLoading } = useGetTopPosts();
+  const { data: topUsers, isLoading: usersLoading } = useGetTopUsers();
+  const { data: currentUser } = useGetLoggedInUser();
 
-  const pages = [
-    {
-      name: "Posts",
-      route: "/posts",
-      icon: <Newspaper />,
-      description:
-        "Read the latest articles, insights, and stories from the comic book world",
-    },
-    {
-      name: "Comics Reviews",
-      route: "/reviews",
-      icon: <Star />,
-      description:
-        "Discover honest reviews and ratings of the newest comic releases",
-    },
-    {
-      name: "Comics Recommendations",
-      route: "/comics",
-      icon: <BookOpen />,
-      description:
-        "Get personalized comic suggestions based on your interests and reading history",
-    },
-    {
-      name: "Community",
-      route: "/community",
-      icon: <Users />,
-      description:
-        "Connect with fellow comic enthusiasts and join engaging discussions",
-    },
-  ];
+  // Get top 3 users and find current user rank
+  const top3Users = topUsers?.slice(0, 3) || [];
+
+  const getRankIcon = (rank: number) => {
+    switch (rank) {
+      case 1:
+        return <Trophy className="w-5 h-5 text-yellow-500" />;
+      case 2:
+        return <Medal className="w-5 h-5 text-gray-400" />;
+      case 3:
+        return <Award className="w-5 h-5 text-amber-600" />;
+      default:
+        return (
+          <span className="w-5 h-5 flex items-center justify-center text-zinc-400 font-bold text-sm">
+            #{rank}
+          </span>
+        );
+    }
+  };
 
   return (
     <div className="min-h-screen bg-zinc-900">
-      <div className="p-6 max-w-4xl mx-auto">
+      <div className="p-6 max-w-7xl mx-auto">
+        {/* Welcome Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2 text-zinc-100">
-            Hello, {user?.username}
+            Welcome back, {currentUser?.username || "Comic Fan"}!
           </h1>
-          <p className="text-zinc-400">What would you like to explore today?</p>
+          <p className="text-zinc-400">
+            Discover the best comics, posts, and community members
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {pages.map((page, index) => (
-            <Link
-              href={page.route}
-              key={index}
-              className="group p-6 rounded-xl bg-zinc-800 border border-zinc-700 hover:border-orange-300 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center group-hover:bg-orange-600 group-hover:text-white transition-all">
-                  {page.icon}
-                </div>
-                <ArrowRight className="w-5 h-5 text-zinc-500 group-hover:text-orange-300 transform group-hover:translate-x-1 transition-all" />
-              </div>
-
-              <h3 className="text-xl font-semibold mb-3 text-zinc-100">
-                {page.name}
-              </h3>
-
-              <p className="text-zinc-400 text-sm leading-relaxed">
-                {page.description}
+        {/* Top Rated Comics Section */}
+        <section className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center">
+              <BookOpen className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-zinc-100">
+                Top Rated Comics
+              </h2>
+              <p className="text-zinc-400 text-sm">
+                Highest rated comics by the community
               </p>
-            </Link>
-          ))}
+            </div>
+          </div>
+
+          {comicsLoading ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-zinc-800 rounded-xl h-96 animate-pulse border border-zinc-700"
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex gap-4 overflow-x-auto pb-4">
+              {topComics?.map((comic) => (
+                <div key={comic.id} className="flex-shrink-0 w-56">
+                  <ComicCard comic={comic} />
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Top Posts Section */}
+          <section className="lg:col-span-2">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-zinc-100">
+                  Trending Posts
+                </h2>
+                <p className="text-zinc-400 text-sm">
+                  Most engaging discussions in the community
+                </p>
+              </div>
+            </div>
+
+            {postsLoading ? (
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-zinc-800 rounded-lg h-32 animate-pulse border border-zinc-700"
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {topPosts?.slice(0, 3).map((post) => (
+                  <PostCard key={post.id} post={post} />
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Top Users & Current User Rank Section */}
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center">
+                <Users className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-zinc-100">
+                  Community Leaders
+                </h2>
+                <p className="text-zinc-400 text-sm">
+                  Top contributors this month
+                </p>
+              </div>
+            </div>
+
+            {/* Current User Rank Card */}
+            {currentUser?.rank && currentUser.rank > 3 && (
+              <div className="bg-gradient-to-r from-orange-500/20 to-orange-600/20 border border-orange-500/30 rounded-xl p-4 mb-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Avatar
+                      url={currentUser.photo || "/placeholder-avatar.png"}
+                      username={currentUser.username}
+                    />
+                    <div>
+                      <p className="text-white font-medium">Your Rank</p>
+                      <p className="text-orange-300 text-sm">
+                        {currentUser.username}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {getRankIcon(currentUser?.rank)}
+                    <span className="text-white font-bold">
+                      #{currentUser?.rank}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Top 3 Users */}
+            {usersLoading ? (
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-zinc-800 rounded-xl p-4 animate-pulse border border-zinc-700"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-zinc-700 rounded-full" />
+                      <div className="flex-1">
+                        <div className="h-4 bg-zinc-700 rounded mb-2" />
+                        <div className="h-3 bg-zinc-700 rounded w-2/3" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {top3Users.map((user, index) => (
+                  <div
+                    key={user.id}
+                    className="bg-zinc-800 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Avatar
+                          url={user.photo || "/placeholder-avatar.png"}
+                          username={user.username}
+                        />
+                        <div>
+                          <p className="text-white font-medium">
+                            {user.fullname}
+                          </p>
+                          <p className="text-zinc-400 text-sm">
+                            @{user.username}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {getRankIcon(index + 1)}
+                        <span className="text-zinc-300 font-medium">
+                          #{index + 1}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
         </div>
       </div>
     </div>
