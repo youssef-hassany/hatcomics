@@ -3,10 +3,14 @@
 import DraftsModal from "@/components/posts/DarftsModal";
 import { Button } from "@/components/ui/button";
 import RichTextEditor from "@/components/ui/RichTextEditor";
+import ThreadBuilder from "@/components/posts/ThreadBuilder"; // Import the new component
 import { useCreatePost } from "@/hooks/posts/useCreatePost";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import React, { useState } from "react";
 import { toast } from "sonner";
+import { FileText, MessageSquare } from "lucide-react";
+
+type EditorMode = "blog" | "thread";
 
 const CreatePostsPage = () => {
   const { data: loggedInUser } = useGetLoggedInUser();
@@ -15,6 +19,7 @@ const CreatePostsPage = () => {
   const [isDraft, setIsDraft] = useState(false);
   const [postId, setPostId] = useState<string | undefined>();
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
+  const [editorMode, setEditorMode] = useState<EditorMode>("blog");
 
   const { mutateAsync: createPost, isPending: isLoading } = useCreatePost();
 
@@ -88,6 +93,27 @@ const CreatePostsPage = () => {
     setPostId(postId);
   };
 
+  const handleEditorModeChange = (mode: EditorMode) => {
+    if (content && editorMode !== mode) {
+      // Warn user about potential content loss when switching modes
+      if (
+        confirm(
+          "Switching editor modes may affect your content formatting. Continue?"
+        )
+      ) {
+        setEditorMode(mode);
+        // Reset content when switching modes to avoid formatting conflicts
+        setContent("");
+      }
+    } else {
+      setEditorMode(mode);
+    }
+  };
+
+  const handleThreadContentChange = (htmlContent: string) => {
+    setContent(htmlContent);
+  };
+
   return (
     <div className="min-h-screen bg-zinc-900 px-4 py-8">
       <div className="max-w-3xl mx-auto">
@@ -128,15 +154,61 @@ const CreatePostsPage = () => {
             <label className="block text-sm font-medium text-zinc-300 mb-2">
               Content
             </label>
-            <div className="bg-zinc-700 rounded-md border border-zinc-600">
-              <RichTextEditor
-                onImageUpload={handleImageUpload}
-                value={content}
-                onChange={setContent}
-                placeholder="Start writing your post post..."
-              />
+
+            {/* Editor Mode Toggle */}
+            <div className="flex justify-center">
+              <div className="w-full p-1 rounded-lg flex justify-evenly mb-2">
+                <Button
+                  type="button"
+                  variant={editorMode !== "blog" ? "secondary" : "primary"}
+                  onClick={() => handleEditorModeChange("blog")}
+                  className="flex items-center gap-2"
+                >
+                  <FileText size={16} />
+                  Blog
+                </Button>
+
+                <Button
+                  type="button"
+                  variant={editorMode !== "thread" ? "secondary" : "primary"}
+                  onClick={() => handleEditorModeChange("thread")}
+                  className="flex items-center gap-2"
+                >
+                  <MessageSquare size={16} />
+                  Thread
+                </Button>
+              </div>
             </div>
+
+            {editorMode === "blog" ? (
+              <div className="bg-zinc-700 rounded-md border border-zinc-600">
+                <RichTextEditor
+                  onImageUpload={handleImageUpload}
+                  value={content}
+                  onChange={setContent}
+                  placeholder="Start writing your post..."
+                />
+              </div>
+            ) : (
+              <div className="bg-zinc-700 rounded-md border border-zinc-600 p-4">
+                <ThreadBuilder onContentChange={handleThreadContentChange} />
+              </div>
+            )}
           </div>
+
+          {/* Content Preview (only show for thread mode) */}
+          {/* {editorMode === "thread" && content && (
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-zinc-300">
+                HTML Preview
+              </label>
+              <div className="bg-zinc-900 border border-zinc-600 rounded-md p-3">
+                <code className="text-xs text-zinc-300 break-all">
+                  {content || "<p>No content generated yet...</p>"}
+                </code>
+              </div>
+            </div>
+          )} */}
 
           <div className="flex gap-3 pt-4">
             <Button
