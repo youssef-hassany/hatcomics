@@ -22,6 +22,7 @@ const ProfilePage = () => {
     data: user,
     isLoading,
     error,
+    refetch,
   } = useGetUserByUsername(username as string);
 
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
@@ -42,7 +43,10 @@ const ProfilePage = () => {
           <div className="text-red-400 text-lg mb-2">
             Failed to load profile
           </div>
-          <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors">
+          <button
+            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
+            onClick={() => refetch()}
+          >
             Try Again
           </button>
         </div>

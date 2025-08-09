@@ -115,6 +115,24 @@ export async function PATCH(
     const { username } = await params;
     const { newUsername, bio, fullName } = await request.json();
 
+    const { userId } = await auth();
+
+    const user = await prisma.user.findFirst({
+      where: {
+        username,
+      },
+    });
+
+    if (userId !== user?.id) {
+      return NextResponse.json(
+        {
+          status: "error",
+          message: "Access Denied",
+        },
+        { status: 403 }
+      );
+    }
+
     const usernameRegex = /^[a-zA-Z0-9._]{1,20}$/;
 
     if (!usernameRegex.test(newUsername)) {
