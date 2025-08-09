@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import RichTextEditor from "@/components/ui/RichTextEditor";
 import ThreadBuilder from "@/components/posts/ThreadBuilder";
 import { useCreatePost } from "@/hooks/posts/useCreatePost";
-import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { FileText, MessageSquare } from "lucide-react";
@@ -13,7 +12,6 @@ import { FileText, MessageSquare } from "lucide-react";
 type EditorMode = "blog" | "thread";
 
 const CreatePostsPage = () => {
-  const { data: loggedInUser } = useGetLoggedInUser();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isDraft, setIsDraft] = useState(false);
@@ -42,7 +40,6 @@ const CreatePostsPage = () => {
     const body = {
       title,
       content,
-      userId: loggedInUser?.id as string,
       isDraft: false,
       postId,
     };
@@ -65,7 +62,6 @@ const CreatePostsPage = () => {
     const body = {
       title,
       content,
-      userId: loggedInUser?.id as string,
       isDraft: true,
       postId,
     };

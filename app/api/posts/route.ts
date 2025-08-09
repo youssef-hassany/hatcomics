@@ -86,7 +86,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, content, title, isDraft, postId } = await req.json();
+    const { userId } = await auth();
+
+    const { content, title, isDraft, postId } = await req.json();
 
     if (!userId || !content || !title) {
       return NextResponse.json(

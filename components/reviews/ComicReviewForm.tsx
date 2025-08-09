@@ -1,7 +1,6 @@
 "use client";
 
 import { useCreateReview } from "@/hooks/reviews/useCreateReview";
-import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { Star, AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -19,7 +18,6 @@ const ComicReviewForm = ({ comicId }: ComicReviewFormProps) => {
   const [hasSpoilers, setHasSpoilers] = useState<boolean>(false);
 
   const { mutateAsync: createReview, isPending: isLoading } = useCreateReview();
-  const { data: loggedInUser } = useGetLoggedInUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +31,6 @@ const ComicReviewForm = ({ comicId }: ComicReviewFormProps) => {
         rating,
         description: review.trim() || undefined,
         spoiler: hasSpoilers,
-        userId: loggedInUser?.id as string,
         comicId,
       };
 

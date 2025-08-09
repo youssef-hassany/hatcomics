@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 interface Params {
   title: string;
   content: string;
-  userId: string;
   postId?: string;
 }
 

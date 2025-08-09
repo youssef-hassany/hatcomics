@@ -5,7 +5,6 @@ interface Params {
   rating: number;
   description?: string;
   spoiler: boolean;
-  userId: string;
   comicId: string;
 }
 
