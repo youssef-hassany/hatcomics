@@ -1,9 +1,23 @@
 "use client";
 
-import { Clock, User, BookOpen, Users, Star, ExternalLink } from "lucide-react";
+import {
+  Clock,
+  User,
+  BookOpen,
+  Users,
+  Star,
+  ExternalLink,
+  Pencil,
+  Plus,
+} from "lucide-react";
 import { ComicPreview } from "@/types/Comic";
 import { useGetComic } from "@/hooks/comics/useGetComic";
 import ComicContentSkeleton from "./ComicContentSkeleton";
+import { useState } from "react";
+import { Modal } from "../ui/modal";
+import UpdateComicForm from "./UpdateComicForm";
+import { Button } from "../ui/button";
+import AddReadingLinkForm from "./AddReadingLinkForm";
 
 interface ComicContentProps {
   initialComic: ComicPreview;
@@ -11,6 +25,9 @@ interface ComicContentProps {
 
 const ComicContent = ({ initialComic }: ComicContentProps) => {
   const { data: comic, isPending } = useGetComic(initialComic.id);
+
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+  const [isAddReadingLinkOpen, setIsAddReadingLinkOpen] = useState(false);
 
   const currentComic = comic || initialComic;
 
@@ -32,6 +49,25 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                   alt={currentComic.name}
                   className="w-full h-full object-cover"
                 />
+              </div>
+
+              <div className="flex items-center gap-4 my-3">
+                <Button
+                  variant="secondary"
+                  onClick={() => setIsUpdateOpen(true)}
+                  className="flex items-center gap-2"
+                >
+                  <Pencil size={16} />
+                  <span>Edit Comic</span>
+                </Button>
+
+                <Button
+                  onClick={() => setIsAddReadingLinkOpen(true)}
+                  className="flex items-center gap-2"
+                >
+                  <Plus size={16} />
+                  <span>Add Link</span>
+                </Button>
               </div>
             </div>
 
@@ -196,6 +232,29 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
           </div>
         </div>
       </div>
+
+      {comic && (
+        <Modal isOpen={isUpdateOpen} onClose={() => setIsUpdateOpen(false)}>
+          <UpdateComicForm
+            comic={comic}
+            onSuccess={() => setIsUpdateOpen(false)}
+            onCancel={() => setIsUpdateOpen(false)}
+          />
+        </Modal>
+      )}
+
+      {comic && (
+        <Modal
+          isOpen={isAddReadingLinkOpen}
+          onClose={() => setIsAddReadingLinkOpen(false)}
+        >
+          <AddReadingLinkForm
+            comicId={comic.id}
+            onSuccess={() => setIsAddReadingLinkOpen(false)}
+            onCancel={() => setIsAddReadingLinkOpen(false)}
+          />
+        </Modal>
+      )}
     </div>
   );
 };
