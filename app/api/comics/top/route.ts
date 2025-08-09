@@ -9,8 +9,13 @@ export async function GET() {
     if (!userId) NoUserError();
 
     const topComics = await prisma.comic.findMany({
+      where: {
+        averageRating: {
+          not: null,
+        },
+      },
       orderBy: {
-        averageRating: "asc",
+        averageRating: "desc",
       },
       take: 5,
     });

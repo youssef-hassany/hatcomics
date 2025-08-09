@@ -61,6 +61,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (parseInt(rating) > 5 || parseInt(rating) < 1) {
+      return NextResponse.json(
+        {
+          status: "error",
+          message: "Rating must be between 1 star to 5 stars",
+        },
+        { status: 400 }
+      );
+    }
+
     const user = await prisma.user.findFirst({
       where: { id: userId },
     });
