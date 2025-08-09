@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { NoUserError } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -74,7 +75,23 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { userId } = await auth();
     const { id } = await params;
+
+    if (!userId) NoUserError();
+
+    const post = await prisma.post.findFirst({
+      where: {
+        id: id,
+      },
+    });
+
+    if (post?.userId !== userId) {
+      return NextResponse.json(
+        { status: "error", message: `Access denied` },
+        { status: 403 }
+      );
+    }
 
     await prisma.post.delete({
       where: {
@@ -100,7 +117,24 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { userId } = await auth();
     const { id } = await params;
+
+    if (!userId) NoUserError();
+
+    const post = await prisma.post.findFirst({
+      where: {
+        id: id,
+      },
+    });
+
+    if (post?.userId !== userId) {
+      return NextResponse.json(
+        { status: "error", message: `Access denied` },
+        { status: 403 }
+      );
+    }
+
     const { content, title, isDraft } = await request.json();
 
     const updatedPost = await prisma.post.update({
