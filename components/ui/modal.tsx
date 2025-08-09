@@ -15,7 +15,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   return createPortal(
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-200 ${
-        isOpen ? "visible bg-black/40" : "invisible bg-transparent"
+        isOpen ? "visible bg-black/80" : "invisible bg-transparent"
       }`}
       onClick={onClose}
     >

@@ -18,6 +18,7 @@ import { Modal } from "../ui/modal";
 import UpdateComicForm from "./UpdateComicForm";
 import { Button } from "../ui/button";
 import AddReadingLinkForm from "./AddReadingLinkForm";
+import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 
 interface ComicContentProps {
   initialComic: ComicPreview;
@@ -25,11 +26,17 @@ interface ComicContentProps {
 
 const ComicContent = ({ initialComic }: ComicContentProps) => {
   const { data: comic, isPending } = useGetComic(initialComic.id);
+  const { data: user } = useGetLoggedInUser();
 
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [isAddReadingLinkOpen, setIsAddReadingLinkOpen] = useState(false);
 
   const currentComic = comic || initialComic;
+  const isUserAccessible =
+    user?.role === "admin" ||
+    user?.role === "translator" ||
+    user?.role === "owner";
+  const isUserAdmin = user?.role === "admin" || user?.role === "owner";
 
   if (isPending && !initialComic) {
     return <ComicContentSkeleton />;
@@ -52,22 +59,26 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
               </div>
 
               <div className="flex items-center gap-4 my-3">
-                <Button
-                  variant="secondary"
-                  onClick={() => setIsUpdateOpen(true)}
-                  className="flex items-center gap-2"
-                >
-                  <Pencil size={16} />
-                  <span>Edit Comic</span>
-                </Button>
+                {isUserAdmin && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => setIsUpdateOpen(true)}
+                    className="flex items-center gap-2"
+                  >
+                    <Pencil size={16} />
+                    <span>Edit Comic</span>
+                  </Button>
+                )}
 
-                <Button
-                  onClick={() => setIsAddReadingLinkOpen(true)}
-                  className="flex items-center gap-2"
-                >
-                  <Plus size={16} />
-                  <span>Add Link</span>
-                </Button>
+                {isUserAccessible && (
+                  <Button
+                    onClick={() => setIsAddReadingLinkOpen(true)}
+                    className="flex items-center gap-2"
+                  >
+                    <Plus size={16} />
+                    <span>Add Link</span>
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -233,7 +244,7 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
         </div>
       </div>
 
-      {comic && (
+      {comic && isUserAdmin && (
         <Modal isOpen={isUpdateOpen} onClose={() => setIsUpdateOpen(false)}>
           <UpdateComicForm
             comic={comic}
@@ -243,7 +254,7 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
         </Modal>
       )}
 
-      {comic && (
+      {comic && isUserAccessible && (
         <Modal
           isOpen={isAddReadingLinkOpen}
           onClose={() => setIsAddReadingLinkOpen(false)}
