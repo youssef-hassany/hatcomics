@@ -39,6 +39,7 @@ export async function GET() {
           points: {
             gt: currentUser.points,
           },
+          NOT: [{ id: userId }, { role: "admin" }, { role: "owner" }],
         },
       });
 
