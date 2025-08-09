@@ -136,7 +136,18 @@ export async function DELETE(
     // Find the comment and check if user owns it
     const comment = await prisma.comment.findFirst({
       where: { id },
-      include: { user: true },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullname: true,
+            username: true,
+            photo: true,
+            points: true,
+            role: true,
+          },
+        },
+      },
     });
 
     if (!comment) {
@@ -204,7 +215,18 @@ export async function PUT(
     // Find the comment and check if user owns it
     const comment = await prisma.comment.findFirst({
       where: { id },
-      include: { user: true },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullname: true,
+            username: true,
+            photo: true,
+            points: true,
+            role: true,
+          },
+        },
+      },
     });
 
     if (!comment) {

@@ -23,7 +23,16 @@ export async function GET(request: NextRequest) {
       select: {
         id: true,
         title: true,
-        user: true,
+        user: {
+          select: {
+            id: true,
+            fullname: true,
+            username: true,
+            photo: true,
+            points: true,
+            role: true,
+          },
+        },
         likes: {
           where: { userId }, // Only get current user's like
           select: { userId: true },

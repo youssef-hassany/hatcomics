@@ -12,6 +12,14 @@ export async function GET() {
       orderBy: {
         points: "desc",
       },
+      select: {
+        id: true,
+        fullname: true,
+        username: true,
+        photo: true,
+        points: true,
+        role: true,
+      },
     });
 
     return NextResponse.json(

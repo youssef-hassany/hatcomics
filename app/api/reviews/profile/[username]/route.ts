@@ -27,7 +27,16 @@ export async function GET(
       },
       include: {
         comic: true,
-        user: true,
+        user: {
+          select: {
+            id: true,
+            fullname: true,
+            username: true,
+            photo: true,
+            points: true,
+            role: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",

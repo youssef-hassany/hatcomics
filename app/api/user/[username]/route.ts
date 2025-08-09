@@ -30,7 +30,6 @@ export async function GET(
         photo: true,
         points: true,
         role: true,
-        email: true,
         _count: {
           select: {
             followers: true, // Count of users following this user
@@ -115,6 +114,18 @@ export async function PATCH(
   try {
     const { username } = await params;
     const { newUsername, bio, fullName } = await request.json();
+
+    const usernameRegex = /^[a-zA-Z0-9._]{1,20}$/;
+
+    if (!usernameRegex.test(newUsername)) {
+      return NextResponse.json(
+        {
+          status: "error",
+          message: "Username must only contain letters, numbers, '.' and '_'",
+        },
+        { status: 400 }
+      );
+    }
 
     await prisma.user.update({
       where: {

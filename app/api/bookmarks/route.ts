@@ -21,7 +21,16 @@ export async function GET(request: NextRequest) {
           include: {
             _count: true,
             likes: true,
-            user: true,
+            user: {
+              select: {
+                id: true,
+                fullname: true,
+                username: true,
+                photo: true,
+                points: true,
+                role: true,
+              },
+            },
           },
         },
       },

@@ -17,7 +17,16 @@ export async function GET(
         id: true,
         userId: true,
         content: true,
-        user: true,
+        user: {
+          select: {
+            id: true,
+            fullname: true,
+            username: true,
+            photo: true,
+            points: true,
+            role: true,
+          },
+        },
         title: true,
         createdAt: true,
         isDraft: true,

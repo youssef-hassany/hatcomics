@@ -28,7 +28,16 @@ export async function GET(
       select: {
         id: true,
         title: true,
-        user: true,
+        user: {
+          select: {
+            id: true,
+            fullname: true,
+            username: true,
+            photo: true,
+            points: true,
+            role: true,
+          },
+        },
         likes: true,
         comments: true,
       },

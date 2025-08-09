@@ -22,7 +22,16 @@ export async function DELETE(
     const reviewToDelete = await prisma.review.findFirst({
       where: { id },
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            fullname: true,
+            username: true,
+            photo: true,
+            points: true,
+            role: true,
+          },
+        },
       },
     });
 

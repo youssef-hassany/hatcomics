@@ -57,6 +57,13 @@ const EditProfileModal = ({
       return;
     }
 
+    const usernameRegex = /^[a-zA-Z0-9._]{1,20}$/;
+
+    if (!usernameRegex.test(formFields.username)) {
+      toast.error("Username must only contain letters, numbers, '.' and '_'");
+      return;
+    }
+
     try {
       const body = {
         username: user.username,

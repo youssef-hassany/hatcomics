@@ -12,7 +12,16 @@ export async function GET(
       where: { comicId: id },
       include: {
         comic: true,
-        user: true,
+        user: {
+          select: {
+            id: true,
+            fullname: true,
+            username: true,
+            photo: true,
+            points: true,
+            role: true,
+          },
+        },
       },
     });
 
