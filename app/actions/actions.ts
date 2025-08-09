@@ -64,6 +64,10 @@ export async function createComic(data: CreateComicData) {
       throw new Error("User not found in database");
     }
 
+    if (user.role !== "admin" && user.role !== "owner") {
+      throw new Error("Access Denied");
+    }
+
     // Create the comic
     const comic = await prisma.comic.create({
       data: {
@@ -105,6 +109,24 @@ export async function createComic(data: CreateComicData) {
 // Alternative version with form data handling
 export async function createComicFromFormData(formData: FormData) {
   try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      throw new Error("Unauthorized: Please log in to add a comic");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { clerkId: userId },
+    });
+
+    if (!user) {
+      throw new Error("User not found in database");
+    }
+
+    if (user.role !== "admin" && user.role !== "owner") {
+      throw new Error("Access Denied");
+    }
+
     // Extract and parse form data
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
@@ -204,6 +226,10 @@ export async function updateComic(data: UpdateComicData) {
       throw new Error("User not found in database");
     }
 
+    if (user.role !== "admin" && user.role !== "owner") {
+      throw new Error("Access Denied");
+    }
+
     // Check if the comic exists
     const existingComic = await prisma.comic.findUnique({
       where: { id: data.id },
@@ -295,6 +321,24 @@ export async function updateComic(data: UpdateComicData) {
 // Alternative version with form data handling
 export async function updateComicFromFormData(formData: FormData) {
   try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      throw new Error("Unauthorized: Please log in to update a comic");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { clerkId: userId },
+    });
+
+    if (!user) {
+      throw new Error("User not found in database");
+    }
+
+    if (user.role !== "admin" && user.role !== "owner") {
+      throw new Error("Access Denied");
+    }
+
     // Extract and parse form data
     const id = formData.get("id") as string;
     const name = formData.get("name") as string;
