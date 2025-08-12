@@ -6,6 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import ComponentProtector from "../common/ComponentProtector";
+import { useGetComic } from "@/hooks/comics/useGetComic";
 
 interface ComicReviewFormProps {
   comicId: string;
@@ -18,6 +19,7 @@ const ComicReviewForm = ({ comicId }: ComicReviewFormProps) => {
   const [hasSpoilers, setHasSpoilers] = useState<boolean>(false);
 
   const { mutateAsync: createReview, isPending: isLoading } = useCreateReview();
+  const { data: comic } = useGetComic(comicId);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +62,10 @@ const ComicReviewForm = ({ comicId }: ComicReviewFormProps) => {
   };
 
   const displayRating = hoveredRating || rating;
+
+  if (comic?.isReviewed) {
+    return;
+  }
 
   return (
     <ComponentProtector>

@@ -58,7 +58,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, comicId, rating, description, spoiler } = await req.json();
+    const { userId } = await auth();
+    const { comicId, rating, description, spoiler } = await req.json();
 
     if (!userId || !rating || !comicId) {
       return NextResponse.json(
@@ -94,7 +95,7 @@ export async function POST(req: NextRequest) {
     const review = await prisma.review.create({
       data: {
         rating,
-        description,
+        description: description || "",
         spoiler: !!spoiler,
         userId,
         comicId,

@@ -14,4 +14,5 @@ export interface ComicPreview {
   createdAt: Date;
   updatedAt: Date;
   ongoing: boolean;
+  isReviewed: boolean;
 }
