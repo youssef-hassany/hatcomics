@@ -53,7 +53,7 @@ const DataDeletionPage: React.FC = () => {
               <h3 className="font-semibold text-zinc-100">Processing</h3>
             </div>
             <p className="text-zinc-400 text-sm">
-              We'll process your request within 30 days and send you a
+              We&apos;ll process your request within 30 days and send you a
               confirmation email.
             </p>
           </div>
