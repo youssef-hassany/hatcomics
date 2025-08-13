@@ -19,6 +19,10 @@
   }
 }
 
+@utility no-scrollbar {
+  @apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -228,4 +232,155 @@ h3.heading-3 {
 /* Handle placeholder text direction */
 .rich-text-editor .ProseMirror-widget::before {
   unicode-bidi: plaintext;
+}
+
+/* Modern Scrollbar Utility Classes */
+.scrollbar-modern {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgb(63 63 70) rgb(24 24 27);
+}
+
+.scrollbar-modern::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-modern::-webkit-scrollbar-track {
+  background: rgb(24 24 27); /* zinc-900 */
+  border-radius: 4px;
+}
+
+.scrollbar-modern::-webkit-scrollbar-thumb {
+  background: rgb(63 63 70); /* zinc-500 */
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.scrollbar-modern::-webkit-scrollbar-thumb:hover {
+  background: rgb(82 82 91); /* zinc-400 */
+}
+
+.scrollbar-modern::-webkit-scrollbar-corner {
+  background: rgb(24 24 27);
+}
+
+/* Thin variant */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(63 63 70) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgb(63 63 70);
+  border-radius: 2px;
+  transition: background-color 0.2s ease;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgb(82 82 91);
+}
+
+/* Orange accent variant */
+.scrollbar-orange {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(251 146 60) rgb(24 24 27); /* orange-400 */
+}
+
+.scrollbar-orange::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-orange::-webkit-scrollbar-track {
+  background: rgb(24 24 27);
+  border-radius: 4px;
+}
+
+.scrollbar-orange::-webkit-scrollbar-thumb {
+  background: rgb(251 146 60); /* orange-400 */
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.scrollbar-orange::-webkit-scrollbar-thumb:hover {
+  background: rgb(255 159 67); /* lighter orange */
+}
+
+.scrollbar-orange::-webkit-scrollbar-corner {
+  background: rgb(24 24 27);
+}
+
+/* Hidden scrollbar but still scrollable */
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* Overlay style (appears only on hover) */
+.scrollbar-overlay {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
+}
+
+.scrollbar-overlay:hover {
+  scrollbar-color: rgb(63 63 70) rgb(24 24 27);
+}
+
+.scrollbar-overlay::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-overlay::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.scrollbar-overlay::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.scrollbar-overlay:hover::-webkit-scrollbar-track {
+  background: rgb(24 24 27);
+}
+
+.scrollbar-overlay:hover::-webkit-scrollbar-thumb {
+  background: rgb(63 63 70);
+}
+
+.scrollbar-overlay:hover::-webkit-scrollbar-thumb:hover {
+  background: rgb(82 82 91);
+}
+
+/* Custom width variants */
+.scrollbar-w-2::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-w-3::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.scrollbar-w-4::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
 }

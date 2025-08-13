@@ -6,6 +6,7 @@ import { Comic } from "@prisma/client"; // Assuming you have this type
 // Define the response type
 type ComicWithReviewStatus = Comic & {
   isReviewed?: boolean;
+  isInReadlist?: boolean;
 };
 
 export async function GET(
@@ -28,6 +29,7 @@ export async function GET(
     }
 
     let comicWithReviewStatus: ComicWithReviewStatus = comic;
+    let isInReadlist = false;
 
     // Only check for review if user is authenticated
     if (userId) {
@@ -38,9 +40,19 @@ export async function GET(
         },
       });
 
+      const comicInReadList = await prisma.readlist.findFirst({
+        where: {
+          userId: userId,
+          comicId: id,
+        },
+      });
+
+      isInReadlist = !!comicInReadList;
+
       comicWithReviewStatus = {
         ...comic,
         isReviewed: !!review,
+        isInReadlist,
       };
     }
 

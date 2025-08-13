@@ -19,6 +19,7 @@ import UpdateComicForm from "./UpdateComicForm";
 import { Button } from "../ui/button";
 import AddReadingLinkForm from "./AddReadingLinkForm";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
+import { ReadlistToggleButton } from "./ReadlistToggleButton";
 
 interface ComicContentProps {
   initialComic: ComicPreview;
@@ -78,6 +79,14 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                     <Plus size={16} />
                     <span>Add Link</span>
                   </Button>
+                )}
+
+                {comic && user && (
+                  <ReadlistToggleButton
+                    comicId={comic?.id}
+                    userId={user?.id}
+                    isInReadlist={comic.isInReadlist}
+                  />
                 )}
               </div>
             </div>

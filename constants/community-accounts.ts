@@ -10,7 +10,7 @@ export const communityAccounts = [
     avatar:
       "https://pbs.twimg.com/profile_images/1915474482833092609/n81tX3h4_400x400.jpg",
     verified: true,
-    url: "https://x.com/iREUS_SA",
+    link: "https://x.com/iREUS_SA",
   },
   {
     id: 2,
@@ -33,21 +33,20 @@ export const communityAccounts = [
     platform: "X",
     followers: "2K+",
     avatar:
-      "https://pbs.twimg.com/profile_images/1933838351959818240/riVG8yqJ_400x400.jpg",
+      "https://pbs.twimg.com/profile_images/1951121736939786241/NKHPwvnE_400x400.jpg",
     link: "https://x.com/Qusaiwahidthani",
     verified: false,
   },
   {
     id: 4,
-    name: "Pixel Perfect Store",
-    type: "store",
-    description:
-      "Gaming merchandise and custom artwork for your favorite games",
-    platform: "Shop",
-    followers: "15K",
+    name: "رايد",
+    type: "social_media",
+    description: "حساب متخصص في الحديث و نقل أخبار عالم مارفل و السوبرهيروز",
+    platform: "X",
+    followers: "1K+",
     avatar:
-      "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=150&h=150&fit=crop&crop=center",
-    link: "https://pixelperfectstore.com",
+      "https://pbs.twimg.com/profile_images/1390364020448845833/134LaFlR_400x400.jpg",
+    link: "https://x.com/iRa2xi",
     verified: true,
   },
   {
@@ -60,7 +59,7 @@ export const communityAccounts = [
     followers: "45K",
     avatar:
       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-    link: "https://twitch.tv/sarahkim",
+    link: "https://x.com/iRa2xi",
     verified: true,
   },
   {

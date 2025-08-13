@@ -19,6 +19,7 @@ import {
   Newspaper,
   User,
   Trophy,
+  Library,
 } from "lucide-react";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { usePathname } from "next/navigation";
@@ -71,11 +72,12 @@ export default function Sidebar() {
         />
       ),
     },
+
     {
-      title: "Community",
-      url: "/community",
+      title: "Readlist",
+      url: `/readlist/${user?.id}`,
       icon: (
-        <Users
+        <Library
           size={20}
           className="group-hover:text-orange-500 transition-colors"
         />
@@ -86,6 +88,16 @@ export default function Sidebar() {
       url: `/profile/${user?.username}`,
       icon: (
         <User
+          size={20}
+          className="group-hover:text-orange-500 transition-colors"
+        />
+      ),
+    },
+    {
+      title: "Community",
+      url: "/community",
+      icon: (
+        <Users
           size={20}
           className="group-hover:text-orange-500 transition-colors"
         />
@@ -212,7 +224,7 @@ export default function Sidebar() {
 
         {/* Sidebar */}
         <aside
-          className={`fixed left-0 top-0 h-full w-64 bg-zinc-900 border-r border-zinc-700 z-50 transform transition-transform duration-200 ease-in-out ${
+          className={`fixed left-0 top-0 h-full w-64 bg-zinc-900 border-r border-zinc-700 z-50 transform transition-transform duration-200 ease-in-out overflow-y-scroll no-scrollbar ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           } md:translate-x-0`}
         >

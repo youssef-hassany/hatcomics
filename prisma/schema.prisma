@@ -30,6 +30,7 @@ model User {
   likes       Like[]
   posts       Post[]
   reviews     Review[]
+  readlist    Readlist[]
 }
 
 model Post {
@@ -101,6 +102,7 @@ model Comic {
   description        String?
   ongoing            Boolean  @default(false)
   reviews            Review[]
+  readlist           Readlist[]
 
   @@index([publisher])
   @@index([isBeginnerFriendly])
@@ -125,14 +127,26 @@ model Review {
 }
 
 model Bookmark {
-  id        String   @id @default(cuid())
-  postId    String
-  userId    String
-  createdAt DateTime @default(now())
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String      @id @default(cuid())
+  postId        String
+  userId        String
+  createdAt     DateTime    @default(now())
+  post          Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([postId, userId])
+}
+
+model Readlist {
+  id          String      @id @default(cuid())
+  userId      String
+  comicId     String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  comic       Comic       @relation(fields: [comicId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, comicId])
 }
 
 enum Role {
