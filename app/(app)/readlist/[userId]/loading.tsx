@@ -9,11 +9,10 @@ const ReadlistPageLoading = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <Book className="w-8 h-8 text-orange-400" />
-            <h1 className="text-4xl font-bold">Comics</h1>
+            <h1 className="text-4xl font-bold">ReadList</h1>
           </div>
           <p className="text-zinc-200 text-lg max-w-2xl mb-6">
-            Browse through all the comics that have been added to our collection
-            by our community.
+            Browse through all the comics that have been added to your readlist.
           </p>
         </div>
       </div>

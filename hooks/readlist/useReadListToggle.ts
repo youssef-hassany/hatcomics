@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface ReadlistToggleArgs {
   userId: string;
@@ -34,8 +34,11 @@ const toggleReadlist = async ({
 };
 
 export const useReadlistToggle = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
-    mutationKey: ["readlist-toggle"],
+    mutationKey: ["readlist"],
     mutationFn: toggleReadlist,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["readlist"] }),
   });
 };

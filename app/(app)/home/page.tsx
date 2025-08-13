@@ -82,7 +82,7 @@ const HomePage = () => {
               ))}
             </div>
           ) : (
-            <div className="flex gap-4 overflow-x-auto pb-4">
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-modern">
               {topComics?.map((comic) => (
                 <div key={comic.id} className="flex-shrink-0 w-56">
                   <ComicCard comic={comic} />

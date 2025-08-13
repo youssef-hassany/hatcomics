@@ -194,7 +194,7 @@ const ProfilePage = () => {
         </div>
 
         {/* Bottom Navigation Buttons */}
-        <ProfileContent username={username as string} />
+        <ProfileContent username={username as string} userProfileData={user} />
       </div>
 
       <FollowersListModal />

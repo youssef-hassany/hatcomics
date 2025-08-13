@@ -5,17 +5,20 @@ import { useGetReviewsByUsername } from "@/hooks/reviews/useGetReviewsByUsername
 import React, { useState } from "react";
 import PostCard from "../posts/PostCard";
 import ComicReview from "../reviews/ComicReview";
-import { Bookmark, Newspaper, Star } from "lucide-react";
+import { Bookmark, Library, Newspaper, Star } from "lucide-react";
 import ComicReviewSkeleton from "../reviews/ComicReviewSkeleton";
 import PostCardSkeleton from "../posts/PostCardSkeleton";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import BookmarksList from "./BookmarksList";
+import UserReadList from "./UserReadList";
+import { User } from "@/types/User";
 
 interface Props {
   username: string;
+  userProfileData: User;
 }
 
-const ProfileContent = ({ username }: Props) => {
+const ProfileContent = ({ username, userProfileData }: Props) => {
   const { data: user } = useGetLoggedInUser();
 
   const { data: posts, isPending: isPostsLoading } =
@@ -23,9 +26,9 @@ const ProfileContent = ({ username }: Props) => {
   const { data: reviews, isPending: isReviewsLoading } =
     useGetReviewsByUsername(username);
 
-  const [content, setContent] = useState<"posts" | "reviews" | "bookmarks">(
-    "reviews"
-  );
+  const [content, setContent] = useState<
+    "posts" | "reviews" | "bookmarks" | "readlist"
+  >("reviews");
 
   return (
     <div className="bg-zinc-800 rounded-xl p-6 border border-zinc-700">
@@ -59,6 +62,18 @@ const ProfileContent = ({ username }: Props) => {
           >
             <Bookmark />
             <span className="hidden md:inline">Bookmarks</span>
+          </button>
+        )}
+
+        {userProfileData && (
+          <button
+            onClick={() => setContent("readlist")}
+            className={`flex items-center gap-1 hover:bg-orange-600/10 text-white p-3 ${
+              content === "readlist" ? "border-b-2 border-orange-600" : ""
+            } rounded-lg transition-colors font-medium cursor-pointer`}
+          >
+            <Library />
+            <span className="hidden md:inline">Readlist</span>
           </button>
         )}
       </div>
@@ -103,6 +118,8 @@ const ProfileContent = ({ username }: Props) => {
       {content === "bookmarks" && user?.username === username && (
         <BookmarksList />
       )}
+
+      {content === "readlist" && <UserReadList userId={user?.id as string} />}
     </div>
   );
 };
