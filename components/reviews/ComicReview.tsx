@@ -3,6 +3,7 @@
 import { Star, Eye, EyeOff, Calendar, Book } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import ReviewActions from "./ReviewActions";
 import Avatar from "../ui/avatar";
 
@@ -31,6 +32,7 @@ interface ComicReviewProps {
   updatedAt?: string;
   isOwner?: boolean;
   onDeleteSuccess?: () => void;
+  showFullContent?: boolean; // New prop to control content display
 }
 
 const ComicReview = ({
@@ -43,9 +45,11 @@ const ComicReview = ({
   createdAt,
   isOwner = false,
   onDeleteSuccess,
+  showFullContent = false, // Default to false for list view
 }: ComicReviewProps) => {
   const [showSpoilers, setShowSpoilers] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const router = useRouter();
 
   const toggleSpoilers = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -59,10 +63,42 @@ const ComicReview = ({
     setIsExpanded(!isExpanded);
   };
 
-  // Check if content is long enough to need truncation
-  const isLongContent = content && content.length > 300;
-  const displayContent =
-    isLongContent && !isExpanded ? `${content.slice(0, 300)}...` : content;
+  const handleReviewClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking on interactive elements
+    const target = e.target as HTMLElement;
+    if (
+      target.closest("button") ||
+      target.closest("a") ||
+      target.closest('[role="button"]')
+    ) {
+      return;
+    }
+
+    // Only navigate if not showing full content (i.e., in list view)
+    if (!showFullContent) {
+      router.push(`/reviews/${id}`);
+    }
+  };
+
+  // Determine content display based on context
+  const getDisplayContent = () => {
+    if (!content) return "";
+
+    if (showFullContent) {
+      // Full content view - show everything with expand/collapse for very long content
+      const isVeryLongContent = content.length > 800;
+      return isVeryLongContent && !isExpanded
+        ? `${content.slice(0, 800)}...`
+        : content;
+    } else {
+      // List view - show only first 100 characters
+      return content.length > 100 ? `${content.slice(0, 100)}...` : content;
+    }
+  };
+
+  const displayContent = getDisplayContent();
+  const isVeryLongContent = showFullContent && content && content.length > 800;
+  const shouldShowExpandButton = showFullContent && isVeryLongContent;
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat("en-US", {
@@ -73,7 +109,12 @@ const ComicReview = ({
   };
 
   return (
-    <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-6 transition-all duration-200 hover:border-zinc-700">
+    <div
+      className={`bg-zinc-800 rounded-xl border border-zinc-700 p-6 transition-all duration-200 hover:border-zinc-600 ${
+        !showFullContent ? "cursor-pointer hover:bg-zinc-750" : ""
+      }`}
+      onClick={handleReviewClick}
+    >
       {/* Comic Info Section - Clickable */}
       <Link href={`/comics/${comic.id}`} className="block">
         <div className="flex items-center gap-3 mb-4 pb-4 border-b border-zinc-700 hover:bg-zinc-750 transition-colors duration-200 rounded-lg p-2 -m-2">
@@ -202,8 +243,8 @@ const ComicReview = ({
                 <p className="whitespace-pre-wrap">{displayContent}</p>
               </div>
 
-              {/* Expand/Collapse for long content */}
-              {isLongContent && (
+              {/* Expand/Collapse for very long content in full view */}
+              {shouldShowExpandButton && (
                 <button
                   onClick={toggleExpanded}
                   className="mt-2 text-sm text-orange-400 hover:text-orange-300 font-medium"
@@ -211,8 +252,29 @@ const ComicReview = ({
                   {isExpanded ? "Show less" : "Show more"}
                 </button>
               )}
+
+              {/* Read More button for list view */}
+              {!showFullContent && content.length > 100 && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    router.push(`/reviews/${id}`);
+                  }}
+                  className="mt-2 text-sm text-orange-400 hover:text-orange-300 font-medium"
+                >
+                  Read full review
+                </button>
+              )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Click hint for list view */}
+      {!showFullContent && (
+        <div className="text-xs text-zinc-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          Click to view full review
         </div>
       )}
     </div>

@@ -27,6 +27,7 @@ export default clerkMiddleware(async (auth, req) => {
   // Check if it's a specific post or comic (public)
   const isSpecificPost = /^\/posts\/[^\/]+$/.test(pathname);
   const isSpecificComic = /^\/comics\/[^\/]+$/.test(pathname);
+  const isSpecificReview = /^\/reviews\/[^\/]+$/.test(pathname);
 
   // Check if the current path is a protected route
   const isProtectedRoute = protectedRoutes.some((route) => {
@@ -39,7 +40,13 @@ export default clerkMiddleware(async (auth, req) => {
 
   // If user is not logged in and trying to access a protected route
   // BUT allow specific posts and comics even without login
-  if (!userId && isProtectedRoute && !isSpecificPost && !isSpecificComic) {
+  if (
+    !userId &&
+    isProtectedRoute &&
+    !isSpecificPost &&
+    !isSpecificComic &&
+    !isSpecificReview
+  ) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
