@@ -12,6 +12,7 @@ import { useState } from "react";
 import Avatar from "../ui/avatar";
 import PostLikeHandler from "./PostLikeHandler";
 import BookmarkHandler from "./BookmarkHandler";
+import ComponentProtector from "../common/ComponentProtector";
 
 interface PostContentProps {
   initialPost: Post;
@@ -69,11 +70,15 @@ const PostContent = ({ initialPost }: PostContentProps) => {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <PostActions
-                postId={post?.id || ""}
-                onEdit={() => setIsEditing(true)}
-                isOwner={isOwner}
-              />
+              {post && (
+                <ComponentProtector>
+                  <PostActions
+                    postId={post?.id || ""}
+                    onEdit={() => setIsEditing(true)}
+                    isOwner={isOwner}
+                  />
+                </ComponentProtector>
+              )}
             </div>
           </div>
         </div>

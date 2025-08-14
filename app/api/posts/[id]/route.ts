@@ -31,14 +31,17 @@ export async function GET(
         title: true,
         createdAt: true,
         isDraft: true,
-        likes: {
-          where: { userId: userId! }, // Only get current user's like
-          select: { userId: true },
-        },
-        bookmarks: {
-          where: { userId: userId! }, // Only get current user's bookmark
-          select: { userId: true },
-        },
+        // Only include likes/bookmarks filter if user is logged in
+        ...(userId && {
+          likes: {
+            where: { userId },
+            select: { userId: true },
+          },
+          bookmarks: {
+            where: { userId },
+            select: { userId: true },
+          },
+        }),
         _count: {
           select: {
             bookmarks: true,
@@ -52,8 +55,9 @@ export async function GET(
     const post = data
       ? {
           ...data,
-          isLikedByCurrentUser: data.likes.length > 0,
-          isBookmarked: data.bookmarks.length > 0,
+          // Only check if logged in user has liked/bookmarked
+          isLikedByCurrentUser: userId ? (data.likes?.length || 0) > 0 : false,
+          isBookmarked: userId ? (data.bookmarks?.length || 0) > 0 : false,
         }
       : data;
 

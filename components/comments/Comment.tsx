@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import Avatar from "../ui/avatar";
+import ComponentProtector from "../common/ComponentProtector";
 
 interface CommentProps {
   comment: CommentType;
@@ -219,19 +220,21 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-6 pt-2">
-            <button
-              onClick={handleLike}
-              className={`flex items-center gap-2 text-sm transition-colors ${
-                isLiked
-                  ? "text-orange-500 hover:text-orange-400"
-                  : "text-zinc-500 hover:text-zinc-400"
-              } `}
-            >
-              <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
-              <span>{optimisticLikeCount}</span>
-            </button>
-          </div>
+          <ComponentProtector>
+            <div className="flex items-center gap-6 pt-2">
+              <button
+                onClick={handleLike}
+                className={`flex items-center gap-2 text-sm transition-colors ${
+                  isLiked
+                    ? "text-orange-500 hover:text-orange-400"
+                    : "text-zinc-500 hover:text-zinc-400"
+                } `}
+              >
+                <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
+                <span>{optimisticLikeCount}</span>
+              </button>
+            </div>
+          </ComponentProtector>
         </div>
       </div>
     </div>
