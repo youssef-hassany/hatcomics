@@ -239,8 +239,10 @@ const ComicReview = ({
                 </div>
               )}
 
-              <div className="prose prose-sm prose-invert max-w-none prose-p:text-zinc-300 prose-p:leading-relaxed">
-                <p className="whitespace-pre-wrap">{displayContent}</p>
+              <div className="prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none prose-zinc rich-text-editor">
+                <p className="whitespace-pre-wrap text-white">
+                  {displayContent}
+                </p>
               </div>
 
               {/* Expand/Collapse for very long content in full view */}
