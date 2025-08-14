@@ -38,8 +38,21 @@ export async function GET(
             role: true,
           },
         },
-        likes: true,
-        comments: true,
+        likes: {
+          where: { userId: userId! }, // Only get current user's like
+          select: { userId: true },
+        },
+        bookmarks: {
+          where: { userId: userId! }, // Only get current user's bookmark
+          select: { userId: true },
+        },
+        _count: {
+          select: {
+            bookmarks: true,
+            likes: true,
+            comments: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
