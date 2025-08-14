@@ -34,21 +34,21 @@ const PostContent = ({ initialPost }: PostContentProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-800">
+    <div className="min-h-screen bg-zinc-900">
       {/* Header Section */}
-      <div className="bg-zinc-900 border-b border-zinc-800 shadow-sm">
+      <div className="bg-zinc-800 border-b border-zinc-700 shadow-sm">
         <div className="max-w-4xl mx-auto px-6 py-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               <Avatar
                 url={post?.user?.photo || "/placeholder-avatar.png"}
-                className="w-20 h-20"
+                className="w-16 h-16"
                 username={post?.user?.username || "username"}
-                height={80}
-                width={80}
+                height={64}
+                width={64}
               />
               <div>
-                <h1 className="text-3xl font-bold text-zinc-100 mb-2">
+                <h1 className="text-2xl font-bold text-zinc-100 mb-2">
                   {post?.title}
                 </h1>
                 <div className="flex items-center gap-4 text-sm text-zinc-400">
@@ -79,30 +79,17 @@ const PostContent = ({ initialPost }: PostContentProps) => {
         </div>
       </div>
 
-      {/* Content Section */}
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <article className="bg-zinc-900 rounded-2xl shadow-xl border border-zinc-800 overflow-hidden mb-8">
-          <div className="p-8 lg:p-12">
+      {/* Content Section - Styled like the Rich Text Editor */}
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        <article className="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-300 dark:border-zinc-600 overflow-hidden mb-8">
+          <div className="p-3">
             <div
-              className="prose prose-lg prose-invert max-w-none
-                prose-headings:text-zinc-100 prose-headings:font-bold
-                prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-0
-                prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-8
-                prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-6
-                prose-p:text-zinc-300 prose-p:leading-relaxed prose-p:mb-6
-                prose-a:text-orange-400 prose-a:no-underline hover:prose-a:text-orange-300 hover:prose-a:underline
-                prose-strong:text-zinc-100 prose-strong:font-semibold
-                prose-code:bg-zinc-800 prose-code:text-orange-300 prose-code:px-2 prose-code:py-1 prose-code:rounded
-                prose-pre:bg-zinc-950 prose-pre:text-zinc-100 prose-pre:border prose-pre:border-zinc-800
-                prose-blockquote:border-l-4 prose-blockquote:border-orange-500 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-zinc-400
-                prose-ul:mb-6 prose-ol:mb-6
-                prose-li:mb-2 prose-li:text-zinc-300
-                prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8 prose-img:border prose-img:border-zinc-800"
+              className="prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[120px] prose-zinc rich-text-editor"
               dangerouslySetInnerHTML={{ __html: post?.content || "" }}
             />
           </div>
 
-          <div className="flex items-center gap-4 border-t border-zinc-700 p-4">
+          <div className="flex items-center gap-4 border-t border-zinc-300 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700 p-4">
             {/* @ts-expect-error: this is completely fine */}
             <PostLikeHandler post={post} />
 
