@@ -1,5 +1,6 @@
 "use client";
 
+import ComponentProtector from "@/components/common/ComponentProtector";
 import ComicReview from "@/components/reviews/ComicReview";
 import ComicReviewSkeleton from "@/components/reviews/ComicReviewSkeleton";
 import { useGetReview } from "@/hooks/reviews/useGetReview";
@@ -44,13 +45,15 @@ const ReviewPage = () => {
         <div className="max-w-2xl mx-auto">
           {/* Back Button */}
           <div className="mb-8">
-            <Link
-              href="/reviews"
-              className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors duration-200"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Reviews
-            </Link>
+            <ComponentProtector>
+              <Link
+                href="/reviews"
+                className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors duration-200"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Reviews
+              </Link>
+            </ComponentProtector>
           </div>
 
           {/* Error State */}
