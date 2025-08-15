@@ -52,7 +52,7 @@ const ComicLandingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-900 text-zinc-100">
+    <div className="min-h-screen bg-zinc-900 text-zinc-100 overflow-x-hidden">
       {/* Hero Section */}
       <section className="px-6 py-20">
         <div className="max-w-7xl mx-auto">
@@ -285,18 +285,29 @@ const ComicLandingPage = () => {
               />
             </div>
             <div className="flex space-x-6 text-zinc-400">
-              <a href="#" className="hover:text-zinc-100 transition-colors">
+              <Link
+                href="/about?view=privacy"
+                className="hover:text-zinc-100 transition-colors"
+              >
                 Privacy
-              </a>
-              <a href="#" className="hover:text-zinc-100 transition-colors">
+              </Link>
+
+              <Link
+                href="/about?view=terms"
+                className="hover:text-zinc-100 transition-colors"
+              >
                 Terms
-              </a>
-              <a href="#" className="hover:text-zinc-100 transition-colors">
+              </Link>
+
+              <a
+                href="mailto:hatcomicsorg@gmail.com"
+                className="hover:text-zinc-100 transition-colors"
+              >
                 Contact
               </a>
-              <a href="#" className="hover:text-zinc-100 transition-colors">
+              {/* <a href="#" className="hover:text-zinc-100 transition-colors">
                 Support
-              </a>
+              </a> */}
             </div>
           </div>
           <div className="text-center text-zinc-500 mt-8">

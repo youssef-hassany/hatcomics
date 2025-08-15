@@ -47,10 +47,10 @@ const NotAuthorized = () => {
           <p className="text-zinc-500 text-sm">
             Need help? Contact support at{" "}
             <a
-              href="mailto:support@yourapp.com"
+              href="mailto:hatcomicsorg@gmail.com"
               className="text-orange-400 hover:text-orange-300 transition-colors"
             >
-              support@yourapp.com
+              hatcomicsorg@gmail.com
             </a>
           </p>
         </div>
