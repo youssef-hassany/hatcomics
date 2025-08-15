@@ -102,7 +102,7 @@ const EditProfileModal = ({
               name="username"
               value={formFields.username}
               onChange={handleChange}
-              className={`w-full px-3 py-2 border rounded-lg ${
+              className={`w-full text-white px-3 py-2 border rounded-lg ${
                 showUsernameError
                   ? "border-red-500 focus:ring-red-500 focus:border-red-500"
                   : showUsernameSuccess
@@ -154,7 +154,7 @@ const EditProfileModal = ({
             name="fullName"
             value={formFields.fullName}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            className="w-full text-white px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
             required
           />
         </div>
@@ -167,7 +167,7 @@ const EditProfileModal = ({
             name="bio"
             value={formFields.bio}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            className="w-full text-white px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
             required
           />
         </div>

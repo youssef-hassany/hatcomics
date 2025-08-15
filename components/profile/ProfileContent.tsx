@@ -12,6 +12,7 @@ import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import BookmarksList from "./BookmarksList";
 import UserReadList from "./UserReadList";
 import { User } from "@/types/User";
+import { useGetUserByUsername } from "@/hooks/user/useGetUserByUsername";
 
 interface Props {
   username: string;
@@ -20,6 +21,7 @@ interface Props {
 
 const ProfileContent = ({ username, userProfileData }: Props) => {
   const { data: user } = useGetLoggedInUser();
+  const { data: userInProfile } = useGetUserByUsername(username);
 
   const { data: posts, isPending: isPostsLoading } =
     useGetPostsByUsername(username);
@@ -119,7 +121,9 @@ const ProfileContent = ({ username, userProfileData }: Props) => {
         <BookmarksList />
       )}
 
-      {content === "readlist" && <UserReadList userId={user?.id as string} />}
+      {content === "readlist" && userInProfile && (
+        <UserReadList userId={userInProfile.id} />
+      )}
     </div>
   );
 };

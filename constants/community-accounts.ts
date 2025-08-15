@@ -35,7 +35,7 @@ export const communityAccounts = [
     avatar:
       "https://pbs.twimg.com/profile_images/1951121736939786241/NKHPwvnE_400x400.jpg",
     link: "https://x.com/Qusaiwahidthani",
-    verified: false,
+    verified: true,
   },
   {
     id: 4,
@@ -51,28 +51,27 @@ export const communityAccounts = [
   },
   {
     id: 5,
-    name: "Sarah Kim",
-    type: "content_creator",
-    description:
-      "Streamer and video creator covering RPGs and story-driven games",
-    platform: "Twitch",
-    followers: "45K",
+    name: "Marauders",
+    type: "translator",
+    description: "فريق وحد شغفه في ترجمة الكوميكس",
+    platform: "X",
+    followers: "150+",
     avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-    link: "https://x.com/iRa2xi",
+      "https://pbs.twimg.com/profile_images/1952894265878593536/v4jw2JF__400x400.jpg",
+    link: "https://x.com/Marauders3_0",
     verified: true,
   },
   {
     id: 6,
-    name: "JP Translation Team",
+    name: "COMICVERSE",
     type: "translator",
     description:
-      "Japanese-English translation group for games and anime content",
-    platform: "Community",
-    followers: "8.9K",
+      "فريق COMICVERSE لترجمة كوميكس مارفل نسعى لنشر ثقافة الكوميكس في الوطن العربي",
+    platform: "X",
+    followers: "1K+",
     avatar:
-      "https://images.unsplash.com/photo-1553028826-f4804151e0b2?w=150&h=150&fit=crop&crop=center",
-    link: "https://jptranslation.com",
+      "https://pbs.twimg.com/profile_images/1762276322343071745/UcOATLhe_400x400.jpg",
+    link: "https://x.com/COMICVERSE_AR",
     verified: true,
   },
 ];

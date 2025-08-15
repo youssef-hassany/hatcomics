@@ -24,7 +24,7 @@ const UserReadList = ({ userId }: Props) => {
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
-              className="bg-zinc-800 rounded-xl h-96 animate-pulse border border-zinc-700"
+              className="w-44 bg-zinc-800 rounded-xl h-96 animate-pulse border border-zinc-700"
             />
           ))}
         </div>
