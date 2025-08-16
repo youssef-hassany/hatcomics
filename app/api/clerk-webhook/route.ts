@@ -32,32 +32,43 @@ function generateUsername(
   clerkUsername: string | null,
   email: string
 ): string {
+  let username = "";
+
   // Try Clerk username first (often from social providers)
   if (clerkUsername && clerkUsername.trim() !== "") {
-    return clerkUsername.toLowerCase().replace(/[^a-z0-9]/g, "");
+    username = clerkUsername.toLowerCase().replace(/[^a-z0-9]/g, "");
   }
 
-  // Try to create username from first and last name
-  if (firstName && lastName) {
-    return `${firstName.toLowerCase()}${lastName.toLowerCase()}`.replace(
+  // Try to create username from first and last name if Clerk username didn't work
+  if (!username && firstName && lastName) {
+    username = `${firstName.toLowerCase()}${lastName.toLowerCase()}`.replace(
       /[^a-z0-9]/g,
       ""
     );
   }
 
   // If only first name available
-  if (firstName) {
-    return firstName.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (!username && firstName) {
+    username = firstName.toLowerCase().replace(/[^a-z0-9]/g, "");
   }
 
   // If only last name available
-  if (lastName) {
-    return lastName.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (!username && lastName) {
+    username = lastName.toLowerCase().replace(/[^a-z0-9]/g, "");
   }
 
-  // Fallback to email prefix
-  const emailPrefix = email.split("@")[0];
-  return emailPrefix.toLowerCase().replace(/[^a-z0-9]/g, "");
+  // Try email prefix if names didn't work
+  if (!username) {
+    const emailPrefix = email.split("@")[0];
+    username = emailPrefix.toLowerCase().replace(/[^a-z0-9]/g, "");
+  }
+
+  // Fallback to user + timestamp if everything else resulted in empty string
+  if (!username || username.trim() === "") {
+    username = `user${Date.now()}`;
+  }
+
+  return username;
 }
 
 // Helper function to ensure username uniqueness
