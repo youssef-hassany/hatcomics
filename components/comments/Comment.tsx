@@ -202,8 +202,10 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
             </div>
           ) : (
             <>
-              <div className="text-zinc-300 leading-relaxed">
-                {comment.content}
+              <div className="prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none prose-zinc rich-text-editor">
+                <p className="whitespace-pre-wrap text-white">
+                  {comment.content}
+                </p>
               </div>
 
               {/* Attachment */}
