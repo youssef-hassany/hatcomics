@@ -244,8 +244,18 @@ export async function POST(req: Request) {
       }
 
       try {
-        // Create full name, handling null values
-        const fullName =
+        // Get the current user from database first
+        const existingUser = await prisma.user.findUnique({
+          where: { clerkId: id },
+        });
+
+        if (!existingUser) {
+          console.error("❌ User not found in database for update:", id);
+          return new NextResponse("User not found", { status: 404 });
+        }
+
+        // Create full name from Clerk data
+        const clerkFullName =
           [first_name, last_name]
             .filter((name) => name && name.trim() !== "")
             .join(" ") || "Comic Fan";
@@ -253,14 +263,32 @@ export async function POST(req: Request) {
         // Get profile photo from social auth providers
         const photoUrl = image_url || profile_image_url || null;
 
+        // Prepare update data - only include fullname if it actually changed in Clerk
+        // or if the user never had a custom fullname (still has the default generated one)
+        const updateData: any = {
+          email,
+          photo: photoUrl,
+        };
+
+        // Only update fullname if:
+        // 1. The user's current fullname matches what would be generated from Clerk names
+        // 2. OR the user has the default "Comic Fan" fallback
+        // This preserves any custom fullname the user set in your app
+        const currentGeneratedName = [first_name, last_name]
+          .filter((name) => name && name.trim() !== "")
+          .join(" ");
+
+        if (
+          existingUser.fullname === "Comic Fan" ||
+          (currentGeneratedName &&
+            existingUser.fullname === currentGeneratedName)
+        ) {
+          updateData.fullname = clerkFullName;
+        }
+
         const updatedUser = await prisma.user.update({
           where: { clerkId: id },
-          data: {
-            email,
-            fullname: fullName,
-            photo: photoUrl,
-            // Don't update username to avoid breaking references
-          },
+          data: updateData,
         });
 
         console.log("✅ User updated successfully:", updatedUser);
