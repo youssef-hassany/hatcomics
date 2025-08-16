@@ -14,9 +14,14 @@ export async function GET() {
           not: null,
         },
       },
-      orderBy: {
-        averageRating: "desc",
-      },
+      orderBy: [
+        {
+          averageRating: "desc",
+        },
+        {
+          totalReviews: "desc",
+        },
+      ],
       take: 5,
     });
 
