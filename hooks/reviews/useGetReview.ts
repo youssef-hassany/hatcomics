@@ -1,7 +1,7 @@
 import { Review } from "@/types/Review";
 import { useQuery } from "@tanstack/react-query";
 
-const getReview = async (reviewId: string) => {
+export const getReview = async (reviewId: string) => {
   try {
     const response = await fetch(`/api/reviews/${reviewId}`);
     const data = await response.json();

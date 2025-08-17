@@ -1,121 +1,175 @@
-"use client";
+import ReviewPageClient from "@/components/reviews/ReviewPageClient";
+import { prisma } from "@/lib/db";
+import { Review } from "@/types/Review";
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
-import ComponentProtector from "@/components/common/ComponentProtector";
-import ComicReview from "@/components/reviews/ComicReview";
-import ComicReviewSkeleton from "@/components/reviews/ComicReviewSkeleton";
-import { useGetReview } from "@/hooks/reviews/useGetReview";
-import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+// Server-side function to get review data
+async function getReviewData(reviewId: string) {
+  try {
+    const review = await prisma.review.findFirst({
+      where: {
+        id: reviewId,
+      },
+      include: {
+        comic: true,
+        user: {
+          select: {
+            id: true,
+            fullname: true,
+            username: true,
+            photo: true,
+            points: true,
+            role: true,
+          },
+        },
+      },
+    });
+    return review;
+  } catch (error) {
+    console.error("Error fetching review:", error);
+    return null;
+  }
+}
 
-const ReviewPage = () => {
-  const params = useParams();
-  const router = useRouter();
-  const reviewId = params.id as string;
+// Generate metadata for the page
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const resolvedParams = await params;
+  const review = await getReviewData(resolvedParams.id);
 
-  const { data: review, isLoading, error } = useGetReview(reviewId);
-  const { data: loggedInUser } = useGetLoggedInUser();
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-zinc-900 p-6">
-        <div className="max-w-2xl mx-auto">
-          {/* Back Button */}
-          <div className="mb-8">
-            <Link
-              href="/reviews"
-              className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors duration-200"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Reviews
-            </Link>
-          </div>
-
-          {/* Loading Skeleton */}
-          <ComicReviewSkeleton />
-        </div>
-      </div>
-    );
+  if (!review) {
+    return {
+      title: "Review Not Found",
+      description: "The review you are looking for does not exist.",
+    };
   }
 
-  if (error || !review) {
-    return (
-      <div className="min-h-screen bg-zinc-900 p-6">
-        <div className="max-w-2xl mx-auto">
-          {/* Back Button */}
-          <div className="mb-8">
-            <ComponentProtector>
-              <Link
-                href="/reviews"
-                className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors duration-200"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back to Reviews
-              </Link>
-            </ComponentProtector>
-          </div>
+  const title = `${review.user.username}'s Review of ${review.comic.name}`;
+  const description = review.description
+    ? `${review.description.slice(0, 155)}${
+        review.description.length > 155 ? "..." : ""
+      }`
+    : `A ${review.rating}/5 star review of ${review.comic.name} by ${review.user.username}`;
 
-          {/* Error State */}
-          <div className="text-center py-12">
-            <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-8">
-              <h2 className="text-xl font-semibold text-white mb-2">
-                Review Not Found
-              </h2>
-              <p className="text-zinc-400 mb-6">
-                The review you are looking for does not exist or has been
-                removed.
-              </p>
-              <Link
-                href="/reviews"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors duration-200"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back to Reviews
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      url: `/reviews/${review.id}`,
+      images: review.comic.image
+        ? [
+            {
+              url: review.comic.image,
+              width: 300,
+              height: 400,
+              alt: `${review.comic.name} cover`,
+            },
+          ]
+        : [],
+      publishedTime: review.createdAt.toISOString(),
+      modifiedTime: review.updatedAt.toISOString(),
+      authors: [review.user.username],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: review.comic.image ? [review.comic.image] : [],
+    },
+    other: {
+      "article:author": review.user.username,
+      "article:published_time": review.createdAt.toISOString(),
+      "article:modified_time": review.updatedAt.toISOString(),
+    },
+  };
+}
+
+// Generate structured data for SEO
+function generateStructuredData(review: any) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    itemReviewed: {
+      "@type": "Book",
+      name: review.comic.name,
+      image: review.comic.image,
+      numberOfPages: review.comic.numberOfIssues,
+    },
+    reviewRating: {
+      "@type": "Rating",
+      ratingValue: review.rating,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    author: {
+      "@type": "Person",
+      name: review.user.username,
+      image: review.user.photo,
+    },
+    reviewBody: review.description,
+    datePublished: review.createdAt.toISOString(),
+    dateModified: review.updatedAt.toISOString(),
+    publisher: {
+      "@type": "Organization",
+      name: "HatComics", // Replace with your site name
+    },
+  };
+}
+
+export default async function ReviewPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = await params;
+  console.log("Review ID:", resolvedParams.id); // Debug log
+
+  const review = await getReviewData(resolvedParams.id);
+
+  if (!review) {
+    console.log("Review not found for ID:", resolvedParams.id); // Debug log
+    notFound();
   }
+
+  // Transform the data to match the Review type expectations
+  const transformedReview = {
+    ...review,
+    user: {
+      ...review.user,
+      photo: review.user.photo ?? undefined, // Convert null to undefined
+    },
+    createdAt: review.createdAt.toISOString(),
+    updatedAt: review.updatedAt.toISOString(),
+    comic: {
+      ...review.comic,
+      image: review.comic.image ?? undefined, // Convert null to undefined
+      description: review.comic.description ?? undefined, // Convert null to undefined
+      createdAt: review.comic.createdAt.toISOString(),
+      updatedAt: review.comic.updatedAt.toISOString(),
+    },
+  } as Review;
+
+  const structuredData = generateStructuredData(review);
 
   return (
-    <div className="min-h-screen bg-zinc-900 p-6">
-      <div className="max-w-2xl mx-auto">
-        {/* Header with Back Button */}
-        <div className="mb-8">
-          <Link
-            href="/reviews"
-            className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors duration-200 mb-4"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Reviews
-          </Link>
+    <>
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+      />
 
-          <h1 className="text-3xl font-bold text-white mb-2">
-            {review.comic.name} Review
-          </h1>
-          <p className="text-zinc-400">Full review by {review.user.fullname}</p>
-        </div>
-
-        {/* Review Component */}
-        <ComicReview
-          id={review.id}
-          rating={review.rating}
-          user={review.user}
-          content={review.description}
-          comic={review.comic}
-          hasSpoilers={review.spoiler}
-          updatedAt={review.updatedAt}
-          createdAt={review.createdAt}
-          isOwner={loggedInUser?.id === review.user.id}
-          showFullContent={true} // This will show the full review content
-          onDeleteSuccess={() => router.push("/reviews")} // Redirect to reviews list after deletion
-        />
-      </div>
-    </div>
+      {/* Client Component */}
+      <ReviewPageClient initialReview={transformedReview} />
+    </>
   );
-};
-
-export default ReviewPage;
+}

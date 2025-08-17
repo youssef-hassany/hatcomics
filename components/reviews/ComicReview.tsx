@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ReviewActions from "./ReviewActions";
 import Avatar from "../ui/avatar";
+import ShareButton from "./ShareButton";
 
 interface ReviewUser {
   id: string;
@@ -110,7 +111,7 @@ const ComicReview = ({
 
   return (
     <div
-      className={`bg-zinc-800 rounded-xl border border-zinc-700 p-6 transition-all duration-200 hover:border-zinc-600 ${
+      className={`bg-zinc-800 rounded-xl border border-zinc-700 p-4 sm:p-6 transition-all duration-200 hover:border-zinc-600 ${
         !showFullContent ? "cursor-pointer hover:bg-zinc-750" : ""
       }`}
       onClick={handleReviewClick}
@@ -123,20 +124,20 @@ const ComicReview = ({
               <img
                 src={comic.image}
                 alt={comic.name}
-                className="w-12 h-16 rounded border border-zinc-700 object-cover"
+                className="w-10 h-12 sm:w-12 sm:h-16 rounded border border-zinc-700 object-cover"
               />
             ) : (
-              <div className="w-12 h-16 rounded border border-zinc-700 bg-zinc-700 flex items-center justify-center">
-                <Book className="w-6 h-6 text-zinc-600" />
+              <div className="w-10 h-12 sm:w-12 sm:h-16 rounded border border-zinc-700 bg-zinc-700 flex items-center justify-center">
+                <Book className="w-5 h-5 sm:w-6 sm:h-6 text-zinc-600" />
               </div>
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-zinc-100 truncate text-lg">
+            <h3 className="font-semibold text-zinc-100 truncate text-base sm:text-lg">
               {comic.name}
             </h3>
             {comic.numberOfIssues && (
-              <p className="text-zinc-400 text-sm">
+              <p className="text-zinc-400 text-xs sm:text-sm">
                 Issues: {comic.numberOfIssues}
               </p>
             )}
@@ -146,20 +147,20 @@ const ComicReview = ({
 
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-3 flex-1 min-w-0">
           {/* User Avatar */}
           <div className="flex-shrink-0">
             <Avatar
               url={user.photo || "/placeholder-avatar.png"}
               username={user.username}
-              className="w-12 h-12 rounded-full border-2 border-zinc-700"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-zinc-700"
             />
           </div>
 
           {/* User Info & Rating */}
           <div className="flex-1 min-w-0">
-            <div className="flex flex-col md:flex-row gap-1 md:gap-2 mb-1">
-              <h4 className="font-semibold text-zinc-100 truncate">
+            <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 mb-1">
+              <h4 className="font-semibold text-zinc-100 truncate text-sm sm:text-base">
                 {user.fullname}
               </h4>
 
@@ -177,7 +178,7 @@ const ComicReview = ({
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
-                    className={`w-4 h-4 ${
+                    className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${
                       star <= rating
                         ? "text-orange-400 fill-current"
                         : "text-zinc-600"
@@ -185,13 +186,24 @@ const ComicReview = ({
                   />
                 ))}
               </div>
-              <span className="text-sm text-zinc-400">{rating}/5</span>
+              <span className="text-xs sm:text-sm text-zinc-400">
+                {rating}/5
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Date and Actions */}
-        <div className="flex items-center gap-3">
+        {/* Actions */}
+        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+          <ShareButton
+            url={
+              typeof window !== "undefined"
+                ? `${window.location.origin}/reviews/${id}`
+                : ""
+            }
+            title={`${user.fullname}'s review of ${comic.name}`}
+            text={`Check out this ${rating}-star review of ${comic.name} by ${user.fullname}!`}
+          />
           <ReviewActions
             reviewId={id}
             isOwner={isOwner}
@@ -205,7 +217,7 @@ const ComicReview = ({
         <div className="mb-4">
           {/* Spoiler Warning */}
           {hasSpoilers && !showSpoilers && (
-            <div className="mb-4 p-4 bg-yellow-900/20 border border-yellow-800/50 rounded-lg">
+            <div className="mb-4 p-3 sm:p-4 bg-yellow-900/20 border border-yellow-800/50 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Eye className="w-4 h-4 text-yellow-500" />
                 <span className="text-sm font-medium text-yellow-300">
@@ -240,7 +252,7 @@ const ComicReview = ({
               )}
 
               <div className="prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none prose-zinc rich-text-editor">
-                <p className="whitespace-pre-wrap text-white">
+                <p className="whitespace-pre-wrap text-white text-sm sm:text-base">
                   {displayContent}
                 </p>
               </div>
@@ -275,7 +287,7 @@ const ComicReview = ({
 
       {/* Click hint for list view */}
       {!showFullContent && (
-        <div className="text-xs text-zinc-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <div className="text-xs text-zinc-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hidden sm:block">
           Click to view full review
         </div>
       )}
