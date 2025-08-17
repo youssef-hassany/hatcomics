@@ -227,6 +227,7 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                   <h2 className="text-2xl font-bold text-zinc-100 mb-6">
                     Description
                   </h2>
+
                   <div
                     className="prose prose-lg prose-invert max-w-none
                       prose-headings:text-zinc-100 prose-headings:font-bold
@@ -241,7 +242,7 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                       prose-blockquote:border-l-4 prose-blockquote:border-orange-500 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-zinc-400
                       prose-ul:mb-6 prose-ol:mb-6
                       prose-li:mb-2 prose-li:text-zinc-300
-                      prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8 prose-img:border prose-img:border-zinc-800"
+                      prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8 prose-img:border prose-img:border-zinc-800 rich-text-editor"
                     dangerouslySetInnerHTML={{
                       __html: currentComic.description,
                     }}

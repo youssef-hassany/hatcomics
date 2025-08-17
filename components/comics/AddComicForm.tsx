@@ -257,7 +257,7 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
           onChange={handleChange}
           disabled={isSubmitting}
         />
-        <label className="font-medium">Beginner Friendly?</label>
+        <label className="font-medium">Ongoing?</label>
       </div>
 
       <div className="flex items-center space-x-2">
