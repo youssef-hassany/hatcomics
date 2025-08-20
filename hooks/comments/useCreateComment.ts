@@ -3,20 +3,25 @@ import { toast } from "sonner";
 
 interface CreateCommentArgs {
   postId: string;
+  commentId?: string;
   formData: FormData;
 }
 
-const createComment = async ({ postId, formData }: CreateCommentArgs) => {
+const createComment = async ({
+  postId,
+  commentId,
+  formData,
+}: CreateCommentArgs) => {
   try {
-    await fetch(`/api/comment/${postId}`, {
+    await fetch(`/api/comment/${postId}${commentId && `/reply/${commentId}`}`, {
       method: "POST",
       body: formData,
     });
 
-    toast.success("comment added successfully");
+    toast.success(`${commentId ? "Reply" : "Comment"} added successfully`);
   } catch (error) {
     console.error(error);
-    toast.error("failed to add comment, try again.");
+    toast.error(`failed to add ${commentId ? "Reply" : "Comment"}, try again.`);
   }
 };
 

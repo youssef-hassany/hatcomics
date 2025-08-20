@@ -17,6 +17,7 @@ export async function GET(
     const { id } = await params;
     const { userId } = await auth();
 
+    // Get all comments for the post
     const comments = await prisma.comment.findMany({
       where: {
         postId: id,
@@ -42,16 +43,36 @@ export async function GET(
       },
     });
 
-    // Add isLikedByCurrentUser field to each comment
-    const commentsWithLikeStatus = comments.map((comment) => ({
-      ...comment,
-      isLikedByCurrentUser: userId
-        ? comment.likes.some((like) => like.userId === userId)
-        : false,
-    }));
+    // Separate top-level comments and replies
+    const topLevelComments = comments.filter((comment) => !comment.replyTo);
+    const replies = comments.filter((comment) => comment.replyTo);
+
+    // Build nested structure
+    const commentsWithReplies = topLevelComments.map((comment) => {
+      const commentReplies = replies
+        .filter((reply) => reply.replyTo === comment.id)
+        .map((reply) => ({
+          ...reply,
+          isLikedByCurrentUser: userId
+            ? reply.likes.some((like) => like.userId === userId)
+            : false,
+        }))
+        .sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        ); // Replies in chronological order
+
+      return {
+        ...comment,
+        isLikedByCurrentUser: userId
+          ? comment.likes.some((like) => like.userId === userId)
+          : false,
+        replies: commentReplies,
+      };
+    });
 
     return NextResponse.json(
-      { status: "success", data: commentsWithLikeStatus },
+      { status: "success", data: commentsWithReplies },
       { status: 200 }
     );
   } catch (error) {

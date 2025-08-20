@@ -53,11 +53,16 @@ model Comment {
   postId     String
   content    String
   attachment String?
+  replyTo    String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   likes      Like[]
+  
+  // Self-referential relations
+  parentComment Comment? @relation("CommentReplies", fields: [replyTo], references: [id], onDelete: Cascade)
+  replies       Comment[] @relation("CommentReplies")
 }
 
 model Like {

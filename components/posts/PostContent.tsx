@@ -102,10 +102,10 @@ const PostContent = ({ initialPost }: PostContentProps) => {
             <BookmarkHandler post={post} />
           </div>
         </article>
-
-        {/* Comments Section */}
-        <CommentsSection postId={post?.id || ""} />
       </div>
+
+      {/* Comments Section */}
+      <CommentsSection postId={post?.id || ""} />
     </div>
   );
 };

@@ -19,20 +19,34 @@ import {
   Trash2,
   X,
   Check,
+  MessageCircle,
+  Reply,
 } from "lucide-react";
 import { useState } from "react";
 import Avatar from "../ui/avatar";
 import ComponentProtector from "../common/ComponentProtector";
+import RepliesSection from "./RepliesSection";
 
 interface CommentProps {
   comment: CommentType;
   onDelete?: (commentId: string) => void;
   isOwner?: boolean;
+  postId?: string;
+  isReply?: boolean;
+  parentComment?: CommentType; // Add parent comment data for replies
 }
 
-const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
+const Comment = ({
+  comment,
+  onDelete,
+  isOwner,
+  postId,
+  isReply = false,
+  parentComment,
+}: CommentProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
+  const [showReplyForm, setShowReplyForm] = useState(false);
   const deleteCommentMutation = useDeleteComment();
   const updateCommentMutation = useUpdateComment();
   const likeCommentMutation = useCommentLike();
@@ -97,14 +111,47 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
     setEditContent(comment.content);
   };
 
+  const handleReplyClick = () => {
+    setShowReplyForm(!showReplyForm);
+  };
+
+  // Different styling for replies
+  const containerClasses = isReply
+    ? "bg-zinc-800/50 border border-zinc-700/50 rounded-lg ml-8 relative"
+    : "bg-zinc-900 border-b border-zinc-700";
+
+  const paddingClasses = isReply ? "p-4" : "p-6";
+
   return (
-    <div className="bg-zinc-900 border-b border-zinc-700 p-6">
+    <div className={`${containerClasses} ${paddingClasses}`}>
+      {/* Reply indicator line (like Reddit/Twitter) */}
+      {isReply && (
+        <>
+          {/* Vertical line connecting to parent */}
+          <div className="absolute -left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-500/60 to-orange-500/20"></div>
+          {/* Horizontal line to comment */}
+          <div className="absolute -left-4 top-6 w-4 h-0.5 bg-orange-500/40"></div>
+        </>
+      )}
+
+      {/* Reply badge/indicator */}
+      {isReply && parentComment && (
+        <div className="flex items-center gap-2 mb-3 text-xs text-zinc-400">
+          <Reply className="w-3 h-3 text-orange-500" />
+          <span>Replying to</span>
+          <span className="text-orange-400 font-medium">
+            @{parentComment.user?.username || "user"}
+          </span>
+        </div>
+      )}
+
       <div className="flex gap-4">
-        {/* User Avatar */}
+        {/* User Avatar - Smaller for replies */}
         <div className="flex-shrink-0">
           <Avatar
             url={comment.user?.photo || "/placeholder-avatar.png"}
             username={comment.user?.username || "User"}
+            className={`${isReply && "w-6 h-6"}`}
           />
         </div>
 
@@ -113,13 +160,23 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
           <div className="flex justify-between flex-wrap gap-2">
             {/* Left Side */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-              <span className="font-semibold text-zinc-100">
+              <span
+                className={`font-semibold text-zinc-100 ${
+                  isReply ? "text-sm" : ""
+                }`}
+              >
                 {comment.user?.fullname || "Anonymous"}
               </span>
-              <span className="text-sm text-zinc-500">
+              <span
+                className={`text-zinc-500 ${isReply ? "text-xs" : "text-sm"}`}
+              >
                 @{comment.user?.username || "user"}
               </span>
-              <span className="text-sm text-zinc-500 sm:ml-2 flex items-center gap-1">
+              <span
+                className={`text-zinc-500 sm:ml-2 flex items-center gap-1 ${
+                  isReply ? "text-xs" : "text-sm"
+                }`}
+              >
                 <Clock className="w-3 h-3" />
                 {new Date(comment.createdAt).toLocaleDateString("en-US", {
                   year: "numeric",
@@ -136,7 +193,9 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="h-6 w-6 p-0 flex items-center justify-center text-zinc-500 hover:text-zinc-400 transition-colors">
-                    <MoreHorizontal className="w-4 h-4" />
+                    <MoreHorizontal
+                      className={isReply ? "w-3 h-3" : "w-4 h-4"}
+                    />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
@@ -168,7 +227,9 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
               <textarea
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
-                className="w-full min-h-[80px] p-3 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 placeholder-zinc-500 resize-none focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className={`w-full p-3 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 placeholder-zinc-500 resize-none focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                  isReply ? "min-h-[60px] text-sm" : "min-h-[80px]"
+                }`}
                 placeholder="Edit your comment..."
                 disabled={updateCommentMutation.isPending}
               />
@@ -178,12 +239,18 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
                   disabled={
                     !editContent.trim() || updateCommentMutation.isPending
                   }
-                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 text-sm"
+                  className={`bg-green-600 hover:bg-green-700 text-white ${
+                    isReply ? "px-2 py-1 text-xs" : "px-3 py-1 text-sm"
+                  }`}
                 >
                   {updateCommentMutation.isPending ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <div
+                      className={`border-2 border-white border-t-transparent rounded-full animate-spin ${
+                        isReply ? "w-3 h-3" : "w-4 h-4"
+                      }`}
+                    ></div>
                   ) : (
-                    <Check className="w-4 h-4" />
+                    <Check className={isReply ? "w-3 h-3" : "w-4 h-4"} />
                   )}
                   <span className="ml-1">
                     {updateCommentMutation.isPending ? "Saving..." : "Save"}
@@ -193,9 +260,11 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
                   onClick={handleCancel}
                   disabled={updateCommentMutation.isPending}
                   variant="secondary"
-                  className="px-3 py-1 text-sm"
+                  className={
+                    isReply ? "px-2 py-1 text-xs" : "px-3 py-1 text-sm"
+                  }
                 >
-                  <X className="w-4 h-4" />
+                  <X className={isReply ? "w-3 h-3" : "w-4 h-4"} />
                   <span className="ml-1">Cancel</span>
                 </Button>
               </div>
@@ -203,7 +272,11 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
           ) : (
             <>
               <div className="prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none prose-zinc rich-text-editor">
-                <p className="whitespace-pre-wrap text-white">
+                <p
+                  className={`whitespace-pre-wrap text-white ${
+                    isReply ? "text-sm" : ""
+                  }`}
+                >
                   {comment.content}
                 </p>
               </div>
@@ -214,7 +287,9 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
                   <img
                     src={comment.attachment}
                     alt="Comment attachment"
-                    className="max-w-full h-auto rounded-lg max-h-64 object-cover"
+                    className={`w-full h-auto rounded-lg object-cover ${
+                      isReply ? "max-h-32" : "max-h-64"
+                    }`}
                   />
                 </div>
               )}
@@ -226,19 +301,44 @@ const Comment = ({ comment, onDelete, isOwner }: CommentProps) => {
             <div className="flex items-center gap-6 pt-2">
               <button
                 onClick={handleLike}
-                className={`flex items-center gap-2 text-sm transition-colors ${
+                className={`flex items-center gap-2 transition-colors cursor-pointer ${
+                  isReply ? "text-xs" : "text-sm"
+                } ${
                   isLiked
                     ? "text-orange-500 hover:text-orange-400"
                     : "text-zinc-500 hover:text-zinc-400"
-                } `}
+                }`}
               >
-                <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
+                <Heart
+                  className={`${isReply ? "w-3 h-3" : "w-4 h-4"} ${
+                    isLiked ? "fill-current" : ""
+                  }`}
+                />
                 <span>{optimisticLikeCount}</span>
               </button>
+
+              {!isReply && (
+                <button
+                  onClick={handleReplyClick}
+                  className={`flex items-center gap-2 text-sm transition-colors cursor-pointer text-zinc-500 hover:text-zinc-400`}
+                >
+                  <MessageCircle className={`w-4 h-4`} />
+                  <span>{comment?.replies?.length}</span>
+                </button>
+              )}
             </div>
           </ComponentProtector>
         </div>
       </div>
+
+      {postId && !isReply && (
+        <RepliesSection
+          commentId={comment.id}
+          postId={postId}
+          replies={comment.replies}
+          showReplyForm={showReplyForm}
+        />
+      )}
     </div>
   );
 };

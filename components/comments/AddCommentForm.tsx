@@ -9,9 +9,15 @@ import ComponentProtector from "../common/ComponentProtector";
 
 interface AddCommentFormProps {
   postId: string;
+  commentId?: string;
+  addReply?: boolean;
 }
 
-const AddCommentForm = ({ postId }: AddCommentFormProps) => {
+const AddCommentForm = ({
+  postId,
+  commentId,
+  addReply = false,
+}: AddCommentFormProps) => {
   const [content, setContent] = useState("");
   const [attachment, setAttachment] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -32,7 +38,7 @@ const AddCommentForm = ({ postId }: AddCommentFormProps) => {
     }
 
     try {
-      await createCommentMutation.mutateAsync({ postId, formData });
+      await createCommentMutation.mutateAsync({ postId, commentId, formData });
       setContent("");
       setAttachment(null);
       setPreviewUrl(null);
@@ -63,30 +69,53 @@ const AddCommentForm = ({ postId }: AddCommentFormProps) => {
 
   if (!loggedInUser) {
     return (
-      <div className="bg-zinc-900 rounded-xl border border-zinc-800 p-6">
-        <p className="text-zinc-400 text-center">
-          Please sign in to leave a comment.
+      <div
+        className={`rounded-xl p-4 ${
+          addReply
+            ? "bg-zinc-800/50 border border-zinc-700/50"
+            : "bg-zinc-900 border border-zinc-800 p-6"
+        }`}
+      >
+        <p className="text-zinc-400 text-center text-sm">
+          Please sign in to {addReply ? "reply" : "leave a comment"}.
         </p>
       </div>
     );
   }
 
+  // Different styling for replies vs main comments
+  const containerClasses = addReply
+    ? "bg-zinc-800/30 border border-zinc-700/30 rounded-lg p-4"
+    : "bg-zinc-900 rounded-xl border border-zinc-700 p-6";
+
+  const textareaClasses = addReply
+    ? "w-full min-h-[80px] p-3 bg-zinc-800/50 border border-zinc-600 rounded-lg text-zinc-100 placeholder-zinc-400 resize-none focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 text-sm"
+    : "w-full min-h-[100px] p-4 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 placeholder-zinc-500 resize-none focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent";
+
   return (
     <ComponentProtector>
-      <div className="bg-zinc-900 rounded-xl border border-zinc-700 p-6">
+      <div className={containerClasses}>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* User Info */}
+          {/* User Info - Smaller for replies */}
           <div className="flex items-center gap-3">
             <img
               src={loggedInUser.photo || "/placeholder-avatar.png"}
               alt={loggedInUser.fullname}
-              className="w-10 h-10 rounded-full"
+              className={`rounded-full ${addReply ? "w-8 h-8" : "w-10 h-10"}`}
             />
             <div>
-              <p className="font-semibold text-zinc-100">
+              <p
+                className={`font-semibold text-zinc-100 ${
+                  addReply ? "text-sm" : ""
+                }`}
+              >
                 {loggedInUser.fullname}
               </p>
-              <p className="text-sm text-zinc-500">@{loggedInUser.username}</p>
+              <p
+                className={`text-zinc-500 ${addReply ? "text-xs" : "text-sm"}`}
+              >
+                @{loggedInUser.username}
+              </p>
             </div>
           </div>
 
@@ -95,8 +124,8 @@ const AddCommentForm = ({ postId }: AddCommentFormProps) => {
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Write your comment..."
-              className="w-full min-h-[100px] p-4 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 placeholder-zinc-500 resize-none focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder={`Write your ${addReply ? "reply" : "comment"}...`}
+              className={textareaClasses}
               disabled={createCommentMutation.isPending}
             />
           </div>
@@ -107,7 +136,9 @@ const AddCommentForm = ({ postId }: AddCommentFormProps) => {
               <img
                 src={previewUrl}
                 alt="Attachment preview"
-                className="max-w-full h-auto rounded-lg max-h-48 object-cover"
+                className={`w-full h-auto rounded-lg object-cover ${
+                  addReply ? "max-h-32" : "max-h-48"
+                }`}
               />
               <button
                 type="button"
@@ -119,8 +150,8 @@ const AddCommentForm = ({ postId }: AddCommentFormProps) => {
             </div>
           )}
 
-          {/* Actions */}
-          <div className="flex items-center gap-4">
+          {/* Actions - Simplified for replies */}
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <input
                 ref={fileInputRef}
@@ -132,28 +163,39 @@ const AddCommentForm = ({ postId }: AddCommentFormProps) => {
               <Button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-400 hover:text-zinc-300 transition-colors"
-                variant="secondary"
+                className={`flex items-center gap-2 text-white hover:text-zinc-300 transition-colors ${
+                  addReply ? "px-2 py-1 text-xs" : "px-3 py-2 text-sm"
+                }`}
               >
-                <Image className="w-4 h-4" />
-                <span className="hidden md:block">Add Image</span>
+                <Image className={addReply ? "w-3 h-3" : "w-4 h-4"} />
+                <span
+                  className={addReply ? "hidden lg:block" : "hidden md:block"}
+                >
+                  Add Image
+                </span>
               </Button>
             </div>
 
             <button
               type="submit"
               disabled={!content.trim() || createCommentMutation.isPending}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-zinc-800 disabled:text-zinc-500 text-white rounded-lg transition-colors"
+              className={`flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:bg-zinc-700 disabled:text-zinc-500 text-white rounded-lg transition-colors ${
+                addReply ? "px-3 py-1.5 text-sm" : "px-4 py-2"
+              }`}
             >
               {createCommentMutation.isPending ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div
+                  className={`border-2 border-white border-t-transparent rounded-full animate-spin ${
+                    addReply ? "w-3 h-3" : "w-4 h-4"
+                  }`}
+                ></div>
               ) : (
-                <Send className="w-4 h-4" />
+                <Send className={addReply ? "w-3 h-3" : "w-4 h-4"} />
               )}
-              <span className="hidden md:block">
-                {createCommentMutation.isPending
-                  ? "Posting..."
-                  : "Post Comment"}
+              <span
+                className={addReply ? "hidden sm:block" : "hidden md:block"}
+              >
+                {addReply ? "Reply" : "Add Comment"}
               </span>
             </button>
           </div>

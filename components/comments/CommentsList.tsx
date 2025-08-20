@@ -58,6 +58,7 @@ const CommentsList = ({ postId }: CommentsListProps) => {
           key={comment.id}
           comment={comment}
           isOwner={loggedInUser?.id === comment.userId}
+          postId={postId}
         />
       ))}
     </div>

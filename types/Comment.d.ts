@@ -6,11 +6,13 @@ export interface Comment {
   postId: string;
   content: string;
   attachment?: string | null;
+  replyTo: string | null;
   createdAt: Date;
   updatedAt: Date;
   user?: User;
   likes?: Like[];
   isLikedByCurrentUser?: boolean;
+  replies: Comment[];
 }
 
 export interface Like {
