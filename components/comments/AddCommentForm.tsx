@@ -15,7 +15,7 @@ interface AddCommentFormProps {
 
 const AddCommentForm = ({
   postId,
-  commentId,
+  commentId = "",
   addReply = false,
 }: AddCommentFormProps) => {
   const [content, setContent] = useState("");
