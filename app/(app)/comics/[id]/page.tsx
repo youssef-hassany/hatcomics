@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? comic.description.replace(/<[^>]*>/g, "").slice(0, 160)
     : `See ${comic.name} at HatComics!`;
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hatcomics.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hat-comics.com";
   const comicUrl = `${baseUrl}/comics/${id}`;
 
   return {
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: comic.name,
       description: plainTextContent,
       url: comicUrl,
-      siteName: "Your Blog Name",
+      siteName: "HatComics",
       type: "article",
       publishedTime: comic.createdAt.toISOString(),
       modifiedTime: comic.updatedAt?.toISOString(),
