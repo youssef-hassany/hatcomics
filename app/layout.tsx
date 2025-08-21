@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/ui/sidebar";
 import Providers from "@/components/common/Providers";
+import Adsense from "@/components/common/Adsense";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,9 @@ export default function RootLayout({
       signUpFallbackRedirectUrl="/home"
     >
       <html lang="en">
+        <head>
+          <Adsense />
+        </head>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-900 text-white relative`}
         >
