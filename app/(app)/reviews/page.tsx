@@ -5,6 +5,7 @@ import ComicReviewSkeleton from "@/components/reviews/ComicReviewSkeleton";
 import NoReviewsMsg from "@/components/reviews/NoReviewsMsg";
 import { useGetAllReviews } from "@/hooks/reviews/useGetAllReview";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
+import { Star } from "lucide-react";
 import React, { useEffect, useRef, useCallback } from "react";
 
 const Page = () => {
@@ -51,14 +52,19 @@ const Page = () => {
   }, [handleObserver]);
 
   return (
-    <div className="min-h-screen bg-zinc-900 p-6">
+    <div className="min-h-screen bg-zinc-900 p-6 pt-0">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Latest Reviews</h1>
-          <p className="text-zinc-400">
-            Take a Look at Our Users Comic Reviews
-          </p>
+        <div className="bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 text-white py-12 px-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center gap-3 mb-4">
+              <Star className="w-8 h-8 text-orange-400" />
+              <h1 className="text-4xl font-bold">Reviews</h1>
+            </div>
+            <p className="text-zinc-200 text-lg max-w-2xl mb-6">
+              Take a Look at Our Users Comic Reviews
+            </p>
+          </div>
         </div>
 
         {/* Initial loading skeleton */}

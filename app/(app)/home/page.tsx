@@ -47,7 +47,7 @@ const HomePage = () => {
     <div className="min-h-screen bg-zinc-900">
       <div className="p-6 max-w-7xl mx-auto">
         {/* Welcome Header */}
-        <div className="mb-8">
+        <div className="mb-8 pt-6 md:pt-0">
           <h1 className="text-3xl font-bold mb-2 text-zinc-100">
             Welcome back, {currentUser?.username || "Comic Fan"}!
           </h1>
