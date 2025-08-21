@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const postUrl = `${baseUrl}/posts/${id}`;
 
   return {
-    title: `${post.title} | Your Blog Name`,
+    title: `${post.title} | HatComics - Comic Reviews & Discussion`,
     description: plainTextContent,
     authors: [{ name: post.user.fullname }],
 
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: post.title,
       description: plainTextContent,
       url: postUrl,
-      siteName: "Your Blog Name",
+      siteName: "HatComics",
       type: "article",
       publishedTime: post.createdAt.toISOString(),
       modifiedTime: post.updatedAt?.toISOString(),

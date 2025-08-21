@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const comicUrl = `${baseUrl}/comics/${id}`;
 
   return {
-    title: `${comic.name}`,
+    title: `${comic.name} | HatComics - Comic Reviews & Discussion`,
     description: plainTextContent,
 
     // Open Graph for social sharing
