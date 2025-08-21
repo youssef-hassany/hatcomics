@@ -5,7 +5,7 @@ const Adsense = () => {
   return (
     <Script
       async
-      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.GOOGLE_ADSENSE_CLIENT}`}
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8123628805164111`}
       crossOrigin="anonymous"
       strategy="afterInteractive"
     />
