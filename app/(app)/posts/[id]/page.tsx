@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // Extract plain text from HTML content for description
   const plainTextContent = post.content.replace(/<[^>]*>/g, "").slice(0, 160);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hatcomics.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hat-comics.com";
   const postUrl = `${baseUrl}/posts/${id}`;
 
   return {

@@ -17,8 +17,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HatComics - Comic Community",
-  description: "The ultimate community for comic book enthusiasts",
+  title: "HatComics - Ultimate Comic Book Community Platform",
+  description:
+    "Join HatComics (هات كوميكس), the premier comic book platform where fans write reviews, share posts, and discover amazing comics. Your ultimate comic universe awaits!",
+  keywords:
+    "HatComics, هات كوميكس, Hat Comics, comic book platform, comic reviews, comic community",
+  alternates: {
+    canonical: "https://hat-comics.com",
+  },
   icons: [
     { rel: "icon", url: "/hatcomics.png" },
     { rel: "shortcut icon", url: "/hatcomics.png" },
