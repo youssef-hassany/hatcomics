@@ -128,9 +128,9 @@ const Comment = ({
       {isReply && (
         <>
           {/* Vertical line connecting to parent */}
-          <div className="absolute -left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-500/60 to-orange-500/20"></div>
+          <div className="absolute h-[110%] -left-4 top-0 bottom-0 w-0.5 bg-zinc-700"></div>
           {/* Horizontal line to comment */}
-          <div className="absolute -left-4 top-6 w-4 h-0.5 bg-orange-500/40"></div>
+          <div className="absolute -left-4 top-6 w-4 h-0.5 bg-zinc-700"></div>
         </>
       )}
 

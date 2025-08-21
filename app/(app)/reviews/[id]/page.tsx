@@ -55,6 +55,9 @@ export async function generateMetadata({
       }`
     : `A ${review.rating}/5 star review of ${review.comic.name} by ${review.user.username}`;
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hat-comics.com";
+  const reviewUrl = `${baseUrl}/reviews/${review.id}`;
+
   return {
     title,
     description,
@@ -62,26 +65,28 @@ export async function generateMetadata({
       title,
       description,
       type: "article",
-      url: `/reviews/${review.id}`,
-      images: review.comic.image
-        ? [
-            {
-              url: review.comic.image,
-              width: 300,
-              height: 400,
-              alt: `${review.comic.name} cover`,
-            },
-          ]
-        : [],
+      url: reviewUrl,
+      siteName: "HatComics",
       publishedTime: review.createdAt.toISOString(),
       modifiedTime: review.updatedAt.toISOString(),
       authors: [review.user.username],
+      images: [
+        {
+          url: review.comic.image || `${baseUrl}/default-og-image.jpg`,
+          width: 1200,
+          height: 630,
+          alt: `${review.comic.name} cover`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: review.comic.image ? [review.comic.image] : [],
+      images: [review.comic.image || `${baseUrl}/default-og-image.jpg`],
+    },
+    alternates: {
+      canonical: reviewUrl,
     },
     other: {
       "article:author": review.user.username,

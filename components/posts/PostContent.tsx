@@ -37,7 +37,7 @@ const PostContent = ({ initialPost }: PostContentProps) => {
   return (
     <div className="min-h-screen bg-zinc-900">
       {/* Header Section */}
-      <div className="bg-zinc-800 border-b border-zinc-700 shadow-sm">
+      <div className="bg-zinc-800 pt-3 border-b border-zinc-700 shadow-sm">
         <div className="max-w-4xl mx-auto px-6 py-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
@@ -52,11 +52,13 @@ const PostContent = ({ initialPost }: PostContentProps) => {
                 <h1 className="text-2xl font-bold text-zinc-100 mb-2">
                   {post?.title}
                 </h1>
-                <div className="flex items-center gap-4 text-sm text-zinc-400">
+
+                <div className="flex flex-col md:flex-row md:items-center gap-4 text-sm text-zinc-400">
                   <span className="flex items-center gap-1">
                     <User className="w-4 h-4" />
                     {post?.user?.fullname}
                   </span>
+
                   <span className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
                     {post &&
