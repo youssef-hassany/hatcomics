@@ -208,17 +208,22 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                     <h3 className="text-lg font-semibold text-zinc-100 mb-3">
                       Where to Read
                     </h3>
-                    <div className="flex flex-col flex-wrap gap-3">
+                    <div className="flex flex-col gap-3">
                       {currentComic.readingLinks.map((link, index) => (
                         <a
                           key={index}
                           href={link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-orange-500 hover:text-orange-600 flex items-center gap-2"
+                          className="text-orange-500 hover:text-orange-600 flex items-center gap-2 break-all overflow-hidden"
+                          title={link} // Show full URL on hover
                         >
-                          <ExternalLink className="w-4 h-4" />
-                          {link.length > 50 ? `${link.slice(0, 50)}...` : link}
+                          <ExternalLink className="w-4 h-4 flex-shrink-0" />
+                          <span className="truncate">
+                            {link.length > 50
+                              ? `${link.slice(0, 50)}...`
+                              : link}
+                          </span>
                         </a>
                       ))}
                     </div>
