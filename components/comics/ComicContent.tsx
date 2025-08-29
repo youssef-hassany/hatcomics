@@ -182,20 +182,24 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
               </div>
 
               {/* Characters */}
-              {currentComic.characters && (
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-zinc-100 mb-2">
-                    Characters
-                  </h3>
-                  <p className="text-zinc-300">
-                    {currentComic.characters.map((char, idx) => (
-                      <span className="mr-2" key={(idx + 1) * 100}>
-                        {char}
-                      </span>
-                    ))}
-                  </p>
-                </div>
-              )}
+              {currentComic.characters &&
+                currentComic.characters.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-zinc-100 mb-2">
+                      Characters
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {currentComic.characters.map((char, idx) => (
+                        <span
+                          key={`char-${idx}`}
+                          className="inline-block px-3 py-1 bg-zinc-800 text-zinc-300 rounded-full text-sm border border-zinc-700"
+                        >
+                          {char}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
               {/* Reading Links */}
               {currentComic.readingLinks &&

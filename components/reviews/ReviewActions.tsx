@@ -38,7 +38,10 @@ const ReviewActions = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() => setShowDeleteModal(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDeleteModal(true);
+              }}
               className="text-red-400 focus:text-red-300 focus:bg-red-900/20"
             >
               <Trash2 className="w-4 h-4 mr-2" />
