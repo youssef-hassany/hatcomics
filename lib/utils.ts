@@ -32,3 +32,13 @@ export const getPreview = (htmlContent: string, maxLength = 150) => {
     ? textContent.substring(0, maxLength) + "..."
     : textContent;
 };
+
+export const starGenerator = (rating: number) => {
+  let stars = "";
+
+  for (let i = 0; i < rating; i++) {
+    stars += "★";
+  }
+
+  return stars;
+};

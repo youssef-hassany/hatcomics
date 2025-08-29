@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import ReviewActions from "./ReviewActions";
 import Avatar from "../ui/avatar";
 import ShareButton from "./ShareButton";
+import { starGenerator } from "@/lib/utils";
 
 interface ReviewUser {
   id: string;
@@ -202,7 +203,9 @@ const ComicReview = ({
                 : ""
             }
             title={`${user.fullname}'s review of ${comic.name}`}
-            text={`Check out this ${rating}-star review of ${comic.name} by ${user.fullname}!`}
+            text={`Check out this ${starGenerator(rating)} review of ${
+              comic.name
+            } by ${user.fullname}!`}
           />
           <ReviewActions
             reviewId={id}
