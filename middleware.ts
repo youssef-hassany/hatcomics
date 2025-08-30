@@ -5,6 +5,16 @@ export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
   const { pathname } = req.nextUrl;
 
+  // Allow AdSense bots
+  const userAgent = req.headers.get("user-agent") || "";
+  const isAdSenseBot =
+    userAgent.includes("Mediapartners-Google") ||
+    userAgent.includes("AdsBot-Google");
+
+  if (isAdSenseBot) {
+    return NextResponse.next();
+  }
+
   // Define your protected routes
   const protectedRoutes = [
     "/stats",
