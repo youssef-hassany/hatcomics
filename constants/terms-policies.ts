@@ -77,12 +77,12 @@ export const changesToPolicy = {
 
 // Terms of Service Variables
 export const termsOfService = {
-  title: "Terms of Service for HatComics.online",
+  title: "Terms of Service for hat-comics.com",
   sections: [
     {
       title: "Acceptance of terms",
       content:
-        "By using HatComics.online, you agree to there Terms, If you disagree, do not use the platform.",
+        "By using hat-comics.com, you agree to there Terms, If you disagree, do not use the platform.",
     },
     {
       title: "User Responsibilities",
@@ -97,7 +97,7 @@ export const termsOfService = {
     {
       title: "Intellectual Property",
       items: [
-        "Our content (text, images, logos, software, etc.) belongs to HatComics.online or its licensors.",
+        "Our content (text, images, logos, software, etc.) belongs to hat-comics.com or its licensors.",
         "Materials posted by you: You retain ownership but grans us a license to host, display and share it on the platform",
         "No copying, modifying, distributing, or selling without permission.",
         "Unauthorized use may lead to legal action.",
@@ -126,7 +126,7 @@ export const termsOfService = {
     {
       title: "liability",
       content:
-        "We are not liable for indirect, direct, accident damages arising from your use of HatComics.online",
+        "We are not liable for indirect, direct, accident damages arising from your use of hat-comics.com",
     },
     {
       title: "Changes to terms",
@@ -140,8 +140,8 @@ export const contactInfo = {
   description:
     "If you have any questions about this Privacy Policy, please contact us at:",
   items: [
-    "Email: HatComics@bis.com",
+    "Email: hatcomicsorg@gmail.com",
     "Address: Egypt",
-    "Facebook Page: HatComics",
+    "Twitter (X) Account: @hat_comics",
   ],
 };

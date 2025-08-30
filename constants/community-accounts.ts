@@ -1,5 +1,29 @@
 export const communityAccounts = [
   {
+    id: 7,
+    name: "COMICVERSE",
+    type: "store",
+    description:
+      "Comic Books and manga shop sells collectibles , Toys and accessories Comic Verse in KSA",
+    platform: "Instagram",
+    followers: "1.5K+",
+    avatar:
+      "https://pbs.twimg.com/profile_images/1584644696218951682/CYKyeQhL_400x400.jpg",
+    link: "https://www.instagram.com/comic_verse_ksa/?r=nametag",
+    verified: true,
+  },
+  {
+    id: 8,
+    name: "Comics Store",
+    type: "store",
+    description: "المتجر الاكبر لبيع الكوميك في العراق",
+    platform: "Instagram",
+    followers: "300+",
+    avatar: "/comics_store_iraq.jpg",
+    link: "https://www.instagram.com/comic_store.1/?igsh=MWt6cXBsbjN3YmkwZw%3D%3D",
+    verified: true,
+  },
+  {
     id: 1,
     name: "Reus",
     type: "content_creator",
@@ -11,6 +35,31 @@ export const communityAccounts = [
       "https://pbs.twimg.com/profile_images/1915474482833092609/n81tX3h4_400x400.jpg",
     verified: true,
     link: "https://x.com/iREUS_SA",
+  },
+  {
+    id: 5,
+    name: "Marauders",
+    type: "translator",
+    description: "فريق وجد شغفه في ترجمة الكوميكس",
+    platform: "X",
+    followers: "150+",
+    avatar:
+      "https://pbs.twimg.com/profile_images/1957782771360813057/q5VuAMqi_400x400.jpg",
+    link: "https://x.com/Marauders3_0",
+    verified: true,
+  },
+  {
+    id: 6,
+    name: "COMICVERSE",
+    type: "translator",
+    description:
+      "فريق COMICVERSE لترجمة كوميكس مارفل نسعى لنشر ثقافة الكوميكس في الوطن العربي",
+    platform: "X",
+    followers: "1K+",
+    avatar:
+      "https://pbs.twimg.com/profile_images/1762276322343071745/UcOATLhe_400x400.jpg",
+    link: "https://x.com/COMICVERSE_AR",
+    verified: true,
   },
   {
     id: 2,
@@ -47,31 +96,6 @@ export const communityAccounts = [
     avatar:
       "https://pbs.twimg.com/profile_images/1390364020448845833/134LaFlR_400x400.jpg",
     link: "https://x.com/iRa2xi",
-    verified: true,
-  },
-  {
-    id: 5,
-    name: "Marauders",
-    type: "translator",
-    description: "فريق وحد شغفه في ترجمة الكوميكس",
-    platform: "X",
-    followers: "150+",
-    avatar:
-      "https://pbs.twimg.com/profile_images/1952894265878593536/v4jw2JF__400x400.jpg",
-    link: "https://x.com/Marauders3_0",
-    verified: true,
-  },
-  {
-    id: 6,
-    name: "COMICVERSE",
-    type: "translator",
-    description:
-      "فريق COMICVERSE لترجمة كوميكس مارفل نسعى لنشر ثقافة الكوميكس في الوطن العربي",
-    platform: "X",
-    followers: "1K+",
-    avatar:
-      "https://pbs.twimg.com/profile_images/1762276322343071745/UcOATLhe_400x400.jpg",
-    link: "https://x.com/COMICVERSE_AR",
     verified: true,
   },
 ];
