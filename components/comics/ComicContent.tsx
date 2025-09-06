@@ -6,9 +6,9 @@ import {
   BookOpen,
   Users,
   Star,
-  ExternalLink,
   Pencil,
   Plus,
+  ExternalLink,
 } from "lucide-react";
 import { ComicPreview } from "@/types/Comic";
 import { useGetComic } from "@/hooks/comics/useGetComic";
@@ -22,6 +22,7 @@ import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { ReadlistToggleButton } from "./ReadlistToggleButton";
 import { sendLinkToReadingLinkTable } from "@/app/actions/actions";
 import { toast } from "sonner";
+import Link from "next/link";
 
 interface ComicContentProps {
   initialComic: ComicPreview;
@@ -234,9 +235,55 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                   </div>
                 )}
 
+              {/* Customized Reading Links */}
+              {currentComic.readingLinksData &&
+                currentComic.readingLinksData.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-zinc-100 mb-2">
+                      Where to Read
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {currentComic.readingLinksData.map((link) => {
+                        // Define a mapping of colors to their Tailwind classes
+                        const colorClasses: any = {
+                          orange: "bg-orange-800 border-orange-700",
+                          yellow: "bg-yellow-800 border-yellow-700",
+                          rose: "bg-rose-800 border-rose-700",
+                          cyan: "bg-cyan-800 border-cyan-700",
+                          blue: "bg-blue-800 border-blue-700",
+                          white: "bg-white border-gray-300 text-zinc-900",
+                          green: "bg-green-800 border-green-700",
+                          purple: "bg-purple-800 border-purple-700",
+                          red: "bg-red-800 border-red-700",
+                          lime: "bg-lime-800 border-lime-700",
+                        };
+
+                        const linkClasses =
+                          colorClasses[link.color] ||
+                          "bg-gray-800 border-gray-700";
+                        const textColor =
+                          link.color === "white"
+                            ? "text-zinc-900"
+                            : "text-zinc-300";
+
+                        return (
+                          <Link
+                            href={link.url}
+                            key={`${link.id}`}
+                            className={`inline-block px-3 py-1 ${linkClasses} ${textColor} rounded-full text-sm`}
+                          >
+                            {link.translatorName} ({link.language})
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
               {/* Reading Links */}
-              {currentComic.readingLinks &&
-                currentComic.readingLinks.length > 0 && (
+              {currentComic?.readingLinks &&
+                currentComic?.readingLinks?.length > 0 &&
+                currentComic?.readingLinksData?.length === 0 && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-zinc-100 mb-3">
                       Where to Read
