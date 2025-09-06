@@ -1,3 +1,14 @@
+interface ReadingLinkData {
+  id: string;
+  comicId: string;
+  url: string;
+  translatorName: string;
+  language: string;
+  color: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ComicPreview {
   id: string;
   name: string;
@@ -16,4 +27,5 @@ export interface ComicPreview {
   ongoing: boolean;
   isReviewed: boolean;
   isInReadlist: boolean;
+  readingLinksData: ReadingLinkData[];
 }

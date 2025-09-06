@@ -1,17 +1,22 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const addReadingLink = async ({
-  comicId,
-  readingLink,
-}: {
+interface Params {
   comicId: string;
-  readingLink: string;
-}) => {
+  url: string;
+  translatorName: string;
+  color: string;
+  language: string;
+}
+
+const addReadingLink = async (params: Params) => {
   try {
-    const response = await fetch(`/api/comics/${comicId}/reading-links`, {
-      body: JSON.stringify({ link: readingLink }),
-      method: "PATCH",
-    });
+    const response = await fetch(
+      `/api/comics/${params.comicId}/reading-links`,
+      {
+        body: JSON.stringify(params),
+        method: "POST",
+      }
+    );
 
     const data = await response.json();
     return data.data;

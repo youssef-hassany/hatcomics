@@ -19,6 +19,9 @@ export async function GET(
 
     const comic = await prisma.comic.findFirst({
       where: { id },
+      include: {
+        readingLinksData: true,
+      },
     });
 
     if (!comic) {

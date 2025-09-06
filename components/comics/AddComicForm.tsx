@@ -23,7 +23,6 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
     numberOfIssues: 0,
     isBeginnerFriendly: false,
     characters: ["spider-man"],
-    readingLinks: [""],
     isOnGoing: false,
   });
 
@@ -38,7 +37,7 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
   const handleArrayChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number,
-    field: "characters" | "readingLinks" | "authors"
+    field: "characters" | "authors"
   ) => {
     const newArray = [...formFields[field]];
     newArray[index] = e.target.value;
@@ -48,17 +47,14 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
     }));
   };
 
-  const addArrayItem = (field: "characters" | "readingLinks" | "authors") => {
+  const addArrayItem = (field: "characters" | "authors") => {
     setFormFields((prev) => ({
       ...prev,
       [field]: [...prev[field], ""],
     }));
   };
 
-  const removeArrayItem = (
-    field: "characters" | "readingLinks" | "authors",
-    index: number
-  ) => {
+  const removeArrayItem = (field: "characters" | "authors", index: number) => {
     const updatedArray = [...formFields[field]];
     updatedArray.splice(index, 1);
     setFormFields((prev) => ({
@@ -82,9 +78,6 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
         numberOfIssues: Number(formFields.numberOfIssues),
         image: formFields.image || undefined,
         isBeginnerFriendly: formFields.isBeginnerFriendly,
-        readingLinks: formFields.readingLinks.filter(
-          (link) => link.trim() !== ""
-        ),
         isOnGoing: formFields.isOnGoing,
       };
 
@@ -115,7 +108,6 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
           numberOfIssues: 0,
           isBeginnerFriendly: false,
           characters: ["spider-man"],
-          readingLinks: [""],
           isOnGoing: false,
         });
       } else {
@@ -303,41 +295,6 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
           disabled={isSubmitting}
         >
           <Plus className="w-4 h-4 mr-1" /> Add character
-        </button>
-      </div>
-
-      {/* Reading Links */}
-      <div>
-        <label className="block font-medium mb-1">Reading Links</label>
-        {formFields.readingLinks &&
-          formFields.readingLinks.map((link, i) => (
-            <div key={i} className="flex items-center gap-2 mb-2">
-              <input
-                value={link}
-                onChange={(e) => handleArrayChange(e, i, "readingLinks")}
-                className="w-full px-3 py-2 border rounded-lg"
-                placeholder="Enter reading link URL"
-                disabled={isSubmitting}
-              />
-              {formFields.readingLinks.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeArrayItem("readingLinks", i)}
-                  className="text-red-500 hover:text-red-700"
-                  disabled={isSubmitting}
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-          ))}
-        <button
-          type="button"
-          onClick={() => addArrayItem("readingLinks")}
-          className="flex items-center text-sm text-orange-600 hover:underline disabled:opacity-50"
-          disabled={isSubmitting}
-        >
-          <Plus className="w-4 h-4 mr-1" /> Add link
         </button>
       </div>
 

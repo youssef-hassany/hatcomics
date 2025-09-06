@@ -108,6 +108,7 @@ model Comic {
   ongoing            Boolean  @default(false)
   reviews            Review[]
   readlist           Readlist[]
+  readingLinksData   ReadingLink[]
 
   @@index([publisher])
   @@index([isBeginnerFriendly])
@@ -153,6 +154,21 @@ model Readlist {
 
   @@unique([userId, comicId])
 }
+
+model ReadingLink {
+  id              String   @id @default(cuid())
+  comicId         String
+  url             String
+  translatorName  String
+  language        String   @default("en")
+  color           String   @default("orange")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  comic Comic @relation(fields: [comicId], references: [id], onDelete: Cascade)
+
+}
+
 
 enum Role {
   owner

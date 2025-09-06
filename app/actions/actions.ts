@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
+import { NoUserError } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -14,7 +15,6 @@ export interface CreateComicData {
   numberOfIssues: number;
   image?: string;
   isBeginnerFriendly?: boolean;
-  readingLinks: string[];
   isOnGoing: boolean;
 }
 
@@ -44,17 +44,6 @@ export async function createComic(data: CreateComicData) {
       throw new Error("Number of issues must be greater than 0");
     }
 
-    // Validate reading links are valid URLs (optional but recommended)
-    if (data.readingLinks.length > 0) {
-      for (const link of data.readingLinks) {
-        try {
-          new URL(link);
-        } catch {
-          throw new Error(`Invalid URL provided in reading links: ${link}`);
-        }
-      }
-    }
-
     // Find the user in the database using clerkId
     const user = await prisma.user.findUnique({
       where: { clerkId: userId },
@@ -79,9 +68,6 @@ export async function createComic(data: CreateComicData) {
         numberOfIssues: data.numberOfIssues,
         image: data.image?.trim() || null,
         isBeginnerFriendly: data.isBeginnerFriendly || false,
-        readingLinks: data.readingLinks
-          .map((link) => link.trim())
-          .filter(Boolean),
         totalReviews: 0,
         averageRating: null,
       },
@@ -136,7 +122,6 @@ export async function createComicFromFormData(formData: FormData) {
     const numberOfIssues = parseInt(formData.get("numberOfIssues") as string);
     const image = formData.get("image") as string;
     const isBeginnerFriendly = formData.get("isBeginnerFriendly") === "true";
-    const readingLinksString = formData.get("readingLinks") as string;
     const isOnGoing = formData.get("isOnGoing") === "false";
 
     // Parse arrays from comma-separated strings
@@ -152,12 +137,6 @@ export async function createComicFromFormData(formData: FormData) {
           .map((s) => s.trim())
           .filter(Boolean)
       : [];
-    const readingLinks = readingLinksString
-      ? readingLinksString
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
-      : [];
 
     const data: CreateComicData = {
       name,
@@ -168,7 +147,6 @@ export async function createComicFromFormData(formData: FormData) {
       numberOfIssues,
       image: image || undefined,
       isBeginnerFriendly,
-      readingLinks,
       isOnGoing: isOnGoing,
     };
 
@@ -409,3 +387,79 @@ export async function updateComicFromFormData(formData: FormData) {
     };
   }
 }
+
+/* ===== migrate reading links from comic to reading link table ===== */
+type Params = {
+  links: string[];
+  comicId: string;
+};
+export async function sendLinkToReadingLinkTable(params: Params) {
+  try {
+    const { userId } = await auth();
+    if (!userId) NoUserError();
+
+    const links = params.links;
+
+    for (let i = 0; i < links.length; i++) {
+      const { color, language, name } = linkFormatter(links[i]);
+
+      console.log({
+        comicId: params.comicId,
+        translatorName: name,
+        url: links[i],
+        language: language,
+        color: color,
+      });
+
+      await prisma.readingLink.create({
+        data: {
+          comicId: params.comicId,
+          translatorName: name,
+          url: links[i],
+          language: language,
+          color: color,
+        },
+      });
+    }
+
+    console.log("Comics added successfully");
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+const linkFormatter = (link: string) => {
+  let color = "orange";
+  let name = "website name";
+  let language = "en";
+
+  if (link.includes("readcomiconline")) {
+    color = "rose";
+    name = "readcomiconline";
+  }
+
+  if (link.includes("getcomics")) {
+    color = "yellow";
+    name = "GetComics";
+  }
+
+  if (link.includes("arcomixverse")) {
+    color = "blue";
+    name = "Comics Verse";
+    language = "ar";
+  }
+
+  if (link.includes("rockscans")) {
+    color = "cyan";
+    name = "Marauders";
+    language = "ar";
+  }
+
+  if (link.includes("infoazcomics")) {
+    color = "white";
+    name = "AZComics";
+    language = "ar";
+  }
+
+  return { color, name, language };
+};

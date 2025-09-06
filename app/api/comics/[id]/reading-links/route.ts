@@ -3,7 +3,7 @@ import { NoUserError } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PATCH(
+export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -29,16 +29,22 @@ export async function PATCH(
 
     const { id } = await params;
 
-    const { link } = await request.json();
+    if (!id) {
+      return NextResponse.json(
+        { status: "error", message: "comic id is required" },
+        { status: 401 }
+      );
+    }
 
-    const comic = await prisma.comic.update({
-      where: {
-        id,
-      },
+    const { translatorName, url, color, language } = await request.json();
+
+    const comic = await prisma.readingLink.create({
       data: {
-        readingLinks: {
-          push: link,
-        },
+        translatorName,
+        url,
+        color,
+        comicId: id,
+        language,
       },
     });
 

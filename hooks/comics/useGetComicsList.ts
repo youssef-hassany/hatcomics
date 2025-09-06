@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 interface ComicsFilters {
   character?: string;
   publisher?: string;
-  isUserFriendly?: boolean;
+  isBeginnerFriendly?: boolean;
   longevity?: "short" | "medium" | "long";
 }
 
@@ -14,8 +14,11 @@ const fetchComicsList = async (filters: ComicsFilters = {}) => {
 
     if (filters.character) params.append("character", filters.character);
     if (filters.publisher) params.append("publisher", filters.publisher);
-    if (filters.isUserFriendly !== undefined)
-      params.append("isUserFriendly", filters.isUserFriendly.toString());
+    if (filters.isBeginnerFriendly !== undefined)
+      params.append(
+        "isBeginnerFriendly",
+        filters.isBeginnerFriendly.toString()
+      );
     if (filters.longevity) params.append("longevity", filters.longevity);
 
     const url = `/api/comics${
