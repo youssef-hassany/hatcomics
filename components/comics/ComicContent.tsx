@@ -22,7 +22,6 @@ import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { ReadlistToggleButton } from "./ReadlistToggleButton";
 import { sendLinkToReadingLinkTable } from "@/app/actions/actions";
 import { toast } from "sonner";
-import Link from "next/link";
 
 interface ComicContentProps {
   initialComic: ComicPreview;
@@ -267,13 +266,14 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                             : "text-zinc-300";
 
                         return (
-                          <Link
+                          <a
+                            target="_blank"
                             href={link.url}
                             key={`${link.id}`}
                             className={`inline-block px-3 py-1 ${linkClasses} ${textColor} rounded-full text-sm`}
                           >
                             {link.translatorName} ({link.language})
-                          </Link>
+                          </a>
                         );
                       })}
                     </div>
