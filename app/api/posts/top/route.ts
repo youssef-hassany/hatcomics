@@ -42,6 +42,9 @@ export async function GET() {
         likes: { _count: "desc" },
       },
       take: 5,
+      where: {
+        comicId: null,
+      },
     });
 
     const posts = topPosts.map((post) => ({

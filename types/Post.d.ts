@@ -73,3 +73,19 @@ export interface DraftPreview {
   content: string;
   createdAt: Date;
 }
+
+export interface ThoughtPreview {
+  id: string;
+  content: string;
+  user: User;
+  likes: Likes[];
+  isLikedByCurrentUser: boolean;
+  isBookmarked: boolean;
+  _count: {
+    bookmarks: number;
+    likes: number;
+    comments: number;
+  };
+  hasSpoiler: boolean;
+  attachments: string[];
+}

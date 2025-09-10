@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     // Open Graph for social sharing
     openGraph: {
-      title: post.title,
+      title: post.title as string,
       description: plainTextContent,
       url: postUrl,
       siteName: "HatComics",
@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           url: post.user.photo || `${baseUrl}/default-og-image.jpg`,
           width: 1200,
           height: 630,
-          alt: post.title,
+          alt: post.title as string,
         },
       ],
     },
@@ -63,14 +63,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // Twitter Card
     twitter: {
       card: "summary_large_image",
-      title: post.title,
+      title: post.title as string,
       description: plainTextContent,
       creator: `@${post.user.username || post.user.fullname}`,
       images: [post.user.photo || `${baseUrl}/default-og-image.jpg`],
     },
 
     // Additional SEO
-    keywords: extractKeywords(post.content, post.title),
+    keywords: extractKeywords(post.content, post.title as string),
     alternates: {
       canonical: postUrl,
     },

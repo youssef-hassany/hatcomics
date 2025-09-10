@@ -16,9 +16,15 @@ interface PostActionsProps {
   postId: string;
   onEdit: () => void;
   isOwner: boolean;
+  showEdit?: boolean;
 }
 
-const PostActions = ({ postId, onEdit, isOwner }: PostActionsProps) => {
+const PostActions = ({
+  postId,
+  onEdit,
+  isOwner,
+  showEdit = true,
+}: PostActionsProps) => {
   const { mutateAsync: deletePost, isPending: isDeleting } = useDeletePost();
   const router = useRouter();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -45,10 +51,12 @@ const PostActions = ({ postId, onEdit, isOwner }: PostActionsProps) => {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={onEdit}>
-              <Edit className="w-4 h-4 mr-2" />
-              Edit
-            </DropdownMenuItem>
+            {showEdit && (
+              <DropdownMenuItem onClick={onEdit}>
+                <Edit className="w-4 h-4 mr-2" />
+                Edit
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem
               onClick={() => setShowDeleteModal(true)}
               className="text-red-400 focus:text-red-300 focus:bg-red-900/20"

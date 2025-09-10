@@ -79,10 +79,17 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth();
     const { id } = await params;
 
-    if (!userId) NoUserError();
+    const { userId } = await auth();
+    const user = await prisma.user.findFirst({
+      where: { id: userId! },
+    });
+
+    if (!user) {
+      NoUserError();
+      return;
+    }
 
     const post = await prisma.post.findFirst({
       where: {
@@ -101,6 +108,14 @@ export async function DELETE(
       where: {
         id,
       },
+    });
+
+    // reduce 5 points from the user
+    await prisma.user.update({
+      data: {
+        points: user.points - 5,
+      },
+      where: { id: userId! },
     });
 
     return NextResponse.json(

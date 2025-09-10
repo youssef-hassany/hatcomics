@@ -1,4 +1,3 @@
-import Link from "next/link";
 import React from "react";
 
 const NoPostsMsg = () => {
@@ -10,12 +9,6 @@ const NoPostsMsg = () => {
         <p className="text-zinc-400 mb-6">
           Be the first to share something with the community!
         </p>
-        <Link
-          href="/posts/create"
-          className="inline-block bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-        >
-          Create First Post
-        </Link>
       </div>
     </div>
   );

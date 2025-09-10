@@ -62,19 +62,6 @@ export const communityAccounts = [
     verified: true,
   },
   {
-    id: 2,
-    name: "Yousif Loves Comics",
-    type: "social_media",
-    description:
-      "The member with the most comic book discussions, opinions & recommendations. one of the best members out there",
-    platform: "X",
-    followers: "750+",
-    avatar:
-      "https://pbs.twimg.com/profile_images/1940148366458994688/8YS-Eo-9_400x400.jpg",
-    verified: true,
-    link: "https://x.com/YousifH76179820",
-  },
-  {
     id: 3,
     name: "Qusaiwahidthani",
     type: "social_media",

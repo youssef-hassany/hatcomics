@@ -34,17 +34,26 @@ model User {
 }
 
 model Post {
-  id        String     @id @default(cuid())
-  userId    String
-  title     String
-  content   String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  isDraft   Boolean    @default(false)
-  bookmarks Bookmark[]
-  comments  Comment[]
-  likes     Like[]
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id              String     @id @default(cuid())
+  userId          String
+  comicId         String?    // If null = global post, if not null = thought in book club
+  title           String?    // Optional for thoughts (they might not need titles)
+  content         String
+  attachments     String[]   @default([]) // Array for image URLs (max 4 for thoughts)
+  hasSpoiler      Boolean    @default(false) // For thoughts in book clubs
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  isDraft         Boolean    @default(false)
+  
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comic           Comic?     @relation(fields: [comicId], references: [id], onDelete: Cascade)
+  bookmarks       Bookmark[]
+  comments        Comment[]
+  likes           Like[]
+
+  @@index([comicId]) // For efficient book club queries
+  @@index([createdAt])
+  @@index([hasSpoiler])
 }
 
 model Comment {
@@ -109,6 +118,7 @@ model Comic {
   reviews            Review[]
   readlist           Readlist[]
   readingLinksData   ReadingLink[]
+  thoughts           Post[]   // Posts with comicId are thoughts
 
   @@index([publisher])
   @@index([isBeginnerFriendly])
@@ -166,9 +176,7 @@ model ReadingLink {
   updatedAt       DateTime @updatedAt
 
   comic Comic @relation(fields: [comicId], references: [id], onDelete: Cascade)
-
 }
-
 
 enum Role {
   owner
@@ -177,4 +185,10 @@ enum Role {
   translator
   seller
   user
+}
+
+enum PostType {
+  post
+  draft
+  thought
 }

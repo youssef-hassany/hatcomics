@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
 
     const data = await prisma.post.findMany({
       where: {
-        isDraft: false,
+        AND: [{ isDraft: false }, { comicId: null }],
       },
       select: {
         id: true,
@@ -149,7 +149,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { status: "error", message: "Internal server error" },
+      { status: "error", message: `Internal server error: ${error}` },
       { status: 500 }
     );
   }

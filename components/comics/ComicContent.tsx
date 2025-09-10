@@ -9,6 +9,7 @@ import {
   Pencil,
   Plus,
   ExternalLink,
+  Coffee,
 } from "lucide-react";
 import { ComicPreview } from "@/types/Comic";
 import { useGetComic } from "@/hooks/comics/useGetComic";
@@ -22,6 +23,7 @@ import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { ReadlistToggleButton } from "./ReadlistToggleButton";
 import { sendLinkToReadingLinkTable } from "@/app/actions/actions";
 import { toast } from "sonner";
+import Link from "next/link";
 
 interface ComicContentProps {
   initialComic: ComicPreview;
@@ -89,7 +91,7 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                     className="flex items-center gap-2"
                   >
                     <Pencil size={16} />
-                    <span>Edit Comic</span>
+                    <span>Edit</span>
                   </Button>
                 )}
 
@@ -122,6 +124,14 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                   <span>Send Links To Table</span>
                 </Button>
               )}
+
+              <Link
+                href={`/comics/${comic?.id}/book-club`}
+                className="bg-zinc-700 my-3 flex items-center gap-2 p-3 rounded-xl w-fit hover:bg-zinc-800 duration-200"
+              >
+                <span>Go To the book club</span>
+                <Coffee />
+              </Link>
             </div>
 
             {/* Comic Info */}
