@@ -16,7 +16,7 @@ const StatsPage = () => {
     return <>Loading...</>;
   }
 
-  if (user?.role !== "owner") {
+  if (user?.role !== "owner" && user?.role !== "admin") {
     return <NotAuthorized />;
   }
 
