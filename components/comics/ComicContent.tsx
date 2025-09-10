@@ -21,8 +21,8 @@ import { Button } from "../ui/button";
 import AddReadingLinkForm from "./AddReadingLinkForm";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { ReadlistToggleButton } from "./ReadlistToggleButton";
-import { sendLinkToReadingLinkTable } from "@/app/actions/actions";
-import { toast } from "sonner";
+// import { sendLinkToReadingLinkTable } from "@/app/actions/actions";
+// import { toast } from "sonner";
 import Link from "next/link";
 
 interface ComicContentProps {
@@ -43,25 +43,25 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
     user?.role === "owner";
   const isUserAdmin = user?.role === "admin" || user?.role === "owner";
 
-  const [isSendingToTable, setIsSendingToTable] = useState(false);
+  // const [isSendingToTable, setIsSendingToTable] = useState(false);
 
-  const handleSendLinksToTable = async () => {
-    setIsSendingToTable(true);
+  // const handleSendLinksToTable = async () => {
+  //   setIsSendingToTable(true);
 
-    try {
-      await sendLinkToReadingLinkTable({
-        comicId: comic?.id as string,
-        links: comic?.readingLinks as string[],
-      });
+  //   try {
+  //     await sendLinkToReadingLinkTable({
+  //       comicId: comic?.id as string,
+  //       links: comic?.readingLinks as string[],
+  //     });
 
-      toast.success("Links Added to the table");
-    } catch (error) {
-      console.error(error);
-      toast.success("failed to add Links to the table, try again");
-    }
+  //     toast.success("Links Added to the table");
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.success("failed to add Links to the table, try again");
+  //   }
 
-    setIsSendingToTable(false);
-  };
+  //   setIsSendingToTable(false);
+  // };
 
   if (isPending && !initialComic) {
     return <ComicContentSkeleton />;
@@ -113,7 +113,7 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                   />
                 )}
               </div>
-              {isUserAdmin && (
+              {/* {isUserAdmin && (
                 <Button
                   onClick={() => {
                     handleSendLinksToTable();
@@ -123,7 +123,7 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                 >
                   <span>Send Links To Table</span>
                 </Button>
-              )}
+              )} */}
 
               <Link
                 href={`/comics/${comic?.id}/book-club`}
