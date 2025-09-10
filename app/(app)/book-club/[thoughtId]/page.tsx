@@ -23,6 +23,8 @@ export default function ThoughtPage() {
 
   return (
     <div>
+      <div className="py-8 bg-zinc-900"></div>
+
       {/* the post itself */}
       <article className="relative bg-zinc-900 border-b border-zinc-800 hover:bg-zinc-900/80 transition-colors px-4 py-3 cursor-pointer">
         <div className="flex space-x-3">
@@ -78,7 +80,7 @@ export default function ThoughtPage() {
           </div>
         </div>
 
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-1 right-3">
           <PostActions
             isOwner={isOwner}
             onEdit={() => {}}

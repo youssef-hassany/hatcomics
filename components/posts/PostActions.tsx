@@ -47,7 +47,7 @@ const PostActions = ({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="p-2 hover:bg-zinc-800 rounded-lg transition-colors border border-zinc-600">
-              <MoreHorizontal className="w-5 h-5 text-zinc-400" />
+              <MoreHorizontal className="w-3 h-3 text-zinc-400" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

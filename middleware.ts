@@ -24,6 +24,7 @@ export default clerkMiddleware(async (auth, req) => {
     "/comics", // This will protect /comics but not /comics/[id]
     "/posts", // This will protect /posts but not /posts/[id]
     "/reviews",
+    "/book-club",
   ];
 
   // Define public routes that should be accessible without authentication
