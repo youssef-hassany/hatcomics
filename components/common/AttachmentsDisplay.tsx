@@ -18,6 +18,13 @@ const AttachmentsDisplay = ({ attachments }: { attachments: string[] }) => {
     setIsModalOpen(false);
   };
 
+  // Prevent event propagation to parent elements (like links)
+  const handleImageClick = (e: React.MouseEvent, slideIndex: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    openModal(slideIndex);
+  };
+
   const attachmentCount = attachments.length;
 
   // Single image layout
@@ -26,7 +33,7 @@ const AttachmentsDisplay = ({ attachments }: { attachments: string[] }) => {
       <>
         <div
           className="mt-3 rounded-2xl overflow-hidden border border-zinc-700 cursor-pointer hover:opacity-90 transition-opacity"
-          onClick={() => openModal(0)}
+          onClick={(e) => handleImageClick(e, 0)}
         >
           <img
             src={attachments[0]}
@@ -55,7 +62,7 @@ const AttachmentsDisplay = ({ attachments }: { attachments: string[] }) => {
               src={attachment}
               alt={`Attachment ${index + 1}`}
               className="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity"
-              onClick={() => openModal(index)}
+              onClick={(e) => handleImageClick(e, index)}
             />
           ))}
         </div>
@@ -79,20 +86,20 @@ const AttachmentsDisplay = ({ attachments }: { attachments: string[] }) => {
               src={attachments[0]}
               alt="Attachment 1"
               className="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity"
-              onClick={() => openModal(0)}
+              onClick={(e) => handleImageClick(e, 0)}
             />
             <div className="grid gap-1">
               <img
                 src={attachments[1]}
                 alt="Attachment 2"
                 className="w-full h-24 object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() => openModal(1)}
+                onClick={(e) => handleImageClick(e, 1)}
               />
               <img
                 src={attachments[2]}
                 alt="Attachment 3"
                 className="w-full h-24 object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() => openModal(2)}
+                onClick={(e) => handleImageClick(e, 2)}
               />
             </div>
           </div>
@@ -118,13 +125,13 @@ const AttachmentsDisplay = ({ attachments }: { attachments: string[] }) => {
                 src={attachment}
                 alt={`Attachment ${index + 1}`}
                 className="w-full h-32 object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() => openModal(index)}
+                onClick={(e) => handleImageClick(e, index)}
               />
               {/* Show +X overlay on last image if there are more than 4 */}
               {index === 3 && attachmentCount > 4 && (
                 <div
                   className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center cursor-pointer hover:bg-opacity-70 transition-all"
-                  onClick={() => openModal(3)}
+                  onClick={(e) => handleImageClick(e, 3)}
                 >
                   <span className="text-white text-lg font-semibold">
                     +{attachmentCount - 4}

@@ -28,6 +28,7 @@ export async function GET(
         content: true,
         attachments: true,
         hasSpoiler: true,
+        createdAt: true,
         user: {
           select: {
             id: true,

@@ -8,6 +8,7 @@ import PostLikeHandler from "@/components/posts/PostLikeHandler";
 import Avatar from "@/components/ui/avatar";
 import { useGetThought } from "@/hooks/book-club/useGetThought";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
+import { getTimeAgo } from "@/lib/date";
 import { MessageCircle } from "lucide-react";
 import { useParams } from "next/navigation";
 
@@ -49,7 +50,7 @@ export default function ThoughtPage() {
                 </span>
                 <span className="text-zinc-500 text-sm">·</span>
                 <span className="text-zinc-500 text-sm hover:underline">
-                  2h {/* You can add timestamp to your data structure */}
+                  {getTimeAgo(thought?.createdAt as string)}
                 </span>
               </div>
             </div>

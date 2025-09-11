@@ -5,6 +5,7 @@ import Avatar from "../ui/avatar";
 import PostLikeHandler from "../posts/PostLikeHandler";
 import AttachmentsDisplay from "../common/AttachmentsDisplay";
 import Link from "next/link";
+import { getTimeAgo } from "@/lib/date";
 
 const ThoughtCard: React.FC<{ thought: ThoughtPreview }> = ({ thought }) => {
   const renderSpoilerContent = () => {
@@ -71,13 +72,7 @@ const ThoughtCard: React.FC<{ thought: ThoughtPreview }> = ({ thought }) => {
               </span>
               <span className="text-zinc-500 text-sm">·</span>
               <span className="text-zinc-500 text-sm hover:underline">
-                {new Date(thought?.createdAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                {getTimeAgo(thought?.createdAt)}
               </span>
             </div>
           </div>
