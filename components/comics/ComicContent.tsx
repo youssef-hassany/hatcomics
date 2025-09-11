@@ -125,13 +125,15 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                 </Button>
               )} */}
 
-              <Link
-                href={`/comics/${comic?.id}/book-club`}
-                className="bg-zinc-700 my-3 flex items-center gap-2 p-3 rounded-xl w-fit hover:bg-zinc-800 duration-200"
-              >
-                <span>Go To the book club</span>
-                <Coffee />
-              </Link>
+              {comic?.id && (
+                <Link
+                  href={`/comics/${comic?.id}/book-club`}
+                  className="bg-zinc-700 my-3 flex items-center gap-2 p-3 rounded-xl w-fit hover:bg-zinc-800 duration-200"
+                >
+                  <span>Go To the book club</span>
+                  <Coffee />
+                </Link>
+              )}
             </div>
 
             {/* Comic Info */}
