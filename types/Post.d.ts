@@ -88,4 +88,5 @@ export interface ThoughtPreview {
   };
   hasSpoiler: boolean;
   attachments: string[];
+  createdAt: string;
 }

@@ -26,7 +26,7 @@ export default function ThoughtPage() {
       <div className="py-8 bg-zinc-900"></div>
 
       {/* the post itself */}
-      <article className="relative bg-zinc-900 border-b border-zinc-800 hover:bg-zinc-900/80 transition-colors px-4 py-3 cursor-pointer">
+      <article className="relative bg-zinc-900 border-b border-zinc-800 px-4 py-3">
         <div className="flex space-x-3">
           {/* Avatar Column */}
           <div className="flex-shrink-0">
@@ -56,7 +56,7 @@ export default function ThoughtPage() {
 
             {/* Content */}
             <>
-              <div className="text-white text-sm leading-relaxed mb-2">
+              <div className="text-white text-sm leading-relaxed mb-2 prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none prose-zinc rich-text-editor whitespace-pre-wrap">
                 <p>{thought?.content}</p>
               </div>
               {/* Attachments */}

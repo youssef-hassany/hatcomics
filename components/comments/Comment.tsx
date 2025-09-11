@@ -26,6 +26,7 @@ import { useState } from "react";
 import Avatar from "../ui/avatar";
 import ComponentProtector from "../common/ComponentProtector";
 import RepliesSection from "./RepliesSection";
+import AttachmentsDisplay from "../common/AttachmentsDisplay";
 
 interface CommentProps {
   comment: CommentType;
@@ -284,13 +285,7 @@ const Comment = ({
               {/* Attachment */}
               {comment.attachment && (
                 <div className="mt-3">
-                  <img
-                    src={comment.attachment}
-                    alt="Comment attachment"
-                    className={`w-full h-auto rounded-lg object-cover ${
-                      isReply ? "max-h-32" : "max-h-64"
-                    }`}
-                  />
+                  <AttachmentsDisplay attachments={[comment.attachment]} />
                 </div>
               )}
             </>

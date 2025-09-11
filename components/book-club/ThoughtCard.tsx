@@ -71,7 +71,13 @@ const ThoughtCard: React.FC<{ thought: ThoughtPreview }> = ({ thought }) => {
               </span>
               <span className="text-zinc-500 text-sm">·</span>
               <span className="text-zinc-500 text-sm hover:underline">
-                2h {/* You can add timestamp to your data structure */}
+                {new Date(thought?.createdAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </span>
             </div>
           </div>
@@ -81,7 +87,7 @@ const ThoughtCard: React.FC<{ thought: ThoughtPreview }> = ({ thought }) => {
             renderSpoilerContent()
           ) : (
             <>
-              <div className="text-white text-sm leading-relaxed mb-2">
+              <div className="text-white text-sm leading-relaxed mb-2 prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none prose-zinc rich-text-editor whitespace-pre-wrap">
                 <p>{thought.content}</p>
               </div>
               {/* Attachments */}
