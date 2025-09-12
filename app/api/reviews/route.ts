@@ -65,17 +65,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           status: "error",
-          message: "Missing required fields: userId, content, or title",
+          message: "Missing required fields: userId, rating, or comicId",
         },
         { status: 400 }
       );
     }
 
-    if (parseInt(rating) > 5 || parseInt(rating) < 1) {
+    const ratingFloat = parseFloat(rating);
+
+    // Validate rating range and increment (only allow 0.5 increments)
+    if (ratingFloat < 0.5 || ratingFloat > 5 || (ratingFloat * 2) % 1 !== 0) {
       return NextResponse.json(
         {
           status: "error",
-          message: "Rating must be between 1 star to 5 stars",
+          message: "Rating must be between 0.5 and 5 stars in 0.5 increments",
         },
         { status: 400 }
       );
@@ -94,7 +97,7 @@ export async function POST(req: NextRequest) {
 
     const review = await prisma.review.create({
       data: {
-        rating,
+        rating: ratingFloat,
         description: description || "",
         spoiler: !!spoiler,
         userId,
@@ -113,7 +116,7 @@ export async function POST(req: NextRequest) {
 
     // calculate the new stats
     const newReviewsNum = reviewsNum + 1;
-    const newAvgRate = (avgRate * reviewsNum + rating) / newReviewsNum;
+    const newAvgRate = (avgRate * reviewsNum + ratingFloat) / newReviewsNum;
 
     // set updated stats
     await prisma.comic.update({

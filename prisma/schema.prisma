@@ -129,7 +129,7 @@ model Review {
   id          String   @id @default(cuid())
   userId      String
   comicId     String
-  rating      Int
+  rating      Float
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

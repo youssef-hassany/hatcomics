@@ -110,6 +110,40 @@ const ComicReview = ({
     }).format(new Date(date));
   };
 
+  const renderStars = (rating: number | null) => {
+    if (rating === null)
+      return <span className="text-zinc-400">No ratings</span>;
+
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(
+        <Star
+          className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-400 fill-current`}
+        />
+      );
+    }
+
+    if (hasHalfStar) {
+      stars.push(
+        <Star
+          key="half"
+          className="w-4 h-4 fill-orange-400 text-orange-400"
+          style={{ clipPath: "inset(0 50% 0 0)" }}
+        />
+      );
+    }
+
+    const emptyStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<Star key={`empty-${i}`} className="w-4 h-4 text-zinc-400" />);
+    }
+
+    return <div className="flex items-center gap-1">{stars}</div>;
+  };
+
   return (
     <div
       className={`bg-zinc-800 rounded-xl border border-zinc-700 p-4 sm:p-6 transition-all duration-200 hover:border-zinc-600 ${
@@ -176,16 +210,7 @@ const ComicReview = ({
             {/* Star Rating */}
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-0.5">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${
-                      star <= rating
-                        ? "text-orange-400 fill-current"
-                        : "text-zinc-600"
-                    }`}
-                  />
-                ))}
+                {renderStars(rating)}
               </div>
               <span className="text-xs sm:text-sm text-zinc-400">
                 {rating}/5
