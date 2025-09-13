@@ -25,6 +25,7 @@ const UpdateComicForm = ({ comic, onSuccess, onCancel }: Props) => {
     isBeginnerFriendly: false,
     characters: [""],
     isOnGoing: false,
+    isIndie: false,
   });
 
   // Initialize form with existing comic data
@@ -40,6 +41,7 @@ const UpdateComicForm = ({ comic, onSuccess, onCancel }: Props) => {
         isBeginnerFriendly: comic.isBeginnerFriendly || false,
         characters: comic.characters.length > 0 ? comic.characters : [""],
         isOnGoing: comic.ongoing || false,
+        isIndie: comic.isIndie || false,
       });
     }
   }, [comic]);
@@ -98,6 +100,7 @@ const UpdateComicForm = ({ comic, onSuccess, onCancel }: Props) => {
         image: formFields.image || undefined,
         isBeginnerFriendly: formFields.isBeginnerFriendly,
         isOnGoing: formFields.isOnGoing,
+        isIndie: formFields.isIndie,
       };
 
       // Validate required fields
@@ -284,6 +287,17 @@ const UpdateComicForm = ({ comic, onSuccess, onCancel }: Props) => {
           disabled={isSubmitting}
         />
         <label className="font-medium">Beginner Friendly?</label>
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          name="isIndie"
+          checked={formFields.isIndie}
+          onChange={handleChange}
+          disabled={isSubmitting}
+        />
+        <label className="font-medium">Indie?</label>
       </div>
 
       {/* Characters */}

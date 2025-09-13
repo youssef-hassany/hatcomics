@@ -25,6 +25,7 @@ export interface ComicPreview {
   createdAt: Date;
   updatedAt: Date;
   ongoing: boolean;
+  isIndie: boolean;
   isReviewed: boolean;
   isInReadlist: boolean;
   readingLinksData: ReadingLinkData[];

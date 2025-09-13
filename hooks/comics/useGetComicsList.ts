@@ -5,7 +5,9 @@ interface ComicsFilters {
   character?: string;
   publisher?: string;
   isBeginnerFriendly?: boolean;
+  isIndie?: boolean;
   longevity?: "short" | "medium" | "long";
+  sortBy?: "A-Z" | "Z-A" | "rating" | "none";
 }
 
 const fetchComicsList = async (filters: ComicsFilters = {}) => {
@@ -19,7 +21,10 @@ const fetchComicsList = async (filters: ComicsFilters = {}) => {
         "isBeginnerFriendly",
         filters.isBeginnerFriendly.toString()
       );
+    if (filters.isIndie !== undefined)
+      params.append("isIndie", filters.isIndie.toString());
     if (filters.longevity) params.append("longevity", filters.longevity);
+    if (filters.sortBy) params.append("sortBy", filters.sortBy);
 
     const url = `/api/comics${
       params.toString() ? `?${params.toString()}` : ""

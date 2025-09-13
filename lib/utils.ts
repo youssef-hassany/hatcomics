@@ -36,8 +36,12 @@ export const getPreview = (htmlContent: string, maxLength = 150) => {
 export const starGenerator = (rating: number) => {
   let stars = "";
 
-  for (let i = 0; i < rating; i++) {
+  for (let i = 0; i < Math.floor(rating); i++) {
     stars += "★";
+  }
+
+  if (rating % 1 > 0) {
+    stars += "½";
   }
 
   return stars;

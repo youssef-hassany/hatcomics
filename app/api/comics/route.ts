@@ -17,16 +17,25 @@ export async function GET(req: NextRequest) {
   const character = searchParams.get("character");
   const publisher = searchParams.get("publisher");
   const isBeginnerFriendlyParam = searchParams.get("isBeginnerFriendly");
+  const isIndieParam = searchParams.get("isIndie");
+  const sortBy = searchParams.get("sortBy") as
+    | "A-Z"
+    | "Z-A"
+    | "rating"
+    | "none"
+    | null;
   const longevity = searchParams.get("longevity") as
     | "short"
     | "medium"
     | "long"
     | null;
 
-  // Convert isBeginnerFriendly string to boolean if present
+  // Convert string parameters to boolean if present
   const isBeginnerFriendly = isBeginnerFriendlyParam
     ? isBeginnerFriendlyParam === "true"
     : undefined;
+
+  const isIndie = isIndieParam ? isIndieParam === "true" : undefined;
 
   try {
     const whereClause: any = {};
@@ -45,6 +54,10 @@ export async function GET(req: NextRequest) {
 
     if (isBeginnerFriendly !== undefined) {
       whereClause.isBeginnerFriendly = isBeginnerFriendly;
+    }
+
+    if (isIndie !== undefined) {
+      whereClause.isIndie = isIndie;
     }
 
     if (longevity) {
@@ -69,11 +82,33 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    // Determine the order by clause based on sortBy parameter
+    let orderBy: any = { createdAt: "desc" }; // default ordering
+
+    if (sortBy) {
+      switch (sortBy) {
+        case "A-Z":
+          orderBy = { name: "asc" };
+          break;
+        case "Z-A":
+          orderBy = { name: "desc" };
+          break;
+        case "rating":
+          orderBy = [
+            { averageRating: { sort: "desc", nulls: "last" } },
+            { createdAt: "desc" },
+          ];
+          break;
+        case "none":
+        default:
+          orderBy = { createdAt: "desc" };
+          break;
+      }
+    }
+
     let comics = await prisma.comic.findMany({
       where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy,
     });
 
     // Filter by character if specified (for partial matching)

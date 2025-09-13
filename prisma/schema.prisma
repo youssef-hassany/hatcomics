@@ -115,6 +115,7 @@ model Comic {
   updatedAt          DateTime @updatedAt
   description        String?
   ongoing            Boolean  @default(false)
+  isIndie            Boolean  @default(false)
   reviews            Review[]
   readlist           Readlist[]
   readingLinksData   ReadingLink[]

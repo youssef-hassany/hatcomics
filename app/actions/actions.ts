@@ -16,6 +16,7 @@ export interface CreateComicData {
   image?: string;
   isBeginnerFriendly?: boolean;
   isOnGoing: boolean;
+  isIndie: boolean;
 }
 
 export async function createComic(data: CreateComicData) {
@@ -70,6 +71,7 @@ export async function createComic(data: CreateComicData) {
         isBeginnerFriendly: data.isBeginnerFriendly || false,
         totalReviews: 0,
         averageRating: null,
+        isIndie: !!data.isIndie,
       },
     });
 
@@ -123,6 +125,7 @@ export async function createComicFromFormData(formData: FormData) {
     const image = formData.get("image") as string;
     const isBeginnerFriendly = formData.get("isBeginnerFriendly") === "true";
     const isOnGoing = formData.get("isOnGoing") === "false";
+    const isIndie = formData.get("isIndie") === "false";
 
     // Parse arrays from comma-separated strings
     const authors = authorsString
@@ -148,6 +151,7 @@ export async function createComicFromFormData(formData: FormData) {
       image: image || undefined,
       isBeginnerFriendly,
       isOnGoing: isOnGoing,
+      isIndie: isIndie,
     };
 
     const result = await createComic(data);
@@ -179,6 +183,7 @@ export interface UpdateComicData {
   isBeginnerFriendly?: boolean;
   readingLinks?: string[];
   isOnGoing?: boolean;
+  isIndie?: boolean;
 }
 
 export async function updateComic(data: UpdateComicData) {
@@ -270,6 +275,8 @@ export async function updateComic(data: UpdateComicData) {
     // FIXED: Changed from 'isOnGoing' to 'ongoing' to match schema
     if (data.isOnGoing !== undefined) updateData.ongoing = data.isOnGoing;
 
+    if (data.isIndie !== undefined) updateData.isIndie = data.isIndie;
+
     // Update the comic
     const comic = await prisma.comic.update({
       where: { id: data.id },
@@ -329,6 +336,7 @@ export async function updateComicFromFormData(formData: FormData) {
     const isBeginnerFriendly = formData.get("isBeginnerFriendly") === "true";
     const readingLinksString = formData.get("readingLinks") as string;
     const isOnGoing = formData.get("isOnGoing") === "true";
+    const isIndie = formData.get("isOnGoing") === "true";
 
     if (!id) {
       throw new Error("Comic ID is required for updating");
@@ -370,6 +378,7 @@ export async function updateComicFromFormData(formData: FormData) {
       isBeginnerFriendly,
       readingLinks,
       isOnGoing,
+      isIndie,
     };
 
     const result = await updateComic(data);
