@@ -12,6 +12,7 @@ import ComicCard from "@/components/comics/ComicCard";
 const StoredComicsPage = () => {
   const [characterFilter, setCharacterFilter] = useState("");
   const [publisherFilter, setPublisherFilter] = useState("");
+  const [authorFilter, setAuthorFilter] = useState("");
   const [isBeginnerFriendlyFilter, setisBeginnerFriendlyFilter] = useState<
     boolean | undefined
   >(undefined);
@@ -28,10 +29,12 @@ const StoredComicsPage = () => {
 
   const debouncedCharacter = useDebounce(characterFilter, 500);
   const debouncedPublisher = useDebounce(publisherFilter, 500);
+  const debouncedAuthor = useDebounce(authorFilter, 500);
 
   const filters = {
     character: debouncedCharacter || undefined,
     publisher: debouncedPublisher || undefined,
+    author: debouncedAuthor || undefined,
     isBeginnerFriendly: isBeginnerFriendlyFilter,
     isIndie: isIndieFilter,
     longevity: longevityFilter,
@@ -43,6 +46,7 @@ const StoredComicsPage = () => {
   const clearAllFilters = () => {
     setCharacterFilter("");
     setPublisherFilter("");
+    setAuthorFilter("");
     setisBeginnerFriendlyFilter(undefined);
     setIsIndieFilter(undefined);
     setLongevityFilter(undefined);
@@ -52,6 +56,7 @@ const StoredComicsPage = () => {
   const hasActiveFilters =
     characterFilter ||
     publisherFilter ||
+    authorFilter ||
     isBeginnerFriendlyFilter !== undefined ||
     isIndieFilter !== undefined ||
     longevityFilter ||
@@ -195,6 +200,27 @@ const StoredComicsPage = () => {
                           value={publisherFilter}
                           onChange={(e) => setPublisherFilter(e.target.value)}
                           placeholder="e.g., Marvel"
+                          className="w-full pl-10 pr-4 py-2 rounded-lg bg-zinc-700 border border-zinc-600 text-white placeholder-zinc-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all duration-200"
+                        />
+                      </div>
+                    </motion.div>
+
+                    {/* Author Filter */}
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2, duration: 0.2 }}
+                    >
+                      <label className="block text-zinc-300 text-sm font-medium mb-2">
+                        Author
+                      </label>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                        <input
+                          type="text"
+                          value={authorFilter}
+                          onChange={(e) => setAuthorFilter(e.target.value)}
+                          placeholder="e.g., Hickman"
                           className="w-full pl-10 pr-4 py-2 rounded-lg bg-zinc-700 border border-zinc-600 text-white placeholder-zinc-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all duration-200"
                         />
                       </div>

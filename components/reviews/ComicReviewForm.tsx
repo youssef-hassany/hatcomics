@@ -63,53 +63,87 @@ const ComicReviewForm = ({ comicId }: ComicReviewFormProps) => {
     setHoveredRating(0);
   };
 
-  const displayRating = hoveredRating || rating;
-
   const renderStar = (starValue: number) => {
-    const isFullStar = starValue <= displayRating;
+    const currentRating = hoveredRating || rating;
+    const isFullStar = starValue <= currentRating;
     const isHalfStar =
-      starValue - 0.5 <= displayRating && starValue > displayRating;
+      starValue - 0.5 <= currentRating && starValue > currentRating;
+    const isHovered = hoveredRating > 0;
 
     return (
-      <div key={starValue} className="relative inline-block">
-        {/* Full star background */}
-        <button
-          type="button"
-          onClick={() => handleStarClick(starValue, false)}
-          onMouseEnter={() => handleStarHover(starValue, false)}
-          onMouseLeave={handleStarLeave}
-          className="p-1 transition-transform duration-150 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 rounded relative cursor-pointer"
-          disabled={isLoading}
-        >
+      <div
+        key={starValue}
+        className={`relative inline-block cursor-pointer transition-all duration-200 ease-out ${
+          isHovered ? "scale-110" : "hover:scale-105"
+        }`}
+      >
+        {/* Background star (empty state) */}
+        <div className="relative">
           <Star
-            className={`w-8 h-8 transition-colors duration-150 ${
-              isFullStar
-                ? "text-orange-400 fill-current"
+            className={`w-8 h-8 transition-all duration-200 ease-out ${
+              isFullStar || isHalfStar
+                ? "text-zinc-700"
+                : isHovered
+                ? "text-zinc-500"
                 : "text-zinc-600 hover:text-zinc-500"
             }`}
           />
-        </button>
 
-        {/* Half star overlay */}
-        <button
-          type="button"
-          onClick={() => handleStarClick(starValue, true)}
-          onMouseEnter={() => handleStarHover(starValue, true)}
-          onMouseLeave={handleStarLeave}
-          className="absolute top-0 left-0 p-1 w-1/2 h-full transition-transform duration-150 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 rounded-l overflow-hidden cursor-pointer"
-          disabled={isLoading}
-        >
-          <Star
-            className={`w-8 h-8 transition-colors duration-150 ${
-              isHalfStar || isFullStar
-                ? "text-orange-400 fill-current"
-                : "text-transparent"
-            }`}
-            style={{
-              clipPath: isHalfStar && !isFullStar ? "inset(0 50% 0 0)" : "none",
-            }}
-          />
-        </button>
+          {/* Full star fill with glow effect */}
+          {isFullStar && (
+            <Star
+              className={`absolute inset-0 w-8 h-8 text-orange-400 fill-current transition-all duration-200 ease-out ${
+                isHovered ? "drop-shadow-[0_0_8px_rgba(251,146,60,0.4)]" : ""
+              }`}
+            />
+          )}
+
+          {/* Half star fill with glow effect */}
+          {isHalfStar && !isFullStar && (
+            <div
+              className="absolute inset-0 overflow-hidden transition-all duration-200 ease-out"
+              style={{ width: "50%" }}
+            >
+              <Star
+                className={`w-8 h-8 text-orange-400 fill-current transition-all duration-200 ease-out ${
+                  isHovered ? "drop-shadow-[0_0_8px_rgba(251,146,60,0.4)]" : ""
+                }`}
+              />
+            </div>
+          )}
+
+          {/* Subtle pulse animation on hover */}
+          {isHovered && (isFullStar || isHalfStar) && (
+            <div className="absolute inset-0 animate-pulse">
+              <Star className="w-8 h-8 text-orange-300 fill-current opacity-30" />
+            </div>
+          )}
+
+          {/* Invisible click areas */}
+          <div className="absolute inset-0 flex">
+            {/* Half star click area */}
+            <button
+              type="button"
+              onClick={() => handleStarClick(starValue, true)}
+              onMouseEnter={() => handleStarHover(starValue, true)}
+              onMouseLeave={handleStarLeave}
+              className="w-1/2 h-full focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-60 focus:ring-offset-1 focus:ring-offset-zinc-900 rounded-l transition-all duration-150 cursor-pointer"
+              disabled={isLoading}
+              aria-label={`${starValue - 0.5} stars`}
+            />
+
+            {/* Full star click area */}
+            <button
+              type="button"
+              onClick={() => handleStarClick(starValue, false)}
+              onMouseEnter={() => handleStarHover(starValue, false)}
+              onMouseLeave={handleStarLeave}
+              className="w-1/2 h-full focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-60 focus:ring-offset-1 focus:ring-offset-zinc-900 rounded-r transition-all duration-150 cursor-pointer"
+              disabled={isLoading}
+              aria-label={`${starValue} stars`}
+            />
+          </div>
+        </div>
       </div>
     );
   };

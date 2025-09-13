@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const character = searchParams.get("character");
   const publisher = searchParams.get("publisher");
+  const author = searchParams.get("author");
   const isBeginnerFriendlyParam = searchParams.get("isBeginnerFriendly");
   const isIndieParam = searchParams.get("isIndie");
   const sortBy = searchParams.get("sortBy") as
@@ -96,7 +97,7 @@ export async function GET(req: NextRequest) {
         case "rating":
           orderBy = [
             { averageRating: { sort: "desc", nulls: "last" } },
-            { createdAt: "desc" },
+            { totalReviews: "desc" },
           ];
           break;
         case "none":
@@ -116,6 +117,15 @@ export async function GET(req: NextRequest) {
       comics = comics.filter((comic) =>
         comic.characters.some((char) =>
           char.toLowerCase().includes(character.toLowerCase())
+        )
+      );
+    }
+
+    // Filter by character if specified (for partial matching)
+    if (author) {
+      comics = comics.filter((comic) =>
+        comic.authors.some((char) =>
+          char.toLowerCase().includes(author.toLowerCase())
         )
       );
     }
