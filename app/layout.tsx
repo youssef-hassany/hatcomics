@@ -17,11 +17,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HatComics - Ultimate Comic Book Community Platform",
+  title: "HatComics - هات كوميكس | Ultimate Comic Book Community Platform",
   description:
-    "Join HatComics (هات كوميكس), the premier comic book platform where fans write reviews, share posts, and discover amazing comics. Your ultimate comic universe awaits!",
+    "انضم إلى هات كوميكس (HatComics)، أفضل منصة كوميكس عربية لمحبي القصص المصورة. اكتب المراجعات، شارك المنشورات، واكتشف كوميكس رائعة جديدة. عالم الكوميكس المثالي ينتظرك!",
   keywords:
-    "HatComics, هات كوميكس, Hat Comics, comic book platform, comic reviews, comic community",
+    "هات كوميكس, كوميكس, كوميكس عربي, قصص مصورة, مراجعات كوميكس, مجتمع كوميكس, HatComics, Hat Comics, comic book platform, comic reviews, comic community, Arabic comics, كتب مصورة, قصص مصورة عربية",
   alternates: {
     canonical: "https://hat-comics.com",
   },
@@ -30,6 +30,39 @@ export const metadata: Metadata = {
     { rel: "shortcut icon", url: "/hatcomics.png" },
     { rel: "apple-touch-icon", url: "/hatcomics.png" },
   ],
+  openGraph: {
+    title: "HatComics - هات كوميكس | Ultimate Comic Book Community",
+    description:
+      "انضم إلى هات كوميكس (HatComics)، أفضل منصة كوميكس عربية لمحبي القصص المصورة. اكتب المراجعات، شارك المنشورات، واكتشف كوميكس رائعة جديدة. عالم الكوميكس المثالي ينتظرك!",
+    url: "https://hat-comics.com",
+    siteName: "HatComics",
+    locale: "ar_EG",
+    alternateLocale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: `/hatcomics.png`,
+        width: 1024,
+        height: 1024,
+        alt: "HatComics - هات كوميكس",
+      },
+    ],
+  },
+};
+
+export const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "HatComics - هات كوميكس",
+  alternateName: ["Hat Comics", "هات كوميكس", "كوميكس"],
+  url: "https://hat-comics.com",
+  description: "أفضل منصة كوميكس عربية لمحبي القصص المصورة",
+  inLanguage: ["ar", "en"],
+  potentialAction: {
+    "@type": "SearchAction",
+    target: "https://hat-comics.com/search?q={search_term_string}",
+    "query-input": "required name=search_term_string",
+  },
 };
 
 export default function RootLayout({
