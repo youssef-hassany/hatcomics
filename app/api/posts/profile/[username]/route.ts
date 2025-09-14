@@ -24,6 +24,7 @@ export async function GET(
     const userPosts = await prisma.post.findMany({
       where: {
         userId: user?.id,
+        comicId: null,
       },
       select: {
         id: true,
