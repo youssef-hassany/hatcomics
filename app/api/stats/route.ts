@@ -10,9 +10,9 @@ export async function GET() {
       where: { id: userId! },
     });
 
-    if (!user || user.role !== "owner") {
+    if (!user || (user.role !== "owner" && user.role !== "admin")) {
       return NextResponse.json(
-        { status: "fail", message: "You are not aithorized to get this data" },
+        { status: "fail", message: "You are not authorized to get this data" },
         { status: 401 }
       );
     }
