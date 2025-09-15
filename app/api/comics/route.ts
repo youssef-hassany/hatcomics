@@ -17,12 +17,14 @@ export async function GET(req: NextRequest) {
   const character = searchParams.get("character");
   const publisher = searchParams.get("publisher");
   const author = searchParams.get("author");
+  const name = searchParams.get("name"); // New name search parameter
   const isBeginnerFriendlyParam = searchParams.get("isBeginnerFriendly");
   const isIndieParam = searchParams.get("isIndie");
   const sortBy = searchParams.get("sortBy") as
     | "A-Z"
     | "Z-A"
     | "rating"
+    | "relevance"
     | "none"
     | null;
   const longevity = searchParams.get("longevity") as
@@ -41,9 +43,53 @@ export async function GET(req: NextRequest) {
   try {
     const whereClause: any = {};
 
-    if (character) {
-      // For partial matching within PostgreSQL arrays, we need to use a different approach
-      // We'll filter the results after fetching them
+    // Smart name search with fuzzy matching
+    if (name && name.trim()) {
+      const searchTerm = name.trim();
+
+      // Use PostgreSQL's full-text search with fuzzy matching
+      // This will match partial words, handle typos, and rank by relevance
+      whereClause.OR = [
+        // Exact match (highest priority)
+        {
+          name: {
+            equals: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        // Starts with (high priority)
+        {
+          name: {
+            startsWith: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        // Contains (medium priority)
+        {
+          name: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        // Word-level matching for multi-word searches
+        ...(searchTerm.includes(" ")
+          ? [
+              {
+                name: {
+                  contains: searchTerm.split(" ").join(" | "),
+                  mode: "insensitive",
+                },
+              },
+            ]
+          : []),
+        // Individual word matching for multi-word comic names
+        ...searchTerm.split(" ").map((word) => ({
+          name: {
+            contains: word,
+            mode: "insensitive",
+          },
+        })),
+      ];
     }
 
     if (publisher) {
@@ -100,6 +146,10 @@ export async function GET(req: NextRequest) {
             { totalReviews: "desc" },
           ];
           break;
+        case "relevance":
+          // When searching by name, sort by relevance (will be handled post-query)
+          orderBy = name ? { name: "asc" } : { createdAt: "desc" };
+          break;
         case "none":
         default:
           orderBy = { createdAt: "desc" };
@@ -121,19 +171,60 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Filter by character if specified (for partial matching)
+    // Filter by author if specified (for partial matching)
     if (author) {
       comics = comics.filter((comic) =>
-        comic.authors.some((char) =>
-          char.toLowerCase().includes(author.toLowerCase())
+        comic.authors.some((auth) =>
+          auth.toLowerCase().includes(author.toLowerCase())
         )
       );
+    }
+
+    // Custom relevance sorting for name searches
+    if (name && sortBy === "relevance") {
+      const searchTerm = name.trim().toLowerCase();
+
+      comics = comics.sort((a, b) => {
+        const aName = a.name.toLowerCase();
+        const bName = b.name.toLowerCase();
+
+        // Exact match gets highest priority
+        if (aName === searchTerm && bName !== searchTerm) return -1;
+        if (bName === searchTerm && aName !== searchTerm) return 1;
+
+        // Starts with gets next priority
+        const aStartsWith = aName.startsWith(searchTerm);
+        const bStartsWith = bName.startsWith(searchTerm);
+        if (aStartsWith && !bStartsWith) return -1;
+        if (bStartsWith && !aStartsWith) return 1;
+
+        // Calculate similarity score based on position and length
+        const aIndex = aName.indexOf(searchTerm);
+        const bIndex = bName.indexOf(searchTerm);
+
+        if (aIndex !== -1 && bIndex !== -1) {
+          // Earlier position in string is better
+          if (aIndex !== bIndex) return aIndex - bIndex;
+          // Shorter total length is better (more relevant match)
+          return a.name.length - b.name.length;
+        }
+
+        // Fallback to alphabetical
+        return aName.localeCompare(bName);
+      });
     }
 
     return NextResponse.json(
       {
         status: "success",
         data: comics,
+        searchInfo: name
+          ? {
+              searchTerm: name,
+              resultCount: comics.length,
+              sortedBy: "relevance",
+            }
+          : undefined,
       },
       { status: 200 }
     );

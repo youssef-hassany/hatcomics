@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ComicCard from "@/components/comics/ComicCard";
 
 const StoredComicsPage = () => {
+  const [comicNameFilter, setComicNameFilter] = useState("");
   const [characterFilter, setCharacterFilter] = useState("");
   const [publisherFilter, setPublisherFilter] = useState("");
   const [authorFilter, setAuthorFilter] = useState("");
@@ -27,11 +28,13 @@ const StoredComicsPage = () => {
   >(undefined);
   const [showFilters, setShowFilters] = useState(false);
 
+  const debouncedComicName = useDebounce(comicNameFilter, 500);
   const debouncedCharacter = useDebounce(characterFilter, 500);
   const debouncedPublisher = useDebounce(publisherFilter, 500);
   const debouncedAuthor = useDebounce(authorFilter, 500);
 
   const filters = {
+    name: debouncedComicName || undefined,
     character: debouncedCharacter || undefined,
     publisher: debouncedPublisher || undefined,
     author: debouncedAuthor || undefined,
@@ -44,6 +47,7 @@ const StoredComicsPage = () => {
   const { data: comicsList, isLoading, error } = useGetComicsList(filters);
 
   const clearAllFilters = () => {
+    setComicNameFilter("");
     setCharacterFilter("");
     setPublisherFilter("");
     setAuthorFilter("");
@@ -54,6 +58,7 @@ const StoredComicsPage = () => {
   };
 
   const hasActiveFilters =
+    comicNameFilter ||
     characterFilter ||
     publisherFilter ||
     authorFilter ||
@@ -163,6 +168,27 @@ const StoredComicsPage = () => {
                     }}
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4"
                   >
+                    {/* comic name Filter */}
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.15, duration: 0.2 }}
+                    >
+                      <label className="block text-zinc-300 text-sm font-medium mb-2">
+                        Comic Name
+                      </label>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                        <input
+                          type="text"
+                          value={comicNameFilter}
+                          onChange={(e) => setComicNameFilter(e.target.value)}
+                          placeholder="e.g., Watchmen"
+                          className="w-full pl-10 pr-4 py-2 rounded-lg bg-zinc-700 border border-zinc-600 text-white placeholder-zinc-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all duration-200"
+                        />
+                      </div>
+                    </motion.div>
+
                     {/* Character Filter */}
                     <motion.div
                       initial={{ opacity: 0, x: -20 }}

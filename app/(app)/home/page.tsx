@@ -49,7 +49,7 @@ const HomePage = () => {
         {/* Welcome Header */}
         <div className="mb-8 pt-6 md:pt-0">
           <h1 className="text-3xl font-bold mb-2 text-zinc-100">
-            Welcome back, {currentUser?.username || "Comic Fan"}!
+            Welcome back, {currentUser?.fullname || "Comic Fan"}!
           </h1>
           <p className="text-zinc-400">
             Discover the best comics, posts, and community members
