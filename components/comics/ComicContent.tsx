@@ -251,7 +251,7 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                 currentComic.readingLinksData.length > 0 && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-zinc-100 mb-2">
-                      Where to Read
+                      Reading Links
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {currentComic.readingLinksData.map((link) => {
