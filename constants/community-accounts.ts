@@ -85,4 +85,16 @@ export const communityAccounts = [
     link: "https://x.com/iRa2xi",
     verified: true,
   },
+  {
+    id: 9,
+    name: "Slash Comics - سلاش كوميكس",
+    type: "social_media",
+    description:
+      "قناة سلاش كوميكس هي قناة ناشرة للكوميكس في برنامج التلجرام وجميع حقوق المترجمين محفوظة لكنها تطمح ان تكون قناة مترجمة",
+    platform: "Telegram",
+    followers: "8500+",
+    avatar: "/slash-comics.jpg",
+    link: "https://t.me/comics7m",
+    verified: true,
+  },
 ];
