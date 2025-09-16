@@ -10,6 +10,7 @@ interface ComicsFilters {
   isIndie?: boolean;
   longevity?: "short" | "medium" | "long";
   sortBy?: "A-Z" | "Z-A" | "rating" | "none";
+  language?: "" | "ar";
 }
 
 const fetchComicsList = async (filters: ComicsFilters = {}) => {
@@ -29,6 +30,7 @@ const fetchComicsList = async (filters: ComicsFilters = {}) => {
       params.append("isIndie", filters.isIndie.toString());
     if (filters.longevity) params.append("longevity", filters.longevity);
     if (filters.sortBy) params.append("sortBy", filters.sortBy);
+    if (filters.language) params.append("language", filters.language);
 
     const url = `/api/comics${
       params.toString() ? `?${params.toString()}` : ""

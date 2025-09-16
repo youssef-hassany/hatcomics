@@ -26,6 +26,7 @@ const StoredComicsPage = () => {
   const [sortBy, setSortBy] = useState<
     "A-Z" | "Z-A" | "rating" | "none" | undefined
   >(undefined);
+  const [language, setLanguage] = useState<"ar" | "" | undefined>(undefined);
   const [showFilters, setShowFilters] = useState(false);
 
   const debouncedComicName = useDebounce(comicNameFilter, 500);
@@ -42,6 +43,7 @@ const StoredComicsPage = () => {
     isIndie: isIndieFilter,
     longevity: longevityFilter,
     sortBy: sortBy,
+    language: language || undefined,
   };
 
   const { data: comicsList, isLoading, error } = useGetComicsList(filters);
@@ -55,6 +57,7 @@ const StoredComicsPage = () => {
     setIsIndieFilter(undefined);
     setLongevityFilter(undefined);
     setSortBy(undefined);
+    setLanguage(undefined);
   };
 
   const hasActiveFilters =
@@ -65,7 +68,8 @@ const StoredComicsPage = () => {
     isBeginnerFriendlyFilter !== undefined ||
     isIndieFilter !== undefined ||
     longevityFilter ||
-    sortBy;
+    sortBy ||
+    language;
 
   return (
     <div className="min-h-screen bg-zinc-900">
@@ -335,6 +339,30 @@ const StoredComicsPage = () => {
                         <option value="short">Short (1-12 issues)</option>
                         <option value="medium">Medium (13-30 issues)</option>
                         <option value="long">Long (30+ issues)</option>
+                      </select>
+                    </motion.div>
+
+                    {/* Arabic Comics Filter*/}
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3, duration: 0.2 }}
+                    >
+                      <label className="block text-zinc-300 text-sm font-medium mb-2">
+                        Language
+                      </label>
+                      <select
+                        value={
+                          language === undefined ? "" : language.toString()
+                        }
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setLanguage(value === "" ? undefined : "ar");
+                        }}
+                        className="w-full px-4 py-2 rounded-lg bg-zinc-700 border border-zinc-600 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all duration-200"
+                      >
+                        <option value="">All</option>
+                        <option value="ar">Arabic</option>
                       </select>
                     </motion.div>
                   </motion.div>

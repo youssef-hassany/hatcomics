@@ -17,7 +17,8 @@ export async function GET(req: NextRequest) {
   const character = searchParams.get("character");
   const publisher = searchParams.get("publisher");
   const author = searchParams.get("author");
-  const name = searchParams.get("name"); // New name search parameter
+  const name = searchParams.get("name");
+  const language = searchParams.get("language");
   const isBeginnerFriendlyParam = searchParams.get("isBeginnerFriendly");
   const isIndieParam = searchParams.get("isIndie");
   const sortBy = searchParams.get("sortBy") as
@@ -105,6 +106,15 @@ export async function GET(req: NextRequest) {
 
     if (isIndie !== undefined) {
       whereClause.isIndie = isIndie;
+    }
+
+    // Filter by language of reading links
+    if (language) {
+      whereClause.readingLinksData = {
+        some: {
+          language: language,
+        },
+      };
     }
 
     if (longevity) {
