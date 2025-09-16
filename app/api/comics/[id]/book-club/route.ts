@@ -106,87 +106,96 @@ export async function POST(
 ) {
   try {
     const { userId } = await auth();
-    const user = await prisma.user.findFirst({
-      where: { id: userId! },
-    });
-
-    if (!user) {
-      NoUserError();
-      return;
+    if (!userId) {
+      return NextResponse.json(
+        { status: "error", message: "User not authenticated" },
+        { status: 401 }
+      );
     }
 
     const { id } = await params;
     if (!id) {
       return NextResponse.json(
         { status: "error", message: "Comic Id is required" },
-        { status: 401 }
+        { status: 400 }
       );
     }
 
     const formData = await request.formData();
-
     const images = formData.getAll("images") as File[];
     const content = formData.get("content") as string;
     const hasSpoiler = formData.get("hasSpoiler");
 
-    const imageUrls: string[] = [];
-
-    // Check if we have images and they're valid files
-    if (images && images.length > 0) {
-      // Validate max 4 images
-      if (images.length > 4) {
-        return NextResponse.json(
-          { status: "error", message: "Maximum 4 images allowed" },
-          { status: 400 }
-        );
-      }
-
-      // Filter out empty files and upload valid ones
-      const validImages = images.filter(
-        (image) => image instanceof File && image.size > 0
+    // Validate max 4 images upfront
+    if (images && images.length > 4) {
+      return NextResponse.json(
+        { status: "error", message: "Maximum 4 images allowed" },
+        { status: 400 }
       );
-
-      for (const image of validImages) {
-        try {
-          const { fileUrl } = await uploadImageToR2FromServer(
-            image,
-            "thoughts"
-          );
-          imageUrls.push(fileUrl);
-        } catch (uploadError) {
-          console.error("Error uploading image:", uploadError);
-          // You might want to continue or return error based on your needs
-        }
-      }
     }
 
-    const newThought = await prisma.post.create({
-      data: {
-        content,
-        attachments: imageUrls,
-        comicId: id,
-        hasSpoiler: hasSpoiler === "true",
-        userId: userId!,
-      },
-    });
+    // Filter valid images
+    const validImages = images.filter(
+      (image) => image instanceof File && image.size > 0
+    );
 
-    // give the user 5 points
-    await prisma.user.update({
-      data: {
-        points: user.points + 5,
-      },
-      where: { id: userId! },
+    // Upload all images in parallel instead of sequentially
+    const imageUploadPromises = validImages.map((image) =>
+      uploadImageToR2FromServer(image, "thoughts").catch((error) => {
+        console.error("Error uploading image:", error);
+        return null; // Return null for failed uploads
+      })
+    );
+
+    const uploadResults = await Promise.all(imageUploadPromises);
+    const imageUrls = uploadResults
+      .filter((result) => result !== null)
+      .map((result) => result!.fileUrl);
+
+    // Use a transaction to combine user fetch, post creation, and user update
+    const result = await prisma.$transaction(async (tx) => {
+      // Get user data
+      const user = await tx.user.findUnique({
+        where: { id: userId },
+        select: { id: true, points: true },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      // Create post and update user points in parallel
+      const [newPost] = await Promise.all([
+        tx.post.create({
+          data: {
+            content,
+            attachments: imageUrls,
+            comicId: id,
+            hasSpoiler: hasSpoiler === "true",
+            userId: userId,
+          },
+        }),
+        tx.user.update({
+          where: { id: userId },
+          data: {
+            points: user.points + 5,
+          },
+        }),
+      ]);
+
+      return newPost;
     });
 
     return NextResponse.json(
-      { status: "success", data: newThought },
+      { status: "success", data: result },
       { status: 200 }
     );
   } catch (error) {
     console.error("Error creating thought:", error);
-    return NextResponse.json(
-      { status: "error", message: `Internal server error: ${error}` },
-      { status: 500 }
-    );
+
+    // Don't expose internal error details in production
+    const message =
+      error instanceof Error ? error.message : "Internal server error";
+    return NextResponse.json({ status: "error", message }, { status: 500 });
   }
 }
