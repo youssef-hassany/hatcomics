@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/db";
 import { uploadImageToR2FromServer } from "@/lib/upload-media";
-import { NoUserError } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import paginator from "@/lib/pagination";
