@@ -10,6 +10,7 @@ interface Comic {
   name: string;
   numberOfIssues: number;
   image?: string;
+  isGraphicNovel: boolean;
 }
 
 export interface Review {
