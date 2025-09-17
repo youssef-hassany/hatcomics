@@ -97,13 +97,21 @@ const ComicCard = ({ comic }: Props) => {
         {/* Metadata */}
         <div className="space-y-2 mb-4">
           {/* Number of Issues */}
-          {!comic.ongoing ? (
+          {!comic.ongoing && !comic.isGraphicNovel && (
             <div className="flex items-center gap-2 text-zinc-400 text-xs">
               <span>📚 {comic.numberOfIssues} issues</span>
             </div>
-          ) : (
+          )}
+
+          {comic.ongoing && (
             <div className="flex items-center gap-2 text-zinc-400 text-xs">
               <span>📚 Ongoing</span>
+            </div>
+          )}
+
+          {comic.isGraphicNovel && (
+            <div className="flex items-center gap-2 text-zinc-400 text-xs">
+              <span>📚 Graphic Novel</span>
             </div>
           )}
 

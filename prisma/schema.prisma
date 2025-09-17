@@ -116,6 +116,7 @@ model Comic {
   description        String?
   ongoing            Boolean  @default(false)
   isIndie            Boolean  @default(false)
+  isGraphicNovel     Boolean  @default(false)
   reviews            Review[]
   readlist           Readlist[]
   readingLinksData   ReadingLink[]

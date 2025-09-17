@@ -25,6 +25,7 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
     characters: ["spider-man"],
     isOnGoing: false,
     isIndie: false,
+    isGraphicNovel: false,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,6 +82,7 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
         isBeginnerFriendly: formFields.isBeginnerFriendly,
         isOnGoing: formFields.isOnGoing,
         isIndie: formFields.isIndie,
+        isGraphicNovel: formFields.isGraphicNovel,
       };
 
       // Validate required fields
@@ -112,6 +114,7 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
           characters: ["spider-man"],
           isOnGoing: false,
           isIndie: false,
+          isGraphicNovel: false,
         });
       } else {
       }
@@ -275,6 +278,17 @@ const AddComicForm = ({ selectedComic, onSuccess }: Props) => {
           disabled={isSubmitting}
         />
         <label className="font-medium">Indie?</label>
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          name="isGraphicNovel"
+          checked={formFields.isGraphicNovel}
+          onChange={handleChange}
+          disabled={isSubmitting}
+        />
+        <label className="font-medium">Graphic Novel?</label>
       </div>
 
       {/* Characters */}

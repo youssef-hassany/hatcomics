@@ -21,6 +21,7 @@ interface Comic {
   name: string;
   numberOfIssues: number;
   image?: string;
+  isGraphicNovel: boolean;
 }
 
 interface ComicReviewProps {
@@ -173,7 +174,8 @@ const ComicReview = ({
             </h3>
             {comic.numberOfIssues && (
               <p className="text-zinc-400 text-xs sm:text-sm">
-                Issues: {comic.numberOfIssues}
+                Issues:{" "}
+                {comic.isGraphicNovel ? "Graphic Novel" : comic.numberOfIssues}
               </p>
             )}
           </div>

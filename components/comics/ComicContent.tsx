@@ -200,10 +200,14 @@ const ComicContent = ({ initialComic }: ComicContentProps) => {
                     <BookOpen className="w-5 h-5 text-zinc-500" />
                     <div>
                       <span className="text-zinc-500 text-sm">Issues</span>
-                      <p className="font-medium">
-                        {currentComic.numberOfIssues}
-                        {currentComic.ongoing && "+ (Ongoing)"}
-                      </p>
+                      {!currentComic.isGraphicNovel ? (
+                        <p className="font-medium">
+                          {currentComic.numberOfIssues}
+                          {currentComic.ongoing && "+ (Ongoing)"}
+                        </p>
+                      ) : (
+                        <p className="font-medium">Graphic Novel</p>
+                      )}
                     </div>
                   </div>
 
