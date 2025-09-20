@@ -8,6 +8,7 @@ import {
   Trophy,
   Medal,
   Award,
+  MessageCircle,
 } from "lucide-react";
 import ComicCard from "@/components/comics/ComicCard";
 import PostCard from "@/components/posts/PostCard";
@@ -16,12 +17,18 @@ import { useGetTopComics } from "@/hooks/comics/useGetTopComics";
 import { useGetTopPosts } from "@/hooks/posts/useGetTopPosts";
 import { useGetTopUsers } from "@/hooks/user/useGetTopUsers";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
+import Link from "next/link";
+import { useGetRecentBookClubPosts } from "@/hooks/book-club/useGetRecentBookClubPosts";
+import ThoughtPreviewSkeleton from "@/components/book-club/ThoughtPreviewSkeleton";
+import ThoughtPreview from "@/components/book-club/ThoughtPreview";
 
 const HomePage = () => {
   const { data: topComics, isLoading: comicsLoading } = useGetTopComics();
   const { data: topPosts, isLoading: postsLoading } = useGetTopPosts();
   const { data: topUsers, isLoading: usersLoading } = useGetTopUsers();
   const { data: currentUser } = useGetLoggedInUser();
+  const { data: recentBookClubPosts, isLoading: bookClubLoading } =
+    useGetRecentBookClubPosts();
 
   // Get top 3 users and find current user rank
   const top3Users = topUsers?.slice(0, 3) || [];
@@ -88,6 +95,56 @@ const HomePage = () => {
                   <ComicCard comic={comic} />
                 </div>
               ))}
+            </div>
+          )}
+        </section>
+
+        {/* Book Club Activity Section */}
+        <section className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center">
+              <MessageCircle className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-zinc-100">
+                Book Club Activity
+              </h2>
+              <p className="text-zinc-400 text-sm">
+                Latest discussions in comic book clubs
+              </p>
+            </div>
+          </div>
+
+          {bookClubLoading ? (
+            <div className="space-y-4">
+              {[...Array(3)].map((i) => (
+                <ThoughtPreviewSkeleton key={i} />
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {recentBookClubPosts?.map((thought) => (
+                <ThoughtPreview
+                  comic={thought.comic}
+                  thoughtContent={thought.content}
+                  thoughtId={thought.id}
+                  createdAt={thought.createdAt}
+                  user={thought.user}
+                  key={thought.id}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Show More Link */}
+          {recentBookClubPosts && recentBookClubPosts.length > 3 && (
+            <div className="mt-4 text-center">
+              <Link
+                href="/book-clubs"
+                className="text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors duration-200"
+              >
+                View all book club activity →
+              </Link>
             </div>
           )}
         </section>

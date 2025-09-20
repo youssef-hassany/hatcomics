@@ -20,6 +20,7 @@ import {
   User,
   Trophy,
   Library,
+  Coffee,
 } from "lucide-react";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { usePathname } from "next/navigation";
@@ -63,6 +64,16 @@ export default function Sidebar() {
       ),
     },
     {
+      title: "Book Clubs",
+      url: "/book-club",
+      icon: (
+        <Coffee
+          size={20}
+          className="group-hover:text-orange-500 transition-colors"
+        />
+      ),
+    },
+    {
       title: "Posts",
       url: "/posts",
       icon: (
@@ -72,7 +83,6 @@ export default function Sidebar() {
         />
       ),
     },
-
     {
       title: "Readlist",
       url: `/readlist/${user?.id}`,
