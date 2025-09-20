@@ -22,7 +22,7 @@ const getLatestThoughts = async ({ pageParam = 1 }): Promise<Response> => {
 
 export const useGetBookClubPostsList = () => {
   return useInfiniteQuery({
-    queryKey: ["posts"],
+    queryKey: ["book-club-posts"],
     queryFn: getLatestThoughts,
     getNextPageParam: (lastPage) => {
       return lastPage.hasNextPage ? lastPage.currentPage + 1 : undefined;
