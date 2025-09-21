@@ -2,6 +2,7 @@
 
 import ComicReview from "@/components/reviews/ComicReview";
 import ComicReviewSkeleton from "@/components/reviews/ComicReviewSkeleton";
+import { useGetReview } from "@/hooks/reviews/useGetReview";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { Review } from "@/types/Review";
 import { ArrowLeft } from "lucide-react";
@@ -15,6 +16,9 @@ interface ReviewPageClientProps {
 const ReviewPageClient = ({ initialReview }: ReviewPageClientProps) => {
   const router = useRouter();
   const { data: loggedInUser, isLoading: userLoading } = useGetLoggedInUser();
+  const { data: loadedReview, isLoading: reviewLoading } = useGetReview(
+    initialReview?.id as string
+  );
 
   if (!initialReview) {
     return (
@@ -55,7 +59,7 @@ const ReviewPageClient = ({ initialReview }: ReviewPageClientProps) => {
     );
   }
 
-  if (userLoading) {
+  if (userLoading || reviewLoading) {
     return (
       <div className="min-h-screen bg-zinc-900 p-6">
         <div className="max-w-2xl mx-auto">
@@ -97,14 +101,7 @@ const ReviewPageClient = ({ initialReview }: ReviewPageClientProps) => {
 
         {/* Review Component */}
         <ComicReview
-          id={initialReview.id}
-          rating={initialReview.rating}
-          user={initialReview.user}
-          content={initialReview.description}
-          comic={initialReview.comic}
-          hasSpoilers={initialReview.spoiler}
-          updatedAt={initialReview.updatedAt}
-          createdAt={initialReview.createdAt}
+          review={loadedReview ? loadedReview : initialReview}
           isOwner={loggedInUser?.id === initialReview.user.id}
           showFullContent={true}
           onDeleteSuccess={() => router.push("/reviews")}

@@ -59,13 +59,15 @@ model Post {
 model Comment {
   id         String   @id @default(cuid())
   userId     String
-  postId     String
+  postId     String?
+  reviewId   String?
   content    String
   attachment String?
   replyTo    String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post       Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  review     Review?   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   likes      Like[]
   
@@ -75,17 +77,20 @@ model Comment {
 }
 
 model Like {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   userId    String
   postId    String?
   commentId String?
-  createdAt DateTime @default(now())
-  comment   Comment? @relation(fields: [commentId], references: [id])
-  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviewId  String?
+  createdAt DateTime  @default(now())
+  comment   Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  post      Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review    Review?   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
   @@unique([userId, postId])
   @@unique([userId, commentId])
+  @@unique([userId, reviewId])
 }
 
 model Follow {
@@ -138,6 +143,9 @@ model Review {
   spoiler     Boolean  @default(false)
   comic       Comic    @relation(fields: [comicId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes       Like[]
+  comments    Comment[]
+
 
   @@unique([userId, comicId])
   @@index([comicId])

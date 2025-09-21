@@ -8,7 +8,7 @@ import {
   Trophy,
   Medal,
   Award,
-  MessageCircle,
+  Coffee,
 } from "lucide-react";
 import ComicCard from "@/components/comics/ComicCard";
 import PostCard from "@/components/posts/PostCard";
@@ -103,7 +103,7 @@ const HomePage = () => {
         <section className="mb-12">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center">
-              <MessageCircle className="w-5 h-5" />
+              <Coffee className="w-5 h-5" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-zinc-100">

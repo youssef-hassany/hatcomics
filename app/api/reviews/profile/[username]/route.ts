@@ -21,7 +21,7 @@ export async function GET(
       },
     });
 
-    const userReviews = await prisma.review.findMany({
+    const data = await prisma.review.findMany({
       where: {
         userId: user?.id,
       },
@@ -37,11 +37,28 @@ export async function GET(
             role: true,
           },
         },
+        ...(userId && {
+          likes: {
+            where: { userId },
+            select: { userId: true },
+          },
+        }),
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
       },
     });
+
+    const userReviews = data.map((review) => ({
+      ...review,
+      isLikedByCurrentUser: review.likes.length > 0,
+    }));
 
     return NextResponse.json(
       { status: "success", data: userReviews },

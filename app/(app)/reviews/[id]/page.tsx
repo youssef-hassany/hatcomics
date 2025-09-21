@@ -159,6 +159,12 @@ export default async function ReviewPage({
       createdAt: review.comic.createdAt.toISOString(),
       updatedAt: review.comic.updatedAt.toISOString(),
     },
+    isLikedByCurrentUser: false,
+    _count: {
+      bookmarks: 0,
+      likes: 0,
+      comments: 0,
+    },
   } as Review;
 
   const structuredData = generateStructuredData(review);

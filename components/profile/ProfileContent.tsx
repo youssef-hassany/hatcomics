@@ -105,14 +105,7 @@ const ProfileContent = ({ username, userProfileData }: Props) => {
         ) : (
           reviews?.map((review) => (
             <div className="my-2" key={review.id}>
-              <ComicReview
-                comic={review.comic}
-                id={review.id}
-                rating={review.rating}
-                createdAt={review.createdAt}
-                user={review.user}
-                content={review.description}
-              />
+              <ComicReview review={review} />
             </div>
           ))
         ))}

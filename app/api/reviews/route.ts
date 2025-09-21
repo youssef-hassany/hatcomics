@@ -11,9 +11,10 @@ export async function GET(request: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       NoUserError();
+      return;
     }
 
-    const review = await prisma.review.findMany({
+    const data = await prisma.review.findMany({
       include: {
         comic: true,
         user: {
@@ -26,14 +27,29 @@ export async function GET(request: NextRequest) {
             role: true,
           },
         },
+        likes: {
+          where: { userId }, // Only get current user's like
+          select: { userId: true },
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
       },
     });
 
+    const reviews = data.map((review) => ({
+      ...review,
+      isLikedByCurrentUser: review.likes.length > 0,
+    }));
+
     const { paginatedData, hasNextPage, currentPage, totalPages } = paginate(
-      review,
+      reviews,
       page
     );
 

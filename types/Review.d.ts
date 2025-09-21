@@ -22,4 +22,9 @@ export interface Review {
   spoiler: boolean;
   createdAt: string;
   updatedAt: string;
+  isLikedByCurrentUser: boolean;
+  _count: {
+    likes: number;
+    comments: number;
+  };
 }

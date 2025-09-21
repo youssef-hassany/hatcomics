@@ -7,9 +7,18 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json(
+        { status: "error", message: "User not authenticated or doesn't exist" },
+        { status: 401 }
+      );
+    }
+
     const { id } = await params;
 
-    const review = await prisma.review.findFirst({
+    const data = await prisma.review.findFirst({
       where: {
         id,
       },
@@ -25,8 +34,28 @@ export async function GET(
             role: true,
           },
         },
+        ...(userId && {
+          likes: {
+            where: { userId },
+            select: { userId: true },
+          },
+        }),
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
       },
     });
+
+    const review = data
+      ? {
+          ...data,
+          // Only check if logged in user has liked/bookmarked
+          isLikedByCurrentUser: userId ? (data.likes?.length || 0) > 0 : false,
+        }
+      : data;
 
     return NextResponse.json(
       { status: "success", data: review },

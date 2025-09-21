@@ -81,14 +81,7 @@ const Page = () => {
           <div className="space-y-6">
             {allReviews?.map((review) => (
               <ComicReview
-                id={review.id}
-                rating={review.rating}
-                user={review.user}
-                content={review.description}
-                comic={review.comic}
-                hasSpoilers={review.spoiler}
-                updatedAt={review.updatedAt}
-                createdAt={review.createdAt}
+                review={review}
                 isOwner={loggedInUser?.id === review.user.id}
                 key={review.id}
               />

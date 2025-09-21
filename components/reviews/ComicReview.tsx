@@ -7,48 +7,22 @@ import { useRouter } from "next/navigation";
 import ReviewActions from "./ReviewActions";
 import Avatar from "../ui/avatar";
 import ShareButton from "./ShareButton";
+import ReviewLikeHandler from "./ReviewLikeHandler";
 import { starGenerator } from "@/lib/utils";
-
-interface ReviewUser {
-  id: string;
-  username: string;
-  fullname: string;
-  photo?: string;
-}
-
-interface Comic {
-  id: string;
-  name: string;
-  numberOfIssues: number;
-  image?: string;
-  isGraphicNovel: boolean;
-}
+import { Review } from "@/types/Review";
 
 interface ComicReviewProps {
-  id: string;
-  user: ReviewUser;
-  comic: Comic;
-  rating: number;
-  content?: string;
-  hasSpoilers?: boolean;
-  createdAt: string;
-  updatedAt?: string;
+  review: Review;
   isOwner?: boolean;
   onDeleteSuccess?: () => void;
-  showFullContent?: boolean; // New prop to control content display
+  showFullContent?: boolean;
 }
 
 const ComicReview = ({
-  id,
-  user,
-  comic,
-  rating,
-  content,
-  hasSpoilers = false,
-  createdAt,
+  review,
   isOwner = false,
   onDeleteSuccess,
-  showFullContent = false, // Default to false for list view
+  showFullContent = false,
 }: ComicReviewProps) => {
   const [showSpoilers, setShowSpoilers] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -79,28 +53,31 @@ const ComicReview = ({
 
     // Only navigate if not showing full content (i.e., in list view)
     if (!showFullContent) {
-      router.push(`/reviews/${id}`);
+      router.push(`/reviews/${review.id}`);
     }
   };
 
   // Determine content display based on context
   const getDisplayContent = () => {
-    if (!content) return "";
+    if (!review.description) return "";
 
     if (showFullContent) {
       // Full content view - show everything with expand/collapse for very long content
-      const isVeryLongContent = content.length > 800;
+      const isVeryLongContent = review.description.length > 800;
       return isVeryLongContent && !isExpanded
-        ? `${content.slice(0, 800)}...`
-        : content;
+        ? `${review.description.slice(0, 800)}...`
+        : review.description;
     } else {
       // List view - show only first 100 characters
-      return content.length > 100 ? `${content.slice(0, 100)}...` : content;
+      return review.description.length > 100
+        ? `${review.description.slice(0, 100)}...`
+        : review.description;
     }
   };
 
   const displayContent = getDisplayContent();
-  const isVeryLongContent = showFullContent && content && content.length > 800;
+  const isVeryLongContent =
+    showFullContent && review.description && review.description.length > 800;
   const shouldShowExpandButton = showFullContent && isVeryLongContent;
 
   const formatDate = (date: Date) => {
@@ -122,6 +99,7 @@ const ComicReview = ({
     for (let i = 0; i < fullStars; i++) {
       stars.push(
         <Star
+          key={`full-${i}`}
           className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-400 fill-current`}
         />
       );
@@ -153,13 +131,13 @@ const ComicReview = ({
       onClick={handleReviewClick}
     >
       {/* Comic Info Section - Clickable */}
-      <Link href={`/comics/${comic.id}`} className="block">
+      <Link href={`/comics/${review.comic.id}`} className="block">
         <div className="flex items-center gap-3 mb-4 pb-4 border-b border-zinc-700 hover:bg-zinc-750 transition-colors duration-200 rounded-lg p-2 -m-2">
           <div className="flex-shrink-0">
-            {comic.image ? (
+            {review.comic.image ? (
               <img
-                src={comic.image}
-                alt={comic.name}
+                src={review.comic.image}
+                alt={review.comic.name}
                 className="w-10 h-12 sm:w-12 sm:h-16 rounded border border-zinc-700 object-cover"
               />
             ) : (
@@ -170,12 +148,14 @@ const ComicReview = ({
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-zinc-100 truncate text-base sm:text-lg">
-              {comic.name}
+              {review.comic.name}
             </h3>
-            {comic.numberOfIssues && (
+            {review.comic.numberOfIssues && (
               <p className="text-zinc-400 text-xs sm:text-sm">
                 Issues:{" "}
-                {comic.isGraphicNovel ? "Graphic Novel" : comic.numberOfIssues}
+                {review.comic.isGraphicNovel
+                  ? "Graphic Novel"
+                  : review.comic.numberOfIssues}
               </p>
             )}
           </div>
@@ -188,8 +168,8 @@ const ComicReview = ({
           {/* User Avatar */}
           <div className="flex-shrink-0">
             <Avatar
-              url={user.photo || "/placeholder-avatar.png"}
-              username={user.username}
+              url={review.user.photo || "/placeholder-avatar.png"}
+              username={review.user.username}
               className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-zinc-700"
             />
           </div>
@@ -198,13 +178,13 @@ const ComicReview = ({
           <div className="flex-1 min-w-0">
             <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 mb-1">
               <h4 className="font-semibold text-zinc-100 truncate text-sm sm:text-base">
-                {user.fullname}
+                {review.user.fullname}
               </h4>
 
               <div className="flex items-center gap-1 text-xs text-zinc-500">
                 <Calendar className="w-3 h-3" />
-                <time dateTime={new Date(createdAt).toISOString()}>
-                  {formatDate(new Date(createdAt))}
+                <time dateTime={new Date(review.createdAt).toISOString()}>
+                  {formatDate(new Date(review.createdAt))}
                 </time>
               </div>
             </div>
@@ -212,10 +192,10 @@ const ComicReview = ({
             {/* Star Rating */}
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-0.5">
-                {renderStars(rating)}
+                {renderStars(review.rating)}
               </div>
               <span className="text-xs sm:text-sm text-zinc-400">
-                {rating}/5
+                {review.rating}/5
               </span>
             </div>
           </div>
@@ -226,16 +206,16 @@ const ComicReview = ({
           <ShareButton
             url={
               typeof window !== "undefined"
-                ? `${window.location.origin}/reviews/${id}`
+                ? `${window.location.origin}/reviews/${review.id}`
                 : ""
             }
-            title={`${user.fullname}'s review of ${comic.name}`}
-            text={`Check out this ${starGenerator(rating)} review of ${
-              comic.name
-            } by ${user.fullname}!`}
+            title={`${review.user.fullname}'s review of ${review.comic.name}`}
+            text={`Check out this ${starGenerator(review.rating)} review of ${
+              review.comic.name
+            } by ${review.user.fullname}!`}
           />
           <ReviewActions
-            reviewId={id}
+            reviewId={review.id}
             isOwner={isOwner}
             onSuccess={onDeleteSuccess}
           />
@@ -243,10 +223,10 @@ const ComicReview = ({
       </div>
 
       {/* Review Content */}
-      {content && (
+      {review.description && (
         <div className="mb-4">
           {/* Spoiler Warning */}
-          {hasSpoilers && !showSpoilers && (
+          {review.spoiler && !showSpoilers && (
             <div className="mb-4 p-3 sm:p-4 bg-yellow-900/20 border border-yellow-800/50 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Eye className="w-4 h-4 text-yellow-500" />
@@ -264,9 +244,9 @@ const ComicReview = ({
           )}
 
           {/* Review Text */}
-          {(!hasSpoilers || showSpoilers) && (
+          {(!review.spoiler || showSpoilers) && (
             <div className="relative">
-              {hasSpoilers && showSpoilers && (
+              {review.spoiler && showSpoilers && (
                 <div className="flex items-center gap-2 mb-3">
                   <EyeOff className="w-4 h-4 text-yellow-500" />
                   <span className="text-xs text-yellow-400">
@@ -298,12 +278,12 @@ const ComicReview = ({
               )}
 
               {/* Read More button for list view */}
-              {!showFullContent && content.length > 100 && (
+              {!showFullContent && review.description.length > 100 && (
                 <button
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    router.push(`/reviews/${id}`);
+                    router.push(`/reviews/${review.id}`);
                   }}
                   className="mt-2 text-sm text-orange-400 hover:text-orange-300 font-medium"
                 >
@@ -315,12 +295,20 @@ const ComicReview = ({
         </div>
       )}
 
-      {/* Click hint for list view */}
-      {!showFullContent && (
-        <div className="text-xs text-zinc-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hidden sm:block">
-          Click to view full review
+      {/* Like Handler and Footer Actions */}
+      <div className="flex items-center justify-between pt-3 ">
+        <div className="flex items-center gap-4">
+          {/* Like Handler */}
+          <ReviewLikeHandler review={review} />
         </div>
-      )}
+
+        {/* Click hint for list view */}
+        {!showFullContent && (
+          <div className="text-xs text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hidden sm:block">
+            Click to view full review
+          </div>
+        )}
+      </div>
     </div>
   );
 };
