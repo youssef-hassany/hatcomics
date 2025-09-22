@@ -8,13 +8,15 @@ import { Button } from "../ui/button";
 import ComponentProtector from "../common/ComponentProtector";
 
 interface AddCommentFormProps {
-  postId: string;
+  referenceId: string;
+  type: "post" | "review";
   commentId?: string;
   addReply?: boolean;
 }
 
 const AddCommentForm = ({
-  postId,
+  referenceId,
+  type,
   commentId = "",
   addReply = false,
 }: AddCommentFormProps) => {
@@ -38,7 +40,12 @@ const AddCommentForm = ({
     }
 
     try {
-      await createCommentMutation.mutateAsync({ postId, commentId, formData });
+      await createCommentMutation.mutateAsync({
+        id: referenceId,
+        commentId,
+        formData,
+        type,
+      });
       setContent("");
       setAttachment(null);
       setPreviewUrl(null);

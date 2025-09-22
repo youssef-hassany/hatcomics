@@ -1,19 +1,33 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+type CommentType = "post" | "review";
+
 interface CreateCommentArgs {
-  postId: string;
+  id: string; // postId or reviewId
+  type: CommentType;
   commentId?: string;
   formData: FormData;
 }
 
 const createComment = async ({
-  postId,
+  id,
+  type,
   commentId,
   formData,
 }: CreateCommentArgs) => {
   try {
-    await fetch(`/api/comment/${postId}${commentId && `/reply/${commentId}`}`, {
+    let endpoint: string;
+
+    if (type === "post") {
+      endpoint = `/api/comment/${id}${commentId ? `/reply/${commentId}` : ""}`;
+    } else {
+      endpoint = `/api/comment/${id}${
+        commentId ? `/reply/${commentId}` : ""
+      }/review`;
+    }
+
+    await fetch(endpoint, {
       method: "POST",
       body: formData,
     });
@@ -33,7 +47,7 @@ export const useCreateComment = () => {
     mutationFn: createComment,
     onSettled: (_, __, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["comments", variables.postId],
+        queryKey: ["comments", variables.id, variables.type],
       });
     },
   });

@@ -5,7 +5,8 @@ import AddCommentForm from "./AddCommentForm";
 import RepliesList from "./RepliesList";
 
 interface RepliesSectionProps {
-  postId: string;
+  referenceId: string;
+  type: "post" | "review";
   commentId: string;
   replies: Comment[];
   showReplyForm?: boolean;
@@ -13,7 +14,8 @@ interface RepliesSectionProps {
 }
 
 const RepliesSection = ({
-  postId,
+  referenceId,
+  type,
   commentId,
   replies,
   showReplyForm = false,
@@ -25,9 +27,10 @@ const RepliesSection = ({
       {replies && replies.length > 0 && (
         <div>
           <RepliesList
-            postId={postId}
+            referenceId={referenceId}
             replies={replies}
             parentComment={parentComment}
+            type={type}
           />
         </div>
       )}
@@ -35,7 +38,12 @@ const RepliesSection = ({
       {/* Add Comment Form - Only show when showReplyForm is true */}
       {showReplyForm && (
         <div className="ml-8">
-          <AddCommentForm postId={postId} commentId={commentId} addReply />
+          <AddCommentForm
+            referenceId={referenceId}
+            type={type}
+            commentId={commentId}
+            addReply
+          />
         </div>
       )}
     </div>

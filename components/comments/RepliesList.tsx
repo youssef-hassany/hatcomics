@@ -7,12 +7,18 @@ import { ChevronDown } from "lucide-react";
 import Comment from "./Comment";
 
 interface RepliesListProps {
-  postId: string;
+  referenceId: string;
+  type: "post" | "review";
   replies: CommentType[];
   parentComment?: CommentType; // Add parent comment for context
 }
 
-const RepliesList = ({ postId, replies, parentComment }: RepliesListProps) => {
+const RepliesList = ({
+  referenceId,
+  type,
+  replies,
+  parentComment,
+}: RepliesListProps) => {
   const { data: loggedInUser } = useGetLoggedInUser();
 
   const [visibleCount, setVisibleCount] = useState(5);
@@ -31,9 +37,10 @@ const RepliesList = ({ postId, replies, parentComment }: RepliesListProps) => {
           key={reply.id}
           comment={reply}
           isOwner={loggedInUser?.id === reply.userId}
-          postId={postId}
+          referenceId={referenceId}
           isReply
           parentComment={parentComment}
+          type={type}
         />
       ))}
 

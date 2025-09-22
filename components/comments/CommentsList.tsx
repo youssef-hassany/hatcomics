@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetPostComments } from "@/hooks/comments/useGetPostComments";
+import { useGetComments } from "@/hooks/comments/useGetComments";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { Comment as CommentType } from "@/types/Comment";
 import { MessageCircle } from "lucide-react";
@@ -8,11 +8,16 @@ import Comment from "./Comment";
 import CommentSkeleton from "./CommentSkeleton";
 
 interface CommentsListProps {
-  postId: string;
+  referenceId: string;
+  type: "post" | "review";
 }
 
-const CommentsList = ({ postId }: CommentsListProps) => {
-  const { data: comments, isLoading, error } = useGetPostComments(postId);
+const CommentsList = ({ referenceId, type }: CommentsListProps) => {
+  const {
+    data: comments,
+    isLoading,
+    error,
+  } = useGetComments(referenceId, type);
   const { data: loggedInUser } = useGetLoggedInUser();
 
   if (isLoading) {
@@ -44,7 +49,7 @@ const CommentsList = ({ postId }: CommentsListProps) => {
             No comments yet
           </p>
           <p className="text-zinc-500">
-            Be the first to share your thoughts on this post!
+            Be the first to share your thoughts on this {type}!
           </p>
         </div>
       </div>
@@ -58,7 +63,8 @@ const CommentsList = ({ postId }: CommentsListProps) => {
           key={comment.id}
           comment={comment}
           isOwner={loggedInUser?.id === comment.userId}
-          postId={postId}
+          referenceId={referenceId}
+          type={type}
         />
       ))}
     </div>

@@ -32,7 +32,8 @@ interface CommentProps {
   comment: CommentType;
   onDelete?: (commentId: string) => void;
   isOwner?: boolean;
-  postId?: string;
+  referenceId?: string;
+  type: "post" | "review";
   isReply?: boolean;
   parentComment?: CommentType; // Add parent comment data for replies
 }
@@ -41,7 +42,8 @@ const Comment = ({
   comment,
   onDelete,
   isOwner,
-  postId,
+  referenceId,
+  type,
   isReply = false,
   parentComment,
 }: CommentProps) => {
@@ -119,7 +121,7 @@ const Comment = ({
   // Different styling for replies
   const containerClasses = isReply
     ? "bg-zinc-800/50 border border-zinc-700/50 rounded-lg ml-8 relative"
-    : "bg-zinc-900 border-b border-zinc-700";
+    : "bg-zinc-900 border-t border-zinc-700";
 
   const paddingClasses = isReply ? "p-4" : "p-6";
 
@@ -326,12 +328,13 @@ const Comment = ({
         </div>
       </div>
 
-      {postId && !isReply && (
+      {referenceId && !isReply && (
         <RepliesSection
           commentId={comment.id}
-          postId={postId}
+          referenceId={referenceId}
           replies={comment.replies}
           showReplyForm={showReplyForm}
+          type={type}
         />
       )}
     </div>

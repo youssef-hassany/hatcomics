@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useEffect, useRef, useCallback } from "react";
-import PostCardSkeleton from "@/components/posts/PostCardSkeleton";
 import NoPostsMsg from "@/components/posts/NoPostsMsg";
 import { useGetBookClubPostsList } from "@/hooks/book-club/useGetBookClubPostsList";
 import ThoughtPreview from "@/components/book-club/ThoughtPreview";
+import ThoughtPreviewSkeleton from "@/components/book-club/ThoughtPreviewSkeleton";
+import { Coffee } from "lucide-react";
 
 const BookClubsPage: React.FC = () => {
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
@@ -46,24 +47,27 @@ const BookClubsPage: React.FC = () => {
   }, [handleObserver]);
 
   return (
-    <div className="min-h-screen bg-zinc-900 py-8">
+    <div className="min-h-screen bg-zinc-900 pb-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Book Club Thoughts
-          </h1>
-          <p className="text-zinc-400">
-            Discover the latest interactions and thoughts from our
-            community&apos;s book clubs
-          </p>
+        <div className="bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 text-white py-12 px-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center gap-3 mb-4">
+              <Coffee className="w-8 h-8 text-orange-400" />
+              <h1 className="text-4xl font-bold">Book Club Thoughts</h1>
+            </div>
+            <p className="text-zinc-200 text-lg max-w-2xl mb-6">
+              Discover the latest interactions and thoughts from our
+              community&apos;s book clubs
+            </p>
+          </div>
         </div>
 
         {/* Initial loading skeleton */}
         {isLoading && (
           <div className="space-y-6">
             {[1, 2, 3, 4, 5].map((post) => (
-              <PostCardSkeleton key={post} />
+              <ThoughtPreviewSkeleton key={post} />
             ))}
           </div>
         )}
@@ -90,7 +94,7 @@ const BookClubsPage: React.FC = () => {
             {isFetchingNextPage ? (
               <div className="space-y-6 w-full">
                 {[1, 2, 3].map((skeleton) => (
-                  <PostCardSkeleton key={skeleton} />
+                  <ThoughtPreviewSkeleton key={skeleton} />
                 ))}
               </div>
             ) : (

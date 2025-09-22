@@ -8,6 +8,7 @@ import { Review } from "@/types/Review";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { CommentsSection } from "../comments";
 
 interface ReviewPageClientProps {
   initialReview?: Review;
@@ -106,6 +107,8 @@ const ReviewPageClient = ({ initialReview }: ReviewPageClientProps) => {
           showFullContent={true}
           onDeleteSuccess={() => router.push("/reviews")}
         />
+
+        <CommentsSection referenceId={initialReview.id} type="review" />
       </div>
     </div>
   );

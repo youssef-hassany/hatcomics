@@ -42,9 +42,11 @@ const ThoughtPreview = (thought: ThoughtPreviewType) => {
 
           {/* Post Preview */}
           <Link href={`/book-club/${thoughtId}`} className="block">
-            <p className="text-zinc-400 text-sm line-clamp-2 group-hover:text-zinc-300 transition-colors duration-200">
-              {thoughtContent}
-            </p>
+            <div className="prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none prose-zinc rich-text-editor">
+              <p className="text-zinc-400 text-sm line-clamp-2 inline-block group-hover:text-zinc-300 transition-colors duration-200">
+                {thoughtContent}
+              </p>
+            </div>
           </Link>
 
           {/* Timestamp */}

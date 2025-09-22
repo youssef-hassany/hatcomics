@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, Eye, EyeOff, Calendar, Book } from "lucide-react";
+import { Star, Eye, EyeOff, Calendar, Book, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -300,6 +300,11 @@ const ComicReview = ({
         <div className="flex items-center gap-4">
           {/* Like Handler */}
           <ReviewLikeHandler review={review} />
+
+          <div className="flex items-center space-x-2 text-zinc-400">
+            <MessageCircle size={20} />
+            <span className="text-sm">{review._count.comments}</span>
+          </div>
         </div>
 
         {/* Click hint for list view */}

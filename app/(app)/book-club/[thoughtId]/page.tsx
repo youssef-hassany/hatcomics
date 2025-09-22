@@ -92,7 +92,7 @@ export default function ThoughtPage() {
       </article>
 
       {/* Comments Section */}
-      <CommentsSection postId={thought?.id || ""} />
+      <CommentsSection referenceId={thought?.id || ""} type="post" />
     </div>
   );
 }

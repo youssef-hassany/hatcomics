@@ -107,7 +107,7 @@ const PostContent = ({ initialPost }: PostContentProps) => {
       </div>
 
       {/* Comments Section */}
-      <CommentsSection postId={post?.id || ""} />
+      <CommentsSection referenceId={post?.id || ""} type="post" />
     </div>
   );
 };

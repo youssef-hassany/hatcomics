@@ -37,6 +37,12 @@ export async function GET(
             userId: true,
           },
         },
+        _count: {
+          select: {
+            likes: true,
+            replies: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "asc",
@@ -157,18 +163,6 @@ export async function DELETE(
     // Find the comment and check if user owns it
     const comment = await prisma.comment.findFirst({
       where: { id },
-      include: {
-        user: {
-          select: {
-            id: true,
-            fullname: true,
-            username: true,
-            photo: true,
-            points: true,
-            role: true,
-          },
-        },
-      },
     });
 
     if (!comment) {
@@ -236,18 +230,6 @@ export async function PUT(
     // Find the comment and check if user owns it
     const comment = await prisma.comment.findFirst({
       where: { id },
-      include: {
-        user: {
-          select: {
-            id: true,
-            fullname: true,
-            username: true,
-            photo: true,
-            points: true,
-            role: true,
-          },
-        },
-      },
     });
 
     if (!comment) {
@@ -275,22 +257,6 @@ export async function PUT(
       data: {
         content: content.trim(),
         updatedAt: new Date(),
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            fullname: true,
-            photo: true,
-          },
-        },
-        likes: {
-          select: {
-            id: true,
-            userId: true,
-          },
-        },
       },
     });
 

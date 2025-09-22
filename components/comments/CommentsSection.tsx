@@ -4,21 +4,22 @@ import AddCommentForm from "./AddCommentForm";
 import CommentsList from "./CommentsList";
 
 interface CommentsSectionProps {
-  postId: string;
+  referenceId: string;
+  type: "post" | "review";
 }
 
-const CommentsSection = ({ postId }: CommentsSectionProps) => {
+const CommentsSection = ({ referenceId, type }: CommentsSectionProps) => {
   return (
     <div className="space-y-6 bg-zinc-900 rounded-xl p-4">
       {/* Add Comment Form */}
       <div>
-        <AddCommentForm postId={postId} />
+        <AddCommentForm referenceId={referenceId} type={type} />
       </div>
 
       {/* Comments List */}
       <div>
         <h3 className="text-xl font-semibold text-zinc-100 mb-4">Comments</h3>
-        <CommentsList postId={postId} />
+        <CommentsList referenceId={referenceId} type={type} />
       </div>
     </div>
   );
