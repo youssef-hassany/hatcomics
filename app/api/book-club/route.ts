@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
           },
         },
         createdAt: true,
+        hasSpoiler: true,
       },
       orderBy: {
         createdAt: "desc",

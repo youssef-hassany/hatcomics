@@ -131,6 +131,7 @@ const HomePage = () => {
                   createdAt={thought.createdAt}
                   user={thought.user}
                   key={thought.id}
+                  hasSpoiler={thought.hasSpoiler}
                 />
               ))}
             </div>

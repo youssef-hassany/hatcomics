@@ -5,7 +5,8 @@ import { ThoughtPreviewType } from "@/types/BookClub";
 import { getTimeAgo } from "@/lib/date";
 
 const ThoughtPreview = (thought: ThoughtPreviewType) => {
-  const { comic, createdAt, thoughtContent, thoughtId, user } = thought;
+  const { comic, createdAt, thoughtContent, thoughtId, user, hasSpoiler } =
+    thought;
 
   return (
     <div className="bg-zinc-800 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 transition-all duration-200 group">
@@ -43,9 +44,15 @@ const ThoughtPreview = (thought: ThoughtPreviewType) => {
           {/* Post Preview */}
           <Link href={`/book-club/${thoughtId}`} className="block">
             <div className="prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none prose-zinc rich-text-editor">
-              <p className="text-zinc-400 text-sm line-clamp-2 inline-block group-hover:text-zinc-300 transition-colors duration-200">
-                {thoughtContent}
-              </p>
+              {hasSpoiler ? (
+                <p className="w-fit flex items-center gap-2 px-4 py-1 rounded-full border bg-orange-500/20 text-orange-400 border-orange-500/30">
+                  Spoiler
+                </p>
+              ) : (
+                <p className="text-zinc-400 text-sm line-clamp-2 inline-block group-hover:text-zinc-300 transition-colors duration-200">
+                  {thoughtContent}
+                </p>
+              )}
             </div>
           </Link>
 

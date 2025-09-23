@@ -83,6 +83,7 @@ const BookClubsPage: React.FC = () => {
                 thoughtContent={post.content}
                 thoughtId={post.id}
                 user={post.user}
+                hasSpoiler={post.hasSpoiler}
               />
             ))}
           </div>

@@ -36,6 +36,7 @@ export async function GET() {
           },
         },
         createdAt: true,
+        hasSpoiler: true,
       },
       orderBy: {
         createdAt: "desc",

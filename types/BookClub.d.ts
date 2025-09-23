@@ -12,6 +12,7 @@ export interface ThoughtPreviewType {
     fullname: string;
   };
   createdAt: string;
+  hasSpoiler: boolean;
 }
 
 export interface ThoughtPreviewResponse {
@@ -28,4 +29,5 @@ export interface ThoughtPreviewResponse {
     fullname: string;
   };
   createdAt: string;
+  hasSpoiler: boolean;
 }
