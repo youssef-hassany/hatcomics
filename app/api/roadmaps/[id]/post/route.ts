@@ -31,6 +31,24 @@ export async function PATCH(
       },
     });
 
+    const user = await prisma.user.findFirst({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      NoUserError();
+      return;
+    }
+
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        points: user?.points + 10,
+      },
+    });
+
     return NextResponse.json(
       { status: "success", message: "Roadmap Posted successfully" },
       { status: 200 }

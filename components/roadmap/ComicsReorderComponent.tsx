@@ -91,30 +91,6 @@ const ComicsReorderComponent: React.FC<ComicsReorderComponentProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* Reorder Controls */}
-      <div className="flex items-center gap-3 p-4 bg-orange-900/30 border border-orange-600 rounded-xl">
-        <div className="text-orange-300 text-sm flex-1">
-          Drag and drop comics to reorder them
-        </div>
-        <Button
-          isLoading={isPending}
-          type="button"
-          onClick={handleSubmitReorder}
-          className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors duration-200"
-        >
-          <Check className="w-4 h-4" />
-          Save Order
-        </Button>
-        <button
-          type="button"
-          onClick={handleCancelReorder}
-          className="flex items-center gap-2 px-4 py-2 bg-zinc-600 hover:bg-zinc-700 text-white rounded-lg transition-colors duration-200"
-        >
-          <X className="w-4 h-4" />
-          Cancel
-        </button>
-      </div>
-
       {/* Comics Grid with Drag & Drop */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {tempComics.map((comic, index) => (
@@ -157,6 +133,30 @@ const ComicsReorderComponent: React.FC<ComicsReorderComponentProps> = ({
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Reorder Controls */}
+      <div className="flex items-center gap-3 p-4 bg-orange-900/30 border border-orange-600 rounded-xl">
+        <div className="text-orange-300 text-sm flex-1">
+          Drag and drop comics to reorder them
+        </div>
+        <Button
+          isLoading={isPending}
+          type="button"
+          onClick={handleSubmitReorder}
+          className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors duration-200"
+        >
+          <Check className="w-4 h-4" />
+          Save Order
+        </Button>
+        <button
+          type="button"
+          onClick={handleCancelReorder}
+          className="flex items-center gap-2 px-4 py-2 bg-zinc-600 hover:bg-zinc-700 text-white rounded-lg transition-colors duration-200 cursor-pointer"
+        >
+          <X className="w-4 h-4" />
+          Cancel
+        </button>
       </div>
     </div>
   );

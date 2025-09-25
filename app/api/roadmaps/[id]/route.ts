@@ -136,6 +136,86 @@ export async function DELETE(
     }
 
     await prisma.roadmap.delete({ where: { id: roadmapId } });
+
+    const user = await prisma.user.findFirst({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      NoUserError();
+      return;
+    }
+
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        points: user?.points - 10,
+      },
+    });
+
+    return NextResponse.json(
+      { status: "success", message: "Roadamap Deleted Successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { status: "error", message: `Internal server error: ${error}` },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      NoUserError();
+      return;
+    }
+
+    const { id: roadmapId } = await params;
+    const { title, description } = await request.json();
+
+    const existingRoadmap = await prisma.roadmap.findFirst({
+      where: {
+        id: roadmapId,
+      },
+    });
+
+    if (!existingRoadmap) {
+      return NextResponse.json(
+        { status: "error", message: "Roadamap does not exist" },
+        { status: 401 }
+      );
+    }
+
+    if (existingRoadmap.createdBy !== userId) {
+      return NextResponse.json(
+        { status: "error", message: "You can only edit your roadmaps" },
+        { status: 401 }
+      );
+    }
+
+    await prisma.roadmap.update({
+      where: {
+        id: roadmapId,
+      },
+      data: {
+        title,
+        description,
+      },
+    });
+
+    return NextResponse.json(
+      { status: "success", message: "Roadamap updated Successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(

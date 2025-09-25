@@ -2,18 +2,22 @@
 
 import { useGetRoadmapDetails } from "@/hooks/roadmaps/useGetRoadmapDetails";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import React from "react";
 import Avatar from "../ui/avatar";
 import RoadmapLikeHandler from "./RoadmapLikeHandler";
 import { CommentsSection } from "../comments";
+import { Edit3 } from "lucide-react"; // Import the edit icon
+import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 
 const RoadmapPageClient: React.FC = () => {
   const { id: roadmapId } = useParams();
   const { data: roadmap, isLoading } = useGetRoadmapDetails(
     roadmapId as string
   );
+  const { data: loggedInUser, isLoading: userLoading } = useGetLoggedInUser();
 
-  if (isLoading) {
+  if (isLoading || userLoading) {
     return (
       <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
         <div className="relative">
@@ -23,6 +27,8 @@ const RoadmapPageClient: React.FC = () => {
       </div>
     );
   }
+
+  const isOwner = loggedInUser?.id === roadmap?.creator.id;
 
   return (
     <div className="min-h-screen bg-zinc-950 px-4">
@@ -52,6 +58,26 @@ const RoadmapPageClient: React.FC = () => {
               roadmap?.image ? "absolute bottom-0 left-0 right-0" : "relative"
             } max-w-6xl mx-auto px-4 pb-12 pt-8`}
           >
+            {/* Edit Button - Positioned at top right */}
+            {isOwner && (
+              <div className="absolute top-4 right-4 z-20">
+                <Link
+                  href={`/roadmaps/${roadmapId}/manage`}
+                  className="group relative inline-flex items-center justify-center p-3 bg-black/40 backdrop-blur-sm rounded-full border border-zinc-800/50 hover:border-orange-500/50 transition-all duration-300 hover:bg-orange-500/10"
+                  title="Edit Roadmap"
+                >
+                  <Edit3 className="w-5 h-5 text-zinc-400 group-hover:text-orange-400 transition-colors duration-300" />
+
+                  {/* Tooltip */}
+                  <div className="absolute -bottom-10 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                    <div className="bg-zinc-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                      Manage Roadmap
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            )}
+
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
               {/* Title Section */}
               <div className="flex-1">

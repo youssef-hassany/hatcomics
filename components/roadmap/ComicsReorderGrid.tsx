@@ -8,7 +8,7 @@ interface ComicsGridProps {
   onReorderClick: () => void;
   roadmapId: string;
   onEditComic?: (comic: RoadmapEntry) => void;
-  onDeleteComic?: (comic: RoadmapEntry) => void;
+  onDeleteComic?: (comicId: string) => void;
 }
 
 const ComicsReorderGrid: React.FC<ComicsGridProps> = ({
@@ -27,7 +27,7 @@ const ComicsReorderGrid: React.FC<ComicsGridProps> = ({
   const handleDeleteClick = (e: React.MouseEvent, comic: RoadmapEntry) => {
     e.preventDefault();
     e.stopPropagation();
-    onDeleteComic?.(comic);
+    onDeleteComic?.(comic.id);
   };
 
   return (

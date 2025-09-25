@@ -252,7 +252,7 @@ const UpdateComicToRoadmapForm: React.FC<UpdateComicToRoadmapFormProps> = ({
                 type="submit"
                 className="px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-700 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
-                Update Entry
+                Update Comic
               </Button>
             </div>
           </form>

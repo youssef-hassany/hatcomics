@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { User, Calendar, MessageCircle, Heart, MapPin } from "lucide-react";
+import { User, Calendar, MessageCircle, Heart, Map } from "lucide-react";
 import { RoadmapPreviewType } from "@/types/Roadmap";
 import { getTimeAgo } from "@/lib/date";
 
@@ -31,7 +31,7 @@ export function RoadmapPreviewCard({
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900 flex items-center justify-center">
-            <MapPin className="w-16 h-16 text-zinc-600" />
+            <Map className="w-16 h-16 text-zinc-600" />
           </div>
         )}
         {/* Gradient overlay */}

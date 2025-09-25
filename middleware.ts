@@ -23,6 +23,7 @@ export default clerkMiddleware(async (auth, req) => {
     "/home",
     "/comics", // This will protect /comics but not /comics/[id]
     "/posts", // This will protect /posts but not /posts/[id]
+    "/roadmaps",
     "/reviews",
     "/book-club",
   ];
@@ -39,6 +40,7 @@ export default clerkMiddleware(async (auth, req) => {
   const isSpecificPost = /^\/posts\/[^\/]+$/.test(pathname);
   const isSpecificComic = /^\/comics\/[^\/]+$/.test(pathname);
   const isSpecificReview = /^\/reviews\/[^\/]+$/.test(pathname);
+  const isSpecificRoadmap = /^\/roadmaps\/[^\/]+$/.test(pathname);
 
   // Check if the current path is a protected route
   const isProtectedRoute = protectedRoutes.some((route) => {

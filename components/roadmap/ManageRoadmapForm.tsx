@@ -11,6 +11,9 @@ import UpdateComicToRoadmapForm from "./UpdateComicToRoadmapForm";
 import { usePostRoadmap } from "@/hooks/roadmaps/usePostRoadmap";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import DeleteRoadmapModal from "./DeleteRoadmapModal";
+import { useUpdateRoadmap } from "@/hooks/roadmaps/useUpdateRoadmap";
+import DeleteComicFromRoadmapModal from "./DeleteComicFromRoadmapModal";
 
 interface Props {
   roadmap: RoadmapType;
@@ -35,8 +38,12 @@ const ManageRoadmapForm: React.FC<Props> = ({ roadmap }) => {
     }));
   };
 
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedEntryForUpdate, setSelectedEntryForUpdate] =
     useState<RoadmapEntry | null>(null);
+  const [selectedEntryForDelete, setSelectedEntryForDelete] = useState<
+    string | null
+  >(null);
 
   const handleDescriptionChange = (value: string) => {
     setFormFields((prev) => ({ ...prev, description: value }));
@@ -51,9 +58,7 @@ const ManageRoadmapForm: React.FC<Props> = ({ roadmap }) => {
   };
 
   const { mutateAsync: postRoadamap, isPending: isPosting } = usePostRoadmap();
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handlePost = async () => {
     try {
       await postRoadamap(roadmap.id);
       toast.success("Roadmap Posted Successfully");
@@ -66,6 +71,25 @@ const ManageRoadmapForm: React.FC<Props> = ({ roadmap }) => {
 
   const closeUpdateModal = () => {
     setSelectedEntryForUpdate(null);
+  };
+
+  const { mutateAsync: updateRoadmap, isPending: isUpdating } =
+    useUpdateRoadmap();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      await updateRoadmap({
+        roadmapId: roadmap.id,
+        title: formFields.title,
+        description: formFields.description,
+      });
+      toast.success("Roadmap Updated Successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error Updating Roadmap, Try Again");
+    }
   };
 
   return (
@@ -142,23 +166,46 @@ const ManageRoadmapForm: React.FC<Props> = ({ roadmap }) => {
                   onReorderClick={handleReorderClick}
                   roadmapId={roadmap.id}
                   onEditComic={setSelectedEntryForUpdate}
+                  onDeleteComic={setSelectedEntryForDelete}
                 />
               )}
             </fieldset>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-4 pt-6 border-t border-zinc-700">
-              {!isReordering && (
+            {!isReordering && (
+              <div className="flex items-center justify-between pt-6 border-t border-zinc-700">
                 <Button
-                  disabled={roadmap.entries.length === 0}
-                  isLoading={isPosting}
-                  type="submit"
-                  className="px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-700 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  type="button"
+                  onClick={() => setIsDeleteOpen(true)}
+                  className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
-                  Post Roadmap
+                  Delete Roadmap
                 </Button>
-              )}
-            </div>
+
+                <div className="flex items-center justify-end gap-4">
+                  {!isReordering && !roadmap.isPublic && (
+                    <Button
+                      type="button"
+                      onClick={handlePost}
+                      disabled={roadmap.entries.length === 0}
+                      isLoading={isPosting}
+                      className="px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-700 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                      Post Roadmap
+                    </Button>
+                  )}
+
+                  <Button
+                    disabled={isUpdating}
+                    isLoading={isUpdating}
+                    type="submit"
+                    className="px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-700 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            )}
           </form>
         </div>
       </div>
@@ -172,6 +219,19 @@ const ManageRoadmapForm: React.FC<Props> = ({ roadmap }) => {
           />
         )}
       </Modal>
+
+      <DeleteRoadmapModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        roadmapId={roadmap.id}
+      />
+
+      <DeleteComicFromRoadmapModal
+        entryId={selectedEntryForDelete}
+        isOpen={!!selectedEntryForDelete}
+        roadmapId={roadmap.id}
+        onClose={() => setSelectedEntryForDelete(null)}
+      />
     </div>
   );
 };

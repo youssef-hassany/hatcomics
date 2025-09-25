@@ -55,6 +55,7 @@ export interface RoadmapPreviewType {
   description: string;
   image: string | null;
   createdAt: string;
+  isPublic: boolean;
   creator: {
     id: string;
     fullname: string;

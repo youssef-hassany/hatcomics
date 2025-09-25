@@ -135,18 +135,64 @@ export async function DELETE(
       );
     }
 
-    await prisma.roadmapEntry.delete({
-      where: {
-        id: entryId,
-      },
+    // Use transaction to handle deletion and reordering
+    const result = await prisma.$transaction(async (tx) => {
+      // First, get the entry to be deleted to know its order
+      const entryToDelete = await tx.roadmapEntry.findUnique({
+        where: {
+          id: entryId,
+          roadmapId: roadmapId,
+        },
+      });
+
+      if (!entryToDelete) {
+        throw new Error("Entry not found");
+      }
+
+      const deletedOrder = entryToDelete.order;
+
+      // Delete the entry
+      await tx.roadmapEntry.delete({
+        where: {
+          id: entryId,
+        },
+      });
+
+      // Reorder remaining entries: decrease order by 1 for all entries
+      // that had an order higher than the deleted entry
+      await tx.roadmapEntry.updateMany({
+        where: {
+          roadmapId: roadmapId,
+          order: {
+            gt: deletedOrder,
+          },
+        },
+        data: {
+          order: {
+            decrement: 1,
+          },
+        },
+      });
+
+      return { deletedOrder, roadmapId };
     });
 
     return NextResponse.json(
-      { status: "Success", message: "Entry Deleted Successfully" },
+      {
+        status: "Success",
+        message: "Entry deleted successfully and remaining entries reordered",
+        deletedOrder: result.deletedOrder,
+      },
       { status: 200 }
     );
   } catch (error) {
     console.error("Error deleting roadmap entry:", error);
+
+    // Handle the case where entry wasn't found
+    if (error instanceof Error && error.message === "Entry not found") {
+      return NextResponse.json({ error: "Entry not found" }, { status: 404 });
+    }
+
     return NextResponse.json(
       { error: `Failed to delete roadmap entry: ${error}` },
       { status: 500 }

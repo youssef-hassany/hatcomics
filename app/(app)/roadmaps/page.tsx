@@ -6,7 +6,7 @@ import NoPostsMsg from "@/components/posts/NoPostsMsg";
 import { RoadmapPreviewSkeleton } from "@/components/roadmap/RoadmapPreviewSkeleton";
 import { RoadmapPreviewCard } from "@/components/roadmap/RoadmapPreview";
 import { useGetRoadmapsList } from "@/hooks/roadmaps/useGetRoadmapsList";
-import { Map, Plus } from "lucide-react";
+import { Edit3, Map, Plus } from "lucide-react";
 
 const PostsPage: React.FC = () => {
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
@@ -61,17 +61,21 @@ const PostsPage: React.FC = () => {
               Take a Look at Our Users Comic Roadmaps
             </p>
           </div>
-
-          {/* Create Post Button */}
-          <div className="mb-8">
+          <div className="flex items-center gap-3 mb-8">
             <Link
-              href={`roadmaps/create`}
-              className="w-fit text-orange-600 flex items-center gap-3 border-2 border-orange-600 px-3 py-1 rounded-2xl font-medium group"
+              href="roadmaps/create"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-600 text-white rounded-full font-medium hover:bg-orange-700 transition-all hover:shadow-lg"
             >
-              <span className="p-0 rounded-full border-2 border-orange-600 group-hover:bg-orange-600 group-hover:text-zinc-900 transition-colors">
-                <Plus />
-              </span>
-              Create New Roadmap
+              <Plus className="w-4 h-4" />
+              Create New
+            </Link>
+
+            <Link
+              href="roadmaps/draft"
+              className="inline-flex items-center gap-2 px-5 py-2.5 border border-orange-600/30 text-orange-400 rounded-full font-medium hover:border-orange-600 hover:text-orange-300 transition-all"
+            >
+              <Edit3 className="w-4 h-4" />
+              Manage
             </Link>
           </div>
         </div>

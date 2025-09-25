@@ -13,7 +13,7 @@ export async function GET() {
 
     const roadmaps = await prisma.roadmap.findMany({
       where: {
-        AND: [{ createdBy: userId }, { isPublic: false }],
+        createdBy: userId,
       },
       select: {
         _count: {
@@ -36,6 +36,7 @@ export async function GET() {
         image: true,
         title: true,
         createdAt: true,
+        isPublic: true,
       },
     });
 
