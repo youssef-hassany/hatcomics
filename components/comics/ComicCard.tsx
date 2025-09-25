@@ -2,12 +2,14 @@ import { ComicPreview } from "@/types/Comic";
 import { Book, ExternalLink, Star } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { Button } from "../ui/button";
 
 interface Props {
   comic: ComicPreview;
+  onSelect?: (comic: ComicPreview) => void;
 }
 
-const ComicCard = ({ comic }: Props) => {
+const ComicCard = ({ comic, onSelect }: Props) => {
   const renderStars = (rating: number | null) => {
     if (rating === null)
       return <span className="text-zinc-400">No ratings</span>;
@@ -129,13 +131,17 @@ const ComicCard = ({ comic }: Props) => {
         {/* Action Buttons */}
         <div className="space-y-2">
           {/* View Details Button */}
-          <Link
-            href={`/comics/${comic.id}`}
-            className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-sm font-medium cursor-pointer"
-          >
-            <span>View Details</span>
-            <ExternalLink className="w-3 h-3" />
-          </Link>
+          {onSelect ? (
+            <Button onClick={() => onSelect(comic)}>Add Comic</Button>
+          ) : (
+            <Link
+              href={`/comics/${comic.id}`}
+              className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-sm font-medium cursor-pointer"
+            >
+              <span>View Details</span>
+              <ExternalLink className="w-3 h-3" />
+            </Link>
+          )}
         </div>
       </div>
     </div>

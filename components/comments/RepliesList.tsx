@@ -8,7 +8,7 @@ import Comment from "./Comment";
 
 interface RepliesListProps {
   referenceId: string;
-  type: "post" | "review";
+  type: "post" | "review" | "roadmap";
   replies: CommentType[];
   parentComment?: CommentType; // Add parent comment for context
 }

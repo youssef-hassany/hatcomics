@@ -9,7 +9,7 @@ import CommentSkeleton from "./CommentSkeleton";
 
 interface CommentsListProps {
   referenceId: string;
-  type: "post" | "review";
+  type: "post" | "review" | "roadmap";
 }
 
 const CommentsList = ({ referenceId, type }: CommentsListProps) => {

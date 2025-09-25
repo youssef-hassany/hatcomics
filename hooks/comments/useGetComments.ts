@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 
-type CommentType = "post" | "review";
+type CommentType = "post" | "review" | "roadmap";
 
 const getComments = async (id: string | undefined, type: CommentType) => {
   if (!id) return;
 
   try {
     const endpoint =
-      type === "post" ? `/api/comment/${id}` : `/api/comment/${id}/review`;
+      type === "post" ? `/api/comment/${id}` : `/api/comment/${id}/${type}`;
 
     const response = await fetch(endpoint);
     const data = await response.json();

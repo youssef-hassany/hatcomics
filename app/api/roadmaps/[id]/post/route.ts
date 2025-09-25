@@ -1,0 +1,45 @@
+import { prisma } from "@/lib/db";
+import { NoUserError } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      NoUserError();
+      return;
+    }
+
+    const { id: roadmapId } = await params;
+    if (!roadmapId) {
+      return NextResponse.json(
+        { status: "error", message: "Missing roadmap Id" },
+        { status: 401 }
+      );
+    }
+
+    await prisma.roadmap.update({
+      where: {
+        id: roadmapId,
+      },
+      data: {
+        isPublic: true,
+      },
+    });
+
+    return NextResponse.json(
+      { status: "success", message: "Roadmap Posted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { status: "error", message: `Internal server error: ${error}` },
+      { status: 500 }
+    );
+  }
+}

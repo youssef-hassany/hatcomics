@@ -5,7 +5,7 @@ import CommentsList from "./CommentsList";
 
 interface CommentsSectionProps {
   referenceId: string;
-  type: "post" | "review";
+  type: "post" | "review" | "roadmap";
 }
 
 const CommentsSection = ({ referenceId, type }: CommentsSectionProps) => {

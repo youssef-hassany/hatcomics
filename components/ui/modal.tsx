@@ -20,7 +20,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
       onClick={onClose}
     >
       <div
-        className={`bg-zinc-800 rounded-xl shadow-xl transform transition-all duration-200 max-w-lg w-full max-h-[80vh] overflow-y-scroll mx-4 p-6
+        className={`bg-zinc-800 rounded-xl shadow-xl transform transition-all duration-200 max-w-lg md:max-w-3xl w-full max-h-[90vh] overflow-y-scroll mx-4 p-6
           ${isOpen ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
         onClick={(e) => e.stopPropagation()} // prevent close when clicking inside modal
       >

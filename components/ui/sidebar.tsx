@@ -21,6 +21,7 @@ import {
   Trophy,
   Library,
   Coffee,
+  Map,
 } from "lucide-react";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { usePathname } from "next/navigation";
@@ -78,6 +79,16 @@ export default function Sidebar() {
       url: "/posts",
       icon: (
         <Newspaper
+          size={20}
+          className="group-hover:text-orange-500 transition-colors"
+        />
+      ),
+    },
+    {
+      title: "Roadmaps",
+      url: "/roadmaps",
+      icon: (
+        <Map
           size={20}
           className="group-hover:text-orange-500 transition-colors"
         />

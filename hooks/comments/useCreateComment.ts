@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-type CommentType = "post" | "review";
+type CommentType = "post" | "review" | "roadmap";
 
 interface CreateCommentArgs {
-  id: string; // postId or reviewId
+  id: string;
   type: CommentType;
   commentId?: string;
   formData: FormData;
@@ -21,10 +21,16 @@ const createComment = async ({
 
     if (type === "post") {
       endpoint = `/api/comment/${id}${commentId ? `/reply/${commentId}` : ""}`;
-    } else {
+    } else if (type === "review") {
       endpoint = `/api/comment/${id}${
         commentId ? `/reply/${commentId}` : ""
       }/review`;
+    } else if (type === "roadmap") {
+      endpoint = `/api/comment/${id}${
+        commentId ? `/reply/${commentId}` : ""
+      }/roadmap`;
+    } else {
+      throw new Error(`Unsupported comment type: ${type}`);
     }
 
     await fetch(endpoint, {
@@ -36,6 +42,7 @@ const createComment = async ({
   } catch (error) {
     console.error(error);
     toast.error(`failed to add ${commentId ? "Reply" : "Comment"}, try again.`);
+    throw error;
   }
 };
 

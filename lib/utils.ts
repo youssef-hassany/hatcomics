@@ -1,3 +1,4 @@
+import { ComicToReOrder, RoadmapEntry } from "@/types/Roadmap";
 import { type ClassValue, clsx } from "clsx";
 import { NextResponse } from "next/server";
 import { twMerge } from "tailwind-merge";
@@ -45,4 +46,22 @@ export const starGenerator = (rating: number) => {
   }
 
   return stars;
+};
+
+export const getOrdersFromEntries = (entries: RoadmapEntry[]) => {
+  let result: ComicToReOrder[] = [];
+
+  entries.forEach((entry) => {
+    result = [
+      ...result,
+      {
+        id: entry.id,
+        order: entry.order,
+        image: (entry.image ? entry.image : entry.comic?.image) as string,
+        title: entry.title,
+      },
+    ];
+  });
+
+  return result;
 };

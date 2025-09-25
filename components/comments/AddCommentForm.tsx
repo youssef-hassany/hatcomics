@@ -9,7 +9,7 @@ import ComponentProtector from "../common/ComponentProtector";
 
 interface AddCommentFormProps {
   referenceId: string;
-  type: "post" | "review";
+  type: "post" | "review" | "roadmap";
   commentId?: string;
   addReply?: boolean;
 }

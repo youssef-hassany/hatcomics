@@ -6,7 +6,7 @@ import RepliesList from "./RepliesList";
 
 interface RepliesSectionProps {
   referenceId: string;
-  type: "post" | "review";
+  type: "post" | "review" | "roadmap";
   commentId: string;
   replies: Comment[];
   showReplyForm?: boolean;
