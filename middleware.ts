@@ -58,7 +58,8 @@ export default clerkMiddleware(async (auth, req) => {
     isProtectedRoute &&
     !isSpecificPost &&
     !isSpecificComic &&
-    !isSpecificReview
+    !isSpecificReview &&
+    !isSpecificRoadmap
   ) {
     return NextResponse.redirect(new URL("/", req.url));
   }
