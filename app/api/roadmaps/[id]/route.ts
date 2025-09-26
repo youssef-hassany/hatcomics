@@ -47,6 +47,9 @@ export async function GET(
         createdAt: true,
         isPublic: true,
         entries: {
+          orderBy: {
+            order: "asc",
+          },
           include: {
             comic: {
               select: {

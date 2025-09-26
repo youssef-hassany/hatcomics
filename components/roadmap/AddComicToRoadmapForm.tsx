@@ -68,7 +68,7 @@ const AddComicToRoadmapForm: React.FC = () => {
           description: importedComic?.description,
           image: importedComic?.image,
           issueNumber: importedComic?.issueNumber?.toString(),
-          name: importedComic?.name,
+          name: formFields.title,
           publisher: "",
         },
       };

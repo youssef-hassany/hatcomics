@@ -6,6 +6,7 @@ import {
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
+import Link from "@tiptap/extension-link";
 import { Heading } from "@tiptap/extension-heading";
 import { TextAlign } from "@tiptap/extension-text-align";
 import React, { useEffect, useRef, useState } from "react";
@@ -21,7 +22,8 @@ import {
   Heading1,
   Heading2,
   ImageIcon,
-  Link,
+  Link as LinkIcon,
+  Link2Off,
   Trash2,
   AlignLeft,
   AlignCenter,
@@ -146,6 +148,13 @@ const RichTextEditor: React.FC<Props> = ({
         types: ["heading", "paragraph"],
       }),
       DirectionExtension,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: "text-blue-600 hover:text-blue-800 underline cursor-pointer",
+        },
+        validate: (href) => /^https?:\/\//.test(href),
+      }),
       Image.configure({
         inline: false,
         allowBase64: true,
@@ -240,6 +249,55 @@ const RichTextEditor: React.FC<Props> = ({
     if (url && editor) {
       editor.chain().focus().setImage({ src: url }).run();
     }
+    setShowMobileMenu(false);
+  };
+
+  const handleSetLink = () => {
+    if (!editor) return;
+
+    const { selection } = editor.state;
+    const { from, to } = selection;
+
+    // Check if there's selected text
+    if (from === to) {
+      alert("Please select some text first to create a link.");
+      return;
+    }
+
+    const selectedText = editor.state.doc.textBetween(from, to);
+    const currentUrl = editor.getAttributes("link").href || "";
+
+    const url = prompt(`Enter URL for "${selectedText}":`, currentUrl);
+
+    if (url === null) return; // User cancelled
+
+    if (url === "") {
+      // Remove link
+      editor.chain().focus().unsetLink().run();
+      return;
+    }
+
+    // Validate URL format
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      const fullUrl = `https://${url}`;
+      if (confirm(`Use "${fullUrl}" as the URL?`)) {
+        editor
+          .chain()
+          .focus()
+          .extendMarkRange("link")
+          .setLink({ href: fullUrl })
+          .run();
+      }
+    } else {
+      editor.chain().focus().setLink({ href: url }).run();
+    }
+
+    setShowMobileMenu(false);
+  };
+
+  const handleUnsetLink = () => {
+    if (!editor) return;
+    editor.chain().focus().unsetLink().run();
     setShowMobileMenu(false);
   };
 
@@ -450,6 +508,25 @@ const RichTextEditor: React.FC<Props> = ({
 
       <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-600 mx-1" />
 
+      {/* Links */}
+      <ToolbarButton
+        onClick={handleSetLink}
+        isActive={editor.isActive("link")}
+        title="Add/Edit Link"
+      >
+        <LinkIcon className="w-4 h-4" />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={handleUnsetLink}
+        title="Remove Link"
+        disabled={!editor.isActive("link")}
+      >
+        <Link2Off className="w-4 h-4" />
+      </ToolbarButton>
+
+      <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-600 mx-1" />
+
       {/* Media */}
       <ToolbarButton
         onClick={() => fileInputRef.current?.click()}
@@ -460,7 +537,7 @@ const RichTextEditor: React.FC<Props> = ({
       </ToolbarButton>
 
       <ToolbarButton onClick={handleImageUrl} title="Insert Image URL">
-        <Link className="w-4 h-4" />
+        <span className="text-xs">IMG</span>
       </ToolbarButton>
 
       {selectedImageNode && (
@@ -682,9 +759,33 @@ const RichTextEditor: React.FC<Props> = ({
                     onClick={handleImageUrl}
                     className="flex items-center gap-2 px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
                   >
-                    <Link className="w-4 h-4" />
+                    <span className="text-xs">IMG</span>
                     Image URL
                   </button>
+                </div>
+
+                {/* Link Controls */}
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={handleSetLink}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                      editor.isActive("link")
+                        ? "bg-orange-500 text-white"
+                        : "bg-purple-500 text-white hover:bg-purple-600"
+                    }`}
+                  >
+                    <LinkIcon className="w-4 h-4" />
+                    {editor.isActive("link") ? "Edit Link" : "Add Link"}
+                  </button>
+                  {editor.isActive("link") && (
+                    <button
+                      onClick={handleUnsetLink}
+                      className="flex items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                    >
+                      <Link2Off className="w-4 h-4" />
+                      Remove Link
+                    </button>
+                  )}
                 </div>
 
                 {selectedImageNode && (
@@ -734,8 +835,8 @@ const RichTextEditor: React.FC<Props> = ({
       </div>
 
       <div className="px-3 py-2 text-xs text-zinc-500 border-t border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700">
-        💡 Tip: Use LTR/RTL buttons to set direction per paragraph. Mixed
-        Arabic/English text will flow naturally. Ctrl+Shift+X toggles direction.
+        💡 Tip: Select text first, then click the link button to create URLs.
+        Use LTR/RTL buttons to set direction per paragraph.
       </div>
     </div>
   );
