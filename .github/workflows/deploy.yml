@@ -26,7 +26,7 @@ jobs:
             cd /home/hatcomics
             git pull origin main
             echo "${{ secrets.ENV_FILE }}" > .env
-            npm install --production
+            npm install
             npm run build
-            pm2 restart hatcomics || pm2 start npm --name "hatcomics" -- start
+            pm2 restart hatcomics || pm2 start "npm run start" --name hatcomics
           EOF
