@@ -9,10 +9,6 @@ export async function GET(
 ) {
   try {
     const { userId } = await auth();
-    if (!userId) {
-      NoUserError();
-      return;
-    }
 
     const { id: roadmapId } = await params;
     if (!roadmapId) {
