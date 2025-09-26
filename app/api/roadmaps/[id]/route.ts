@@ -67,15 +67,15 @@ export async function GET(
       );
     }
 
-    if (data.isPublic === false && data.creator.id !== userId) {
-      return NextResponse.json(
-        {
-          status: "error",
-          message: "You are not authorized to get those data",
-        },
-        { status: 401 }
-      );
-    }
+    // if (data.isPublic === false && data.creator.id !== userId) {
+    //   return NextResponse.json(
+    //     {
+    //       status: "error",
+    //       message: "You are not authorized to get those data",
+    //     },
+    //     { status: 401 }
+    //   );
+    // }
 
     const roadmap = data
       ? {
