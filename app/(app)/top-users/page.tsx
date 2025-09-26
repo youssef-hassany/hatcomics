@@ -272,7 +272,7 @@ const TopUsersPage = () => {
         {remaining.length > 0 && (
           <div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-center mb-8 md:mb-12 text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 uppercase transform -skew-x-6">
-              🦸‍♀️ RISING HEROES 🦸‍♂️
+              🦸‍♀️ RISING HEROES
             </h2>
             <div className="flex flex-col space-y-4 md:space-y-6 max-w-4xl mx-auto">
               {remaining.map((user, index) => (
