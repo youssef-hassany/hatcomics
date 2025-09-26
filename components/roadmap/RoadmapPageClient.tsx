@@ -16,9 +16,9 @@ const RoadmapPageClient: React.FC = () => {
   const { data: roadmap, isLoading } = useGetRoadmapDetails(
     roadmapId as string
   );
-  const { data: loggedInUser, isLoading: userLoading } = useGetLoggedInUser();
+  const { data: loggedInUser } = useGetLoggedInUser();
 
-  if (isLoading || userLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
         <div className="relative">
