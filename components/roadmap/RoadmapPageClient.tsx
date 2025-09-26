@@ -199,7 +199,7 @@ const RoadmapPageClient: React.FC = () => {
               About This Roadmap
             </h2>
             <div
-              className="text-zinc-300 text-base leading-relaxed prose prose-invert max-w-none"
+              className="text-zinc-300 text-base leading-relaxed prose prose-invert max-w-none rich-text-editor"
               dangerouslySetInnerHTML={{
                 __html: roadmap.description,
               }}
@@ -263,7 +263,7 @@ const RoadmapPageClient: React.FC = () => {
                       </h3>
 
                       <div
-                        className="text-zinc-300 text-sm leading-relaxed"
+                        className="text-zinc-300 text-sm leading-relaxed rich-text-editor"
                         dangerouslySetInnerHTML={{
                           __html: comic.description || "",
                         }}
