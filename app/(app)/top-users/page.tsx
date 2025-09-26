@@ -3,6 +3,7 @@
 import React from "react";
 import { useGetTopUsers } from "@/hooks/user/useGetTopUsers";
 import Avatar from "@/components/ui/avatar";
+import PointsInfoIcon from "@/components/top-users/PointsInfoIcon";
 
 const TopUsersPage = () => {
   const { data: users, isLoading, error } = useGetTopUsers();
@@ -73,7 +74,7 @@ const TopUsersPage = () => {
             <div className="absolute -inset-2 bg-gradient-to-r from-orange-500/20 to-red-500/20 blur-xl -z-10 transform -skew-x-12"></div>
           </div>
           <p className="text-zinc-300 text-sm sm:text-base md:text-xl font-bold uppercase tracking-wider">
-            🦸‍♂️ LEGENDARY COMIC COLLECTORS 🦸‍♀️
+            🦸‍♂️ LEGENDARY COMIC READERS 🦸‍♀️
           </p>
         </div>
 
@@ -318,6 +319,9 @@ const TopUsersPage = () => {
           </div>
         )}
       </div>
+
+      {/* Points Info Icon */}
+      <PointsInfoIcon />
 
       <style jsx>{`
         .comic-border {
