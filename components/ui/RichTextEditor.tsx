@@ -88,6 +88,7 @@ const ImageWithRemove: React.FC<any> = (props) => {
         <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center md:hidden">
           <div className="bg-zinc-800 rounded-lg p-4 shadow-xl flex gap-3">
             <button
+              type="button"
               onClick={handleRemove}
               className="flex items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
             >
@@ -95,6 +96,7 @@ const ImageWithRemove: React.FC<any> = (props) => {
               Remove
             </button>
             <button
+              type="button"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -363,6 +365,7 @@ const RichTextEditor: React.FC<Props> = ({
     isActive: boolean;
   }) => (
     <button
+      type="button"
       onClick={() => setActiveSection(section)}
       className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
         isActive
@@ -598,6 +601,7 @@ const RichTextEditor: React.FC<Props> = ({
         </div>
 
         <button
+          type="button"
           onClick={() => setShowMobileMenu(!showMobileMenu)}
           className="flex items-center gap-1 px-3 py-1 rounded-md bg-zinc-200 dark:bg-zinc-600 text-zinc-700 dark:text-zinc-300"
         >
@@ -748,6 +752,7 @@ const RichTextEditor: React.FC<Props> = ({
               <div className="space-y-2">
                 <div className="flex flex-wrap gap-2">
                   <button
+                    type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isUploading || !onImageUpload}
                     className="flex items-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors disabled:opacity-50"
@@ -756,6 +761,7 @@ const RichTextEditor: React.FC<Props> = ({
                     Upload Image
                   </button>
                   <button
+                    type="button"
                     onClick={handleImageUrl}
                     className="flex items-center gap-2 px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
                   >
@@ -767,6 +773,7 @@ const RichTextEditor: React.FC<Props> = ({
                 {/* Link Controls */}
                 <div className="flex flex-wrap gap-2">
                   <button
+                    type="button"
                     onClick={handleSetLink}
                     className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
                       editor.isActive("link")
@@ -779,6 +786,7 @@ const RichTextEditor: React.FC<Props> = ({
                   </button>
                   {editor.isActive("link") && (
                     <button
+                      type="button"
                       onClick={handleUnsetLink}
                       className="flex items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
                     >
@@ -790,6 +798,7 @@ const RichTextEditor: React.FC<Props> = ({
 
                 {selectedImageNode && (
                   <button
+                    type="button"
                     onClick={deleteSelectedImage}
                     className="flex items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
                   >

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { GripVertical, Check, X } from "lucide-react";
 import { ComicToReOrder } from "@/types/Roadmap";
 import { useReorderComics } from "@/hooks/roadmaps/useReorderComics";
@@ -18,7 +18,10 @@ const ComicsReorderComponent: React.FC<ComicsReorderComponentProps> = ({
 }) => {
   const [tempComics, setTempComics] = useState<ComicToReOrder[]>([...comics]);
   const [draggedItem, setDraggedItem] = useState<ComicToReOrder | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number>(-1);
+  const containerRef = useRef<HTMLDivElement>(null);
 
+  // Desktop drag handlers (keep for desktop support)
   const handleDragStart = (
     e: React.DragEvent<HTMLDivElement>,
     comic: ComicToReOrder
@@ -37,15 +40,85 @@ const ComicsReorderComponent: React.FC<ComicsReorderComponentProps> = ({
     targetComic: ComicToReOrder
   ): void => {
     e.preventDefault();
+    reorderComics(draggedItem, targetComic);
+  };
 
-    if (!draggedItem || draggedItem.id === targetComic.id) return;
+  // Touch handlers for mobile
+  const handleTouchStart = (
+    e: React.TouchEvent<HTMLDivElement>,
+    comic: ComicToReOrder,
+    index: number
+  ): void => {
+    // Prevent default to avoid text selection and image dragging
+    e.preventDefault();
 
-    const draggedIndex = tempComics.findIndex((c) => c.id === draggedItem.id);
-    const targetIndex = tempComics.findIndex((c) => c.id === targetComic.id);
+    setDraggedItem(comic);
+    setDraggedIndex(index);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>): void => {
+    if (!draggedItem || draggedIndex === -1) return;
+
+    e.preventDefault(); // Prevent scrolling while dragging
+
+    const touch = e.touches[0];
+    const containerRect = containerRef.current?.getBoundingClientRect();
+
+    if (!containerRect) return;
+
+    // Find which comic we're hovering over
+    const elements = containerRef.current?.querySelectorAll("[data-comic-id]");
+    if (!elements) return;
+
+    let targetIndex = -1;
+    elements.forEach((element, index) => {
+      const rect = element.getBoundingClientRect();
+      if (
+        touch.clientX >= rect.left &&
+        touch.clientX <= rect.right &&
+        touch.clientY >= rect.top &&
+        touch.clientY <= rect.bottom &&
+        index !== draggedIndex
+      ) {
+        targetIndex = index;
+      }
+    });
+
+    // If we found a valid target, reorder immediately for visual feedback
+    if (targetIndex !== -1 && targetIndex !== draggedIndex) {
+      const newComics = [...tempComics];
+      const [removed] = newComics.splice(draggedIndex, 1);
+      newComics.splice(targetIndex, 0, removed);
+
+      // Update order property
+      const updatedComics = newComics.map((comic, index) => ({
+        ...comic,
+        order: index + 1,
+      }));
+
+      setTempComics(updatedComics);
+      setDraggedIndex(targetIndex);
+    }
+  };
+
+  const handleTouchEnd = (): void => {
+    setDraggedItem(null);
+    setDraggedIndex(-1);
+  };
+
+  // Common reorder logic
+  const reorderComics = (
+    draggedComic: ComicToReOrder | null,
+    targetComic: ComicToReOrder
+  ): void => {
+    if (!draggedComic || draggedComic.id === targetComic.id) return;
+
+    const draggedIdx = tempComics.findIndex((c) => c.id === draggedComic.id);
+    const targetIdx = tempComics.findIndex((c) => c.id === targetComic.id);
 
     const newComics = [...tempComics];
-    const [removed] = newComics.splice(draggedIndex, 1);
-    newComics.splice(targetIndex, 0, removed);
+    const [removed] = newComics.splice(draggedIdx, 1);
+    newComics.splice(targetIdx, 0, removed);
 
     // Update order property
     const updatedComics = newComics.map((comic, index) => ({
@@ -92,19 +165,34 @@ const ComicsReorderComponent: React.FC<ComicsReorderComponentProps> = ({
   return (
     <div className="space-y-4">
       {/* Comics Grid with Drag & Drop */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+      <div
+        ref={containerRef}
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+      >
         {tempComics.map((comic, index) => (
           <div
             key={comic.id}
+            data-comic-id={comic.id}
             draggable
             onDragStart={(e) => handleDragStart(e, comic)}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, comic)}
+            onTouchStart={(e) => handleTouchStart(e, comic, index)}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
             className={`
               group relative bg-zinc-700 rounded-xl overflow-hidden border-2 transition-all duration-300
               border-orange-500 cursor-move hover:scale-105 hover:shadow-lg hover:shadow-orange-500/25
-              ${draggedItem?.id === comic.id ? "opacity-50 scale-95" : ""}
+              touch-none select-none
+              ${draggedItem?.id === comic.id ? "opacity-50 scale-95 z-50" : ""}
             `}
+            style={{
+              // Add touch-action to prevent default touch behaviors
+              touchAction: "none",
+              userSelect: "none",
+              WebkitUserSelect: "none",
+              WebkitTouchCallout: "none",
+            }}
           >
             {/* Order Number */}
             <div className="absolute top-2 left-2 z-10 bg-orange-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
@@ -116,7 +204,8 @@ const ComicsReorderComponent: React.FC<ComicsReorderComponentProps> = ({
               <img
                 src={comic.image}
                 alt={comic.title}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 pointer-events-none"
+                draggable={false}
               />
             </div>
 
@@ -136,9 +225,14 @@ const ComicsReorderComponent: React.FC<ComicsReorderComponentProps> = ({
       </div>
 
       {/* Reorder Controls */}
-      <div className="flex items-center gap-3 p-4 bg-orange-900/30 border border-orange-600 rounded-xl">
+      <div className="flex flex-col md:flex-row items-center gap-3 p-4 bg-orange-900/30 border border-orange-600 rounded-xl">
         <div className="text-orange-300 text-sm flex-1">
-          Drag and drop comics to reorder them
+          <span className="hidden sm:inline">
+            Drag and drop comics to reorder them
+          </span>
+          <span className="sm:hidden">
+            Touch and drag comics to reorder them
+          </span>
         </div>
         <Button
           isLoading={isPending}

@@ -27,6 +27,7 @@ import Avatar from "../ui/avatar";
 import ComponentProtector from "../common/ComponentProtector";
 import RepliesSection from "./RepliesSection";
 import AttachmentsDisplay from "../common/AttachmentsDisplay";
+import { getTimeAgo } from "@/lib/date";
 
 interface CommentProps {
   comment: CommentType;
@@ -181,13 +182,7 @@ const Comment = ({
                 }`}
               >
                 <Clock className="w-3 h-3" />
-                {new Date(comment.createdAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                {getTimeAgo(comment.createdAt)}
               </span>
             </div>
 

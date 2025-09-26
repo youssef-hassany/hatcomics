@@ -58,7 +58,7 @@ const ComicsReorderGrid: React.FC<ComicsGridProps> = ({
               className="group relative bg-zinc-700 rounded-xl overflow-hidden border-2 border-zinc-600 hover:border-zinc-500 transition-all duration-300"
             >
               {/* Action Buttons - Edit and Delete */}
-              <div className="absolute top-2 right-2 z-10 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="absolute top-2 right-2 z-10 flex gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <button
                   onClick={(e) => handleEditClick(e, comic)}
                   className="bg-orange-600 hover:bg-orange-700 text-white p-1.5 rounded-full transition-colors duration-200 shadow-lg cursor-pointer"
