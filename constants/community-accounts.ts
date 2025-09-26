@@ -97,4 +97,15 @@ export const communityAccounts = [
     link: "https://t.me/comics7m",
     verified: true,
   },
+  {
+    id: 10,
+    name: "adarot_comics",
+    type: "social_media",
+    description: "Your friendly neighborhood comic tik tok guy",
+    platform: "TikTok",
+    followers: "100+",
+    avatar: "/adarot_comics.jpeg",
+    link: "https://www.tiktok.com/@adarot_comics?_t=ZS-902PhZTxqxM&_r=1",
+    verified: true,
+  },
 ];
