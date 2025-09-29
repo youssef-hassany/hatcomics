@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/db";
 import paginate from "@/lib/pagination";
 import { NoUserError } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
@@ -12,7 +11,8 @@ export async function GET(request: NextRequest) {
 
     if (!userId) NoUserError();
 
-    const data = await prisma.bookmark.findMany({
+    const data = await paginate({
+      model: "bookmark",
       where: {
         userId: userId!,
       },
@@ -34,18 +34,14 @@ export async function GET(request: NextRequest) {
           },
         },
       },
+      page: Number(page),
     });
 
-    const { paginatedData, hasNextPage, currentPage, totalPages } = paginate(
-      data,
-      page
-    );
-
-    const bookmarks = paginatedData.map((item) => ({
+    const bookmarks = data.data.map((item: any) => ({
       ...item,
       isBookmarked: true,
       isLikedByCurrentUser: item.post.likes.some(
-        (like) => like.userId === userId
+        (like: any) => like.userId === userId
       ),
     }));
 
@@ -53,9 +49,9 @@ export async function GET(request: NextRequest) {
       {
         status: "success",
         data: bookmarks,
-        hasNextPage,
-        currentPage,
-        totalPages,
+        hasNextPage: data.meta.hasNextPage,
+        currentPage: data.meta.currentPage,
+        totalPages: data.meta.totalPages,
       },
       { status: 200 }
     );

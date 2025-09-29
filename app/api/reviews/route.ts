@@ -14,7 +14,8 @@ export async function GET(request: NextRequest) {
       return;
     }
 
-    const data = await prisma.review.findMany({
+    const data = await paginate({
+      model: "review",
       include: {
         comic: true,
         user: {
@@ -41,25 +42,21 @@ export async function GET(request: NextRequest) {
       orderBy: {
         createdAt: "desc",
       },
+      page: Number(page),
     });
 
-    const reviews = data.map((review) => ({
+    const reviews = data.data.map((review: any) => ({
       ...review,
       isLikedByCurrentUser: review.likes.length > 0,
     }));
 
-    const { paginatedData, hasNextPage, currentPage, totalPages } = paginate(
-      reviews,
-      page
-    );
-
     return NextResponse.json(
       {
         status: "success",
-        data: paginatedData,
-        hasNextPage,
-        currentPage,
-        totalPages,
+        data: reviews,
+        hasNextPage: data.meta.hasNextPage,
+        currentPage: data.meta.currentPage,
+        totalPages: data.meta.totalPages,
       },
       { status: 200 }
     );

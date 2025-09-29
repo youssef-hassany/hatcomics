@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 import { uploadImageToR2FromServer } from "@/lib/upload-media";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import paginator from "@/lib/pagination";
+import paginate from "@/lib/pagination";
 
 export async function GET(
   request: NextRequest,
@@ -28,7 +28,8 @@ export async function GET(
       );
     }
 
-    const data = await prisma.post.findMany({
+    const data = await paginate({
+      model: "post",
       where: {
         comicId: id,
       },
@@ -67,26 +68,22 @@ export async function GET(
       orderBy: {
         createdAt: "desc",
       },
+      page: Number(page),
     });
 
-    const posts = data.map((post) => ({
+    const posts = data.data.map((post: any) => ({
       ...post,
       isLikedByCurrentUser: post.likes.length > 0,
       isBookmarked: post.bookmarks.length > 0,
     }));
 
-    const { paginatedData, hasNextPage, currentPage, totalPages } = paginator(
-      posts,
-      page
-    );
-
     return NextResponse.json(
       {
         status: "success",
-        data: paginatedData,
-        hasNextPage,
-        currentPage,
-        totalPages,
+        data: posts,
+        hasNextPage: data.meta.hasNextPage,
+        currentPage: data.meta.currentPage,
+        totalPages: data.meta.totalPages,
       },
       { status: 200 }
     );

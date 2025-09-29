@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import paginator from "@/lib/pagination";
+import paginate from "@/lib/pagination";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -16,7 +16,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const data = await prisma.post.findMany({
+    const data = await paginate({
+      model: "post",
       where: {
         AND: [{ isDraft: false }, { comicId: null }],
       },
@@ -52,26 +53,22 @@ export async function GET(request: NextRequest) {
       orderBy: {
         createdAt: "desc",
       },
+      page: Number(page),
     });
 
-    const posts = data.map((post) => ({
+    const posts = data.data.map((post: any) => ({
       ...post,
       isLikedByCurrentUser: post.likes.length > 0,
       isBookmarked: post.bookmarks.length > 0,
     }));
 
-    const { paginatedData, hasNextPage, currentPage, totalPages } = paginator(
-      posts,
-      page
-    );
-
     return NextResponse.json(
       {
         status: "success",
-        data: paginatedData,
-        hasNextPage,
-        currentPage,
-        totalPages,
+        data: posts,
+        hasNextPage: data.meta.hasNextPage,
+        currentPage: data.meta.currentPage,
+        totalPages: data.meta.totalPages,
       },
       { status: 200 }
     );
