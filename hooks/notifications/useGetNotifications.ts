@@ -20,5 +20,6 @@ export const useGetNotifications = () => {
   return useQuery({
     queryKey: ["notifications"],
     queryFn: getNotifications,
+    refetchInterval: 5 * 60 * 1000,
   });
 };

@@ -19,5 +19,6 @@ export const useGetNotificationsCount = () => {
   return useQuery({
     queryKey: ["notifications-count"],
     queryFn: getNotificationsCount,
+    refetchInterval: 5 * 60 * 1000,
   });
 };
