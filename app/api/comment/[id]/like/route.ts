@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { notificationService } from "@/services/notification.service";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -21,6 +22,11 @@ export async function POST(
     // Check if comment exists
     const comment = await prisma.comment.findUnique({
       where: { id: commentId },
+      include: {
+        post: true,
+        review: true,
+        roadmap: true,
+      },
     });
 
     if (!comment) {
@@ -52,6 +58,28 @@ export async function POST(
         commentId: commentId,
       },
     });
+
+    let url = `/posts/${comment.post?.id}`;
+
+    if (comment.post?.comicId) {
+      url = `/book-club/${comment.post.id}`;
+    }
+    if (comment.review) {
+      url = `/reviews/${comment.review.id}`;
+    }
+    if (comment.roadmap) {
+      url = `/roadmaps/${comment.roadmap.id}`;
+    }
+
+    if (comment.userId !== userId) {
+      await notificationService.createLikeNotification(
+        comment.userId,
+        userId,
+        "COMMENT",
+        commentId,
+        url
+      );
+    }
 
     return NextResponse.json({
       status: "success",

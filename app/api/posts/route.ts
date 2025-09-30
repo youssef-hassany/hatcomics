@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import paginate from "@/lib/pagination";
+import { notificationService } from "@/services/notification.service";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -138,6 +139,15 @@ export async function POST(req: NextRequest) {
       },
       where: { id: userId },
     });
+
+    if (!isDraft && !postId) {
+      // Only notify on new published posts, not when publishing drafts
+      await notificationService.notifyFollowersOfNewPost(
+        userId,
+        post.id,
+        `/posts/${postId}`
+      );
+    }
 
     return NextResponse.json(
       { status: "success", data: post },

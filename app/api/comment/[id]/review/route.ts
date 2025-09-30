@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { uploadImageToR2FromServer } from "@/lib/upload-media";
+import { notificationService } from "@/services/notification.service";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -129,6 +130,22 @@ export async function POST(
         reviewId: id,
       },
     });
+
+    const review = await prisma.review.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (review && review.userId !== userId) {
+      await notificationService.createCommentNotification(
+        review.userId,
+        userId,
+        "REVIEW",
+        review.id,
+        `/reviews/${review.id}`
+      );
+    }
 
     return NextResponse.json({
       status: "success",

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { uploadImageToR2FromServer } from "@/lib/upload-media";
 import { NoUserError } from "@/lib/utils";
+import { notificationService } from "@/services/notification.service";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -10,7 +11,10 @@ export async function POST(
 ) {
   try {
     const { userId } = await auth();
-    if (!userId) NoUserError();
+    if (!userId) {
+      NoUserError();
+      return;
+    }
 
     const { id: postId, commentId } = await params;
 
@@ -29,7 +33,7 @@ export async function POST(
       attachmentUrl = fileUrl;
     }
 
-    await prisma.comment.create({
+    const reply = await prisma.comment.create({
       data: {
         content,
         attachment: attachmentUrl || null,
@@ -38,6 +42,22 @@ export async function POST(
         replyTo: commentId,
       },
     });
+
+    const originalComment = await prisma.comment.findUnique({
+      where: {
+        id: commentId,
+      },
+    });
+
+    if (originalComment && originalComment.userId !== userId) {
+      await notificationService.createReplyNotification(
+        originalComment.userId,
+        userId,
+        commentId,
+        reply.id,
+        `/posts/${postId}`
+      );
+    }
 
     return NextResponse.json({
       status: "success",

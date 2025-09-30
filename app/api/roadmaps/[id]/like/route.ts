@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { NoUserError } from "@/lib/utils";
+import { notificationService } from "@/services/notification.service";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,6 +14,7 @@ export async function POST(
 
     if (!userId) {
       NoUserError();
+      return;
     }
 
     await prisma.like.create({
@@ -21,6 +23,22 @@ export async function POST(
         userId: userId!,
       },
     });
+
+    const roadmap = await prisma.roadmap.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (roadmap && roadmap.createdBy !== userId) {
+      await notificationService.createLikeNotification(
+        roadmap.createdBy,
+        userId,
+        "ROADMAP",
+        roadmap.id,
+        `/roadmaps/${roadmap.id}`
+      );
+    }
 
     return NextResponse.json(
       { status: "success", message: "Like added to post" },
@@ -45,13 +63,14 @@ export async function DELETE(
 
     if (!userId) {
       NoUserError();
+      return;
     }
 
     await prisma.like.delete({
       where: {
         userId_roadmapId: {
-          roadmapId: id,
           userId: userId!,
+          roadmapId: id,
         },
       },
     });
@@ -63,7 +82,7 @@ export async function DELETE(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { status: "error", message: "Internal server error" },
+      { status: "error", message: `Internal server error: ${error}` },
       { status: 500 }
     );
   }

@@ -9,29 +9,32 @@ datasource db {
 }
 
 model User {
-  id          String     @id
-  clerkId     String     @unique
-  username    String     @unique
-  fullname    String
-  email       String     @unique
-  photo       String?
-  points      Int        @default(0)
-  bio         String?    @default("Your friendly neighborhood user")
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  lastLoginAt DateTime?
-  provider    String?
-  providerId  String?
-  role        Role       @default(user)
-  bookmarks   Bookmark[]
-  comments    Comment[]
-  following   Follow[]   @relation("UserFollowing")
-  followers   Follow[]   @relation("UserFollowers")
-  likes       Like[]
-  posts       Post[]
-  reviews     Review[]
-  readlist    Readlist[]
-  roadmaps    Roadmap[]
+  id                    String     @id
+  clerkId               String     @unique
+  username              String     @unique
+  fullname              String
+  email                 String     @unique
+  photo                 String?
+  points                Int        @default(0)
+  bio                   String?    @default("Your friendly neighborhood user")
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+  lastLoginAt           DateTime?
+  provider              String?
+  providerId            String?
+  role                  Role       @default(user)
+  bookmarks             Bookmark[]
+  comments              Comment[]
+  following             Follow[]   @relation("UserFollowing")
+  followers             Follow[]   @relation("UserFollowers")
+  likes                 Like[]
+  posts                 Post[]
+  reviews               Review[]
+  readlist              Readlist[]
+  roadmaps              Roadmap[]
+  sentNotifications     UserNotification[] @relation("NotificationActor")
+  receivedNotifications UserNotification[] @relation("NotificationRecipient")
+  broadcastReads        UserBroadcastRead[]
 }
 
 model Post {
@@ -236,6 +239,85 @@ model RoadmapEntry {
   @@unique([roadmapId, order])
   @@index([roadmapId])
   @@index([comicId])
+}
+
+// Individual notifications
+model UserNotification {
+  id           String   @id @default(cuid())
+  recipientId  String
+  actorId      String   // Who performed the action
+  type         NotificationType
+  entityType   EntityType
+  entityId     String   // ID of the post/comment/review/roadmap
+  message      String?  // Optional custom message
+  readAt       DateTime?
+  url          String   @default("/")
+  createdAt    DateTime @default(now())
+  
+  // For batching - group similar notifications
+  batchKey     String?  // e.g., "like_post_123" to group likes on same post
+  batchCount   Int      @default(1) // How many similar actions
+  lastBatchedAt DateTime @default(now()) // When last similar action was added
+  
+  recipient User @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  actor     User @relation("NotificationActor", fields: [actorId], references: [id], onDelete: Cascade)
+  
+  @@index([recipientId, createdAt])
+  @@index([batchKey])
+  @@map("user_notifications")
+}
+
+// Broadcast notifications (stored once)
+model BroadcastNotification {
+  id             String   @id @default(cuid())
+  title          String
+  content        String
+  type           BroadcastType
+  targetCriteria Json     // { type: "all" | "followers", userId?: string }
+  createdAt      DateTime @default(now())
+  expiresAt      DateTime?
+  url            String   @default("/")
+  
+  reads UserBroadcastRead[]
+  
+  @@map("broadcast_notifications")
+}
+
+model UserBroadcastRead {
+  userId                  String
+  broadcastNotificationId String
+  readAt                  DateTime @default(now())
+  
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  broadcastNotification BroadcastNotification @relation(fields: [broadcastNotificationId], references: [id], onDelete: Cascade)
+  
+  @@id([userId, broadcastNotificationId])
+  @@map("user_broadcast_reads")
+}
+
+enum NotificationType {
+  LIKE_POST
+  LIKE_COMMENT
+  LIKE_REVIEW
+  LIKE_ROADMAP
+  COMMENT_POST
+  COMMENT_REVIEW
+  COMMENT_ROADMAP
+  REPLY_COMMENT
+}
+
+enum EntityType {
+  POST
+  COMMENT
+  REVIEW
+  ROADMAP
+}
+
+enum BroadcastType {
+  FOLLOWER_POST
+  FOLLOWER_ROADMAP
+  ADMIN_ANNOUNCEMENT
+  SYSTEM_UPDATE
 }
 
 enum Role {

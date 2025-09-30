@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { uploadImageToR2FromServer } from "@/lib/upload-media";
+import { notificationService } from "@/services/notification.service";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -123,6 +124,22 @@ export async function POST(
         postId: id,
       },
     });
+
+    const post = await prisma.post.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (post && post.userId !== userId) {
+      await notificationService.createCommentNotification(
+        post.userId,
+        userId,
+        "POST",
+        post.id,
+        post.comicId ? `/book-club/${post.id}` : `/posts/${post.id}`
+      );
+    }
 
     return NextResponse.json({
       status: "success",

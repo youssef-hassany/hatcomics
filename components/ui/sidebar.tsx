@@ -22,14 +22,17 @@ import {
   Library,
   Coffee,
   Map,
+  Bell,
 } from "lucide-react";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { useGetNotificationsCount } from "@/hooks/notifications/useGetNotificationsCount";
 
 export default function Sidebar() {
   const { data: user } = useGetLoggedInUser();
+  const { data: notificationsCount } = useGetNotificationsCount();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
 
@@ -113,6 +116,17 @@ export default function Sidebar() {
           className="group-hover:text-orange-500 transition-colors"
         />
       ),
+    },
+    {
+      title: "Notifications",
+      url: `/notifications`,
+      icon: (
+        <Bell
+          size={20}
+          className="group-hover:text-orange-500 transition-colors"
+        />
+      ),
+      count: notificationsCount,
     },
     {
       title: "Community",
@@ -272,18 +286,28 @@ export default function Sidebar() {
                       key={idx}
                       onClick={() => setSidebarOpen(false)}
                       href={link.url}
-                      className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-all group ${
+                      className={`flex items-center justify-between px-3 py-2 rounded-lg transition-all group ${
                         active
                           ? "bg-orange-500/10 text-orange-500 border-r-2 border-orange-500"
                           : "text-zinc-300 hover:text-white hover:bg-zinc-800"
                       }`}
                     >
-                      <span className={active ? "text-orange-500" : ""}>
-                        {link.icon}
-                      </span>
-                      <span className={active ? "font-medium" : ""}>
-                        {link.title}
-                      </span>
+                      {/* Left side (icon + title) */}
+                      <div className="flex items-center space-x-3">
+                        <span className={active ? "text-orange-500" : ""}>
+                          {link.icon}
+                        </span>
+                        <span className={active ? "font-medium" : ""}>
+                          {link.title}
+                        </span>
+                      </div>
+
+                      {/* Right side (count badge) */}
+                      {link.count && link.count > 0 && (
+                        <span className="ml-auto rounded-full bg-orange-600 px-2 py-0.5 text-xs font-medium text-white">
+                          {link.count > 99 ? "99+" : link.count}
+                        </span>
+                      )}
                     </Link>
                   );
                 })}

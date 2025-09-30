@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { NoUserError } from "@/lib/utils";
+import { notificationService } from "@/services/notification.service";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -48,6 +49,12 @@ export async function PATCH(
         points: user?.points + 10,
       },
     });
+
+    await notificationService.notifyFollowersOfNewRoadmap(
+      userId,
+      roadmapId,
+      `/roadmaps/${roadmapId}`
+    );
 
     return NextResponse.json(
       { status: "success", message: "Roadmap Posted successfully" },

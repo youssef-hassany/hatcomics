@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { NoUserError } from "@/lib/utils";
+import { notificationService } from "@/services/notification.service";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,6 +14,7 @@ export async function POST(
 
     if (!userId) {
       NoUserError();
+      return;
     }
 
     await prisma.like.create({
@@ -21,6 +23,22 @@ export async function POST(
         userId: userId!,
       },
     });
+
+    const review = await prisma.review.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (review && review.userId !== userId) {
+      await notificationService.createLikeNotification(
+        review.userId,
+        userId,
+        "REVIEW",
+        review.id,
+        `/reviews/${review.id}`
+      );
+    }
 
     return NextResponse.json(
       { status: "success", message: "Like added to review" },

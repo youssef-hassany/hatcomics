@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "BroadcastType" ADD VALUE 'FOLLOWER_ROADMAP';

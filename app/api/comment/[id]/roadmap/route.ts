@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { uploadImageToR2FromServer } from "@/lib/upload-media";
+import { notificationService } from "@/services/notification.service";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -129,6 +130,22 @@ export async function POST(
         roadmapId: id,
       },
     });
+
+    const roadmap = await prisma.roadmap.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (roadmap && roadmap.createdBy !== userId) {
+      await notificationService.createCommentNotification(
+        roadmap.createdBy,
+        userId,
+        "ROADMAP",
+        roadmap.id,
+        `/roadmaps/${roadmap.id}`
+      );
+    }
 
     return NextResponse.json({
       status: "success",
