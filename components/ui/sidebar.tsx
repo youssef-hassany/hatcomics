@@ -247,6 +247,12 @@ export default function Sidebar() {
           className="fixed top-4 left-4 z-50 md:hidden p-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors"
         >
           {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+
+          {typeof notificationsCount === "number" && notificationsCount > 0 && (
+            <span className="absolute -top-2 -right-2 rounded-full bg-orange-600 px-2 py-0.5 text-xs font-medium text-white">
+              {notificationsCount > 99 ? "99+" : notificationsCount}
+            </span>
+          )}
         </button>
 
         {/* Mobile overlay */}
@@ -303,7 +309,7 @@ export default function Sidebar() {
                       </div>
 
                       {/* Right side (count badge) */}
-                      {link.count && link.count > 0 && (
+                      {typeof link.count === "number" && link.count > 0 && (
                         <span className="ml-auto rounded-full bg-orange-600 px-2 py-0.5 text-xs font-medium text-white">
                           {link.count > 99 ? "99+" : link.count}
                         </span>
