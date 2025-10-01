@@ -11,7 +11,7 @@ export async function GET(
 
     const { id } = await params;
 
-    const review = await prisma.review.findMany({
+    const data = await prisma.review.findMany({
       where: { comicId: id },
       include: {
         comic: true,
@@ -40,8 +40,13 @@ export async function GET(
       },
     });
 
+    const reviews = data.map((review: any) => ({
+      ...review,
+      isLikedByCurrentUser: review.likes.length > 0,
+    }));
+
     return NextResponse.json(
-      { status: "success", data: review },
+      { status: "success", data: reviews },
       { status: 200 }
     );
   } catch (error) {
