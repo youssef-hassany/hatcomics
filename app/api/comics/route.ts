@@ -48,8 +48,6 @@ export async function GET(req: NextRequest) {
     if (name && name.trim()) {
       const searchTerm = name.trim();
 
-      // Use PostgreSQL's full-text search with fuzzy matching
-      // This will match partial words, handle typos, and rank by relevance
       whereClause.OR = [
         // Exact match (highest priority)
         {
@@ -65,32 +63,25 @@ export async function GET(req: NextRequest) {
             mode: "insensitive",
           },
         },
-        // Contains (medium priority)
+        // Contains full phrase (medium-high priority)
         {
           name: {
             contains: searchTerm,
             mode: "insensitive",
           },
         },
-        // Word-level matching for multi-word searches
-        ...(searchTerm.includes(" ")
-          ? [
-              {
-                name: {
-                  contains: searchTerm.split(" ").join(" | "),
-                  mode: "insensitive",
-                },
-              },
-            ]
-          : []),
-        // Individual word matching for multi-word comic names
-        ...searchTerm.split(" ").map((word) => ({
+      ];
+
+      // Only add individual word matching if search term is a single word
+      // This prevents matching every comic with common words like "one", "year"
+      if (!searchTerm.includes(" ")) {
+        whereClause.OR.push({
           name: {
-            contains: word,
+            contains: searchTerm,
             mode: "insensitive",
           },
-        })),
-      ];
+        });
+      }
     }
 
     if (publisher) {
