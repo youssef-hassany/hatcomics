@@ -36,6 +36,10 @@ export default function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
 
+  if (user?.isBanned) {
+    return null;
+  }
+
   const links = [
     {
       title: "Home",

@@ -1,5 +1,7 @@
 "use client";
 
+import { CreateReportModal } from "../reports/CreateReportModal";
+import { BanUserModal } from "../user/BanUserModal";
 import AddCommentForm from "./AddCommentForm";
 import CommentsList from "./CommentsList";
 
@@ -21,6 +23,9 @@ const CommentsSection = ({ referenceId, type }: CommentsSectionProps) => {
         <h3 className="text-xl font-semibold text-zinc-100 mb-4">Comments</h3>
         <CommentsList referenceId={referenceId} type={type} />
       </div>
+
+      <BanUserModal />
+      <CreateReportModal />
     </div>
   );
 };

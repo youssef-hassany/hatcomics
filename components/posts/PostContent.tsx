@@ -13,6 +13,8 @@ import Avatar from "../ui/avatar";
 import PostLikeHandler from "./PostLikeHandler";
 import BookmarkHandler from "./BookmarkHandler";
 import ComponentProtector from "../common/ComponentProtector";
+import { BanUserModal } from "../user/BanUserModal";
+import { CreateReportModal } from "../reports/CreateReportModal";
 
 interface PostContentProps {
   initialPost: Post;
@@ -78,6 +80,8 @@ const PostContent = ({ initialPost }: PostContentProps) => {
                     postId={post?.id || ""}
                     onEdit={() => setIsEditing(true)}
                     isOwner={isOwner}
+                    postOwnerId={post.userId}
+                    showEdit={loggedInUser?.id === post.userId}
                   />
                 </ComponentProtector>
               )}
@@ -108,6 +112,9 @@ const PostContent = ({ initialPost }: PostContentProps) => {
 
       {/* Comments Section */}
       <CommentsSection referenceId={post?.id || ""} type="post" />
+
+      <BanUserModal />
+      <CreateReportModal />
     </div>
   );
 };

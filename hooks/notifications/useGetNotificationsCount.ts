@@ -1,3 +1,4 @@
+import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 
 const getNotificationsCount = async () => {
@@ -16,9 +17,12 @@ const getNotificationsCount = async () => {
 };
 
 export const useGetNotificationsCount = () => {
+  const { userId } = useAuth();
+
   return useQuery({
     queryKey: ["notifications-count"],
     queryFn: getNotificationsCount,
     refetchInterval: 5 * 60 * 1000,
+    enabled: !!userId,
   });
 };

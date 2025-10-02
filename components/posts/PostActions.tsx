@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, CircleAlert } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,12 +11,16 @@ import { Modal } from "@/components/ui/modal";
 import { useDeletePost } from "@/hooks/posts/useDeletePost";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
+import { useBanUserStore } from "@/store/userBanStore";
+import { useReportStore } from "@/store/reportStore";
 
 interface PostActionsProps {
   postId: string;
   onEdit: () => void;
   isOwner: boolean;
   showEdit?: boolean;
+  postOwnerId: string;
 }
 
 const PostActions = ({
@@ -24,7 +28,12 @@ const PostActions = ({
   onEdit,
   isOwner,
   showEdit = true,
+  postOwnerId,
 }: PostActionsProps) => {
+  const { data: loggedInUser } = useGetLoggedInUser();
+  const { setBanUserId } = useBanUserStore();
+  const { setReferenceUrl } = useReportStore();
+
   const { mutateAsync: deletePost, isPending: isDeleting } = useDeletePost();
   const router = useRouter();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -38,8 +47,6 @@ const PostActions = ({
       console.error("Error deleting post:", error);
     }
   };
-
-  if (!isOwner) return;
 
   return (
     <>
@@ -57,13 +64,39 @@ const PostActions = ({
                 Edit
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem
-              onClick={() => setShowDeleteModal(true)}
-              className="text-red-400 focus:text-red-300 focus:bg-red-900/20"
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Delete
-            </DropdownMenuItem>
+            {isOwner && (
+              <DropdownMenuItem
+                onClick={() => setShowDeleteModal(true)}
+                className="text-red-400 focus:text-red-300 focus:bg-red-900/20"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </DropdownMenuItem>
+            )}
+
+            {(loggedInUser?.role === "owner" ||
+              loggedInUser?.role === "admin") && (
+              <DropdownMenuItem
+                onClick={() => setBanUserId(postOwnerId)}
+                className="text-red-400 hover:text-red-300 hover:bg-zinc-700 cursor-pointer"
+              >
+                <CircleAlert className="w-4 h-4 mr-2" />
+                Ban User
+              </DropdownMenuItem>
+            )}
+
+            {!isOwner && (
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setReferenceUrl(`/posts/${postId}`);
+                }}
+                className="cursor-pointer"
+              >
+                <CircleAlert className="w-4 h-4 mr-2" />
+                Report
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

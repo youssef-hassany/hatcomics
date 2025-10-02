@@ -15,6 +15,7 @@ export interface User {
   role: Role;
   email: string;
   rank?: number;
+  isBanned: boolean;
 }
 
 export interface UserProfile {
@@ -30,4 +31,5 @@ export interface UserProfile {
   followersCount: number;
   followingCount: number;
   bio: string;
+  isBanned: boolean;
 }

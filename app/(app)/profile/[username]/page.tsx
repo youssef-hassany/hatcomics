@@ -12,6 +12,8 @@ import FollowingListModal from "@/components/profile/FollowingListModal";
 import ProfileContent from "@/components/profile/ProfileContent";
 import { Button } from "@/components/ui/button";
 import EditProfileModal from "@/components/profile/EditProfileModal";
+import UserBannedMsg from "@/components/common/UserBannedMsg";
+import { UnBanUserModal } from "@/components/user/UnBanUserModal";
 
 const ProfilePage = () => {
   const { username } = useParams();
@@ -81,6 +83,15 @@ const ProfilePage = () => {
         return <User className="w-4 h-4" />;
     }
   };
+
+  if (user.isBanned) {
+    return (
+      <>
+        <UserBannedMsg isBanned={user.isBanned} userId={user.id} />
+        <UnBanUserModal />
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-zinc-900 text-white">

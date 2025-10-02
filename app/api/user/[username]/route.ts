@@ -36,6 +36,7 @@ export async function GET(
             following: true, // Count of users this user is following
           },
         },
+        isBanned: true,
       },
     });
 

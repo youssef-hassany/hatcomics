@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { CircleAlert, MoreHorizontal, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,23 +9,28 @@ import {
 } from "@/components/ui/dropdown-menu";
 import DeleteReviewModal from "./DeleteReviewModal";
 import { useState } from "react";
+import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
+import { useBanUserStore } from "@/store/userBanStore";
+import { useReportStore } from "@/store/reportStore";
 
 interface ReviewActionsProps {
   reviewId: string;
   isOwner: boolean;
   onSuccess?: () => void;
+  reviewOwnerId: string;
 }
 
 const ReviewActions = ({
   reviewId,
   isOwner,
   onSuccess,
+  reviewOwnerId,
 }: ReviewActionsProps) => {
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { data: loggedInUser } = useGetLoggedInUser();
+  const { setBanUserId } = useBanUserStore();
+  const { setReferenceUrl } = useReportStore();
 
-  if (!isOwner) {
-    return null;
-  }
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   return (
     <>
@@ -37,16 +42,45 @@ const ReviewActions = ({
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowDeleteModal(true);
-              }}
-              className="text-red-400 focus:text-red-300 focus:bg-red-900/20"
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Delete
-            </DropdownMenuItem>
+            {isOwner && (
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowDeleteModal(true);
+                }}
+                className="text-red-400 focus:text-red-300 focus:bg-red-900/20"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </DropdownMenuItem>
+            )}
+
+            {(loggedInUser?.role === "owner" ||
+              loggedInUser?.role === "admin") && (
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setBanUserId(reviewOwnerId);
+                }}
+                className="text-red-400 hover:text-red-300 hover:bg-zinc-700 cursor-pointer"
+              >
+                <CircleAlert className="w-4 h-4 mr-2" />
+                Ban User
+              </DropdownMenuItem>
+            )}
+
+            {!isOwner && (
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setReferenceUrl(`/reviews/${reviewId}`);
+                }}
+                className="hover:bg-zinc-700 cursor-pointer"
+              >
+                <CircleAlert className="w-4 h-4 mr-2" />
+                Report
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

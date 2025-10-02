@@ -1,4 +1,5 @@
 import { User } from "@/types/User";
+import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 
 const fetchCurrentUser = async () => {
@@ -12,8 +13,11 @@ const fetchCurrentUser = async () => {
 };
 
 export const useGetLoggedInUser = () => {
+  const { userId } = useAuth();
+
   return useQuery({
     queryKey: ["me"],
     queryFn: fetchCurrentUser,
+    enabled: !!userId,
   });
 };

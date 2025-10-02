@@ -98,6 +98,7 @@ const BookmarksList: React.FC = () => {
               points: bookmark.post.user.points,
               role: bookmark.post.user.role,
               email: bookmark.post.user.email,
+              isBanned: false,
             },
             likes: bookmark.post.likes || [],
             isLikedByCurrentUser: bookmark.isLikedByCurrentUser,

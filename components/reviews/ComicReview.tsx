@@ -218,6 +218,7 @@ const ComicReview = ({
             reviewId={review.id}
             isOwner={isOwner}
             onSuccess={onDeleteSuccess}
+            reviewOwnerId={review.user.id}
           />
         </div>
       </div>

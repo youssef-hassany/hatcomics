@@ -87,6 +87,7 @@ export default function ThoughtPage() {
             onEdit={() => {}}
             postId={thought?.id as string}
             showEdit={false}
+            postOwnerId={thought?.user.id as string}
           />
         </div>
       </article>

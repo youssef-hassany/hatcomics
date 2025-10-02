@@ -21,6 +21,7 @@ export async function GET() {
         photo: true,
         points: true,
         role: true,
+        isBanned: true,
       },
     });
 

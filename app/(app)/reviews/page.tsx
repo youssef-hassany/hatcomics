@@ -1,5 +1,6 @@
 "use client";
 
+import { BanUserModal } from "@/components/user/BanUserModal";
 import ComicReview from "@/components/reviews/ComicReview";
 import ComicReviewSkeleton from "@/components/reviews/ComicReviewSkeleton";
 import NoReviewsMsg from "@/components/reviews/NoReviewsMsg";
@@ -7,6 +8,7 @@ import { useGetAllReviews } from "@/hooks/reviews/useGetAllReview";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { Star } from "lucide-react";
 import React, { useEffect, useRef, useCallback } from "react";
+import { CreateReportModal } from "@/components/reports/CreateReportModal";
 
 const Page = () => {
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
@@ -109,6 +111,9 @@ const Page = () => {
         {/* Empty State */}
         {!isLoading && allReviews.length === 0 && <NoReviewsMsg />}
       </div>
+
+      <BanUserModal />
+      <CreateReportModal />
     </div>
   );
 };

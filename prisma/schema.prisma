@@ -19,6 +19,7 @@ model User {
   bio                   String?    @default("Your friendly neighborhood user")
   createdAt             DateTime   @default(now())
   updatedAt             DateTime   @updatedAt
+  isBanned              Boolean    @default(false)
   lastLoginAt           DateTime?
   provider              String?
   providerId            String?
@@ -35,6 +36,13 @@ model User {
   sentNotifications     UserNotification[] @relation("NotificationActor")
   receivedNotifications UserNotification[] @relation("NotificationRecipient")
   broadcastReads        UserBroadcastRead[]
+}
+
+model Report {
+  id                    String      @id @default(cuid())
+  referenceUrl          String
+  description           String?
+  createdAt             DateTime    @default(now())
 }
 
 model Post {
