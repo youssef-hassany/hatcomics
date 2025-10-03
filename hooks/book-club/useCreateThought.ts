@@ -1,21 +1,43 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 interface Params {
   formData: FormData;
   comicId: string;
+  onUploadProgress?: (progress: number) => void;
 }
 
 const createThought = async (params: Params) => {
   try {
-    const response = await fetch(`/api/comics/${params.comicId}/book-club`, {
-      method: "POST",
-      body: params.formData,
-    });
+    const response = await axios.post(
+      `/api/comics/${params.comicId}/book-club`,
+      params.formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const progress = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            console.log(
+              "Upload progress:",
+              progress,
+              "Loaded:",
+              progressEvent.loaded,
+              "Total:",
+              progressEvent.total
+            );
+            params.onUploadProgress?.(progress);
+          } else {
+            console.log("Upload progress (no total):", progressEvent.loaded);
+          }
+        },
+      }
+    );
 
-    if (!response.ok) throw new Error("error creating thought");
-
-    const data = await response.json();
-    return data.data;
+    return response.data.data;
   } catch (error) {
     console.error(error);
     throw new Error("error creating thought");

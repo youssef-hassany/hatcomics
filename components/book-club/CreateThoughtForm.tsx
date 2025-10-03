@@ -14,6 +14,7 @@ const CreateThoughtForm: React.FC<CreateThoughtFormProps> = ({ comicId }) => {
   const [content, setContent] = useState("");
   const [images, setImages] = useState<File[]>([]);
   const [hasSpoiler, setHasSpoiler] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,6 +32,7 @@ const CreateThoughtForm: React.FC<CreateThoughtFormProps> = ({ comicId }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setUploadProgress(0);
 
     try {
       const formData = new FormData();
@@ -41,16 +43,29 @@ const CreateThoughtForm: React.FC<CreateThoughtFormProps> = ({ comicId }) => {
         formData.append("images", file);
       });
 
-      await createThought({ comicId, formData });
+      console.log("Starting upload...");
+
+      await createThought({
+        comicId,
+        formData,
+        onUploadProgress: (progress) => {
+          console.log("Progress update received in form:", progress);
+          setUploadProgress(progress);
+        },
+      });
+
+      console.log("Upload complete");
 
       // Reset form
       setContent("");
       setImages([]);
       setHasSpoiler(false);
+      setUploadProgress(0);
 
       toast.success("Thought added successfully");
     } catch (error) {
       console.error(error);
+      setUploadProgress(0);
       toast.error("Couldn't post, try again");
     }
   };
@@ -70,6 +85,7 @@ const CreateThoughtForm: React.FC<CreateThoughtFormProps> = ({ comicId }) => {
             placeholder="What's on your mind? Share your thoughts..."
             className="w-full bg-zinc-900 border border-zinc-600 rounded-lg px-4 py-3 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none transition-all duration-200"
             rows={4}
+            disabled={isPending}
           />
           <div className="flex justify-between items-center mt-2">
             <span className="text-xs text-zinc-500">
@@ -101,11 +117,13 @@ const CreateThoughtForm: React.FC<CreateThoughtFormProps> = ({ comicId }) => {
                     src={URL.createObjectURL(image)}
                     alt={`Upload ${index + 1}`}
                     className="w-full h-24 lg:h-48 object-cover rounded-lg border border-zinc-600"
-                    onClick={() => removeImage(index)}
+                    onClick={() => !isPending && removeImage(index)}
                   />
                   <button
                     type="button"
-                    className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => removeImage(index)}
+                    disabled={isPending}
+                    className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -119,7 +137,8 @@ const CreateThoughtForm: React.FC<CreateThoughtFormProps> = ({ comicId }) => {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 px-3 py-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded-lg text-sm transition-colors"
+              disabled={isPending}
+              className="flex items-center gap-2 px-3 py-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded-lg text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ImagePlus className="w-4 h-4" />
               Add Images
@@ -133,8 +152,27 @@ const CreateThoughtForm: React.FC<CreateThoughtFormProps> = ({ comicId }) => {
             accept="image/*"
             onChange={handleImageUpload}
             className="hidden"
+            disabled={isPending}
           />
         </div>
+
+        {/* Upload Progress Bar */}
+        {isPending && uploadProgress > 0 && (
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-zinc-300">Uploading...</span>
+              <span className="text-sm text-orange-400 font-medium">
+                {uploadProgress}%
+              </span>
+            </div>
+            <div className="w-full bg-zinc-700 rounded-full h-2 overflow-hidden">
+              <div
+                className="bg-orange-500 h-full transition-all duration-300 ease-out"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Spoiler Toggle */}
         <div className="mb-4">
@@ -145,11 +183,12 @@ const CreateThoughtForm: React.FC<CreateThoughtFormProps> = ({ comicId }) => {
                 checked={hasSpoiler}
                 onChange={(e) => setHasSpoiler(e.target.checked)}
                 className="sr-only"
+                disabled={isPending}
               />
               <div
                 className={`w-11 h-6 rounded-full transition-colors ${
                   hasSpoiler ? "bg-orange-500" : "bg-zinc-600"
-                }`}
+                } ${isPending ? "opacity-50" : ""}`}
               >
                 <div
                   className={`w-5 h-5 bg-white rounded-full shadow-lg transform transition-transform ${
@@ -178,12 +217,12 @@ const CreateThoughtForm: React.FC<CreateThoughtFormProps> = ({ comicId }) => {
         <div className="flex justify-end gap-3 pt-4 border-t border-zinc-700">
           <Button
             type="submit"
-            disabled={!content.trim()}
+            disabled={!content.trim() || isPending}
             variant={!content.trim() ? "secondary" : "primary"}
             className="px-6 py-2 disabled:cursor-not-allowed font-medium rounded-lg text-sm"
             isLoading={isPending}
           >
-            Post
+            {isPending ? "Posting..." : "Post"}
           </Button>
         </div>
       </form>
