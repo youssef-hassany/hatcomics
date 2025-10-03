@@ -50,7 +50,9 @@ const ThoughtPreview = (thought: ThoughtPreviewType) => {
                 </p>
               ) : (
                 <p className="text-zinc-400 text-sm line-clamp-2 inline-block group-hover:text-zinc-300 transition-colors duration-200">
-                  {thoughtContent}
+                  {thoughtContent.length > 150
+                    ? `${thoughtContent.slice(0, 150)}...`
+                    : thoughtContent}
                 </p>
               )}
             </div>

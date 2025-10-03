@@ -41,6 +41,7 @@ export default clerkMiddleware(async (auth, req) => {
   const isSpecificComic = /^\/comics\/[^\/]+$/.test(pathname);
   const isSpecificReview = /^\/reviews\/[^\/]+$/.test(pathname);
   const isSpecificRoadmap = /^\/roadmaps\/[^\/]+$/.test(pathname);
+  const isSpecificThought = /^\/book-club\/[^\/]+$/.test(pathname);
 
   // Check if the current path is a protected route
   const isProtectedRoute = protectedRoutes.some((route) => {
@@ -59,7 +60,8 @@ export default clerkMiddleware(async (auth, req) => {
     !isSpecificPost &&
     !isSpecificComic &&
     !isSpecificReview &&
-    !isSpecificRoadmap
+    !isSpecificRoadmap &&
+    !isSpecificThought
   ) {
     return NextResponse.redirect(new URL("/", req.url));
   }

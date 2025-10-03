@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { useBanUserStore } from "@/store/userBanStore";
 import { useReportStore } from "@/store/reportStore";
+import ComponentProtector from "../common/ComponentProtector";
 
 interface PostActionsProps {
   postId: string;
@@ -49,7 +50,7 @@ const PostActions = ({
   };
 
   return (
-    <>
+    <ComponentProtector>
       <div className="flex items-center gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -125,7 +126,7 @@ const PostActions = ({
           </div>
         </div>
       </Modal>
-    </>
+    </ComponentProtector>
   );
 };
 

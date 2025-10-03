@@ -195,61 +195,65 @@ const Comment = ({
             </div>
 
             {/* Right Side (3 dots menu) */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="h-6 w-6 p-0 flex items-center justify-center text-zinc-500 hover:text-zinc-400 transition-colors">
-                  <MoreHorizontal className={isReply ? "w-3 h-3" : "w-4 h-4"} />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="bg-zinc-800 border-zinc-700"
-              >
-                {isOwner && !isEditing && (
-                  <DropdownMenuItem
-                    onClick={handleEdit}
-                    className="text-zinc-300 hover:text-zinc-100 hover:bg-zinc-700 cursor-pointer"
-                  >
-                    <Pencil className="w-4 h-4 mr-2" />
-                    Edit
-                  </DropdownMenuItem>
-                )}
+            <ComponentProtector>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="h-6 w-6 p-0 flex items-center justify-center text-zinc-500 hover:text-zinc-400 transition-colors">
+                    <MoreHorizontal
+                      className={isReply ? "w-3 h-3" : "w-4 h-4"}
+                    />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="bg-zinc-800 border-zinc-700"
+                >
+                  {isOwner && !isEditing && (
+                    <DropdownMenuItem
+                      onClick={handleEdit}
+                      className="text-zinc-300 hover:text-zinc-100 hover:bg-zinc-700 cursor-pointer"
+                    >
+                      <Pencil className="w-4 h-4 mr-2" />
+                      Edit
+                    </DropdownMenuItem>
+                  )}
 
-                {isOwner && (
-                  <DropdownMenuItem
-                    onClick={handleDelete}
-                    className="text-red-400 hover:text-red-300 hover:bg-zinc-700 cursor-pointer"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete
-                  </DropdownMenuItem>
-                )}
+                  {isOwner && (
+                    <DropdownMenuItem
+                      onClick={handleDelete}
+                      className="text-red-400 hover:text-red-300 hover:bg-zinc-700 cursor-pointer"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete
+                    </DropdownMenuItem>
+                  )}
 
-                {(loggedInUser?.role === "owner" ||
-                  loggedInUser?.role === "admin") && (
-                  <DropdownMenuItem
-                    onClick={() => setBanUserId(comment.userId)}
-                    className="text-red-400 hover:text-red-300 hover:bg-zinc-700 cursor-pointer"
-                  >
-                    <CircleAlert className="w-4 h-4 mr-2" />
-                    Ban User
-                  </DropdownMenuItem>
-                )}
+                  {(loggedInUser?.role === "owner" ||
+                    loggedInUser?.role === "admin") && (
+                    <DropdownMenuItem
+                      onClick={() => setBanUserId(comment.userId)}
+                      className="text-red-400 hover:text-red-300 hover:bg-zinc-700 cursor-pointer"
+                    >
+                      <CircleAlert className="w-4 h-4 mr-2" />
+                      Ban User
+                    </DropdownMenuItem>
+                  )}
 
-                {!isOwner && (
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setReferenceUrl(`/${type}/${referenceId}`);
-                    }}
-                    className="text-zinc-300 hover:text-zinc-100 hover:bg-zinc-700 cursor-pointer"
-                  >
-                    <CircleAlert className="w-4 h-4 mr-2" />
-                    Report
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  {!isOwner && (
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setReferenceUrl(`/${type}/${referenceId}`);
+                      }}
+                      className="text-zinc-300 hover:text-zinc-100 hover:bg-zinc-700 cursor-pointer"
+                    >
+                      <CircleAlert className="w-4 h-4 mr-2" />
+                      Report
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </ComponentProtector>
           </div>
 
           {/* Comment Text or Edit Form */}
