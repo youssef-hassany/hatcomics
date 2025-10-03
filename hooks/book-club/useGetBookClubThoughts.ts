@@ -10,7 +10,7 @@ interface PostsResponse {
 }
 
 const getThoughts = async (
-  comicId: string,
+  comicId: string | undefined,
   { pageParam = 1 }
 ): Promise<PostsResponse> => {
   try {
@@ -25,7 +25,7 @@ const getThoughts = async (
   }
 };
 
-export const useGetBookClubThoughts = (comicId: string) => {
+export const useGetBookClubThoughts = (comicId: string | undefined) => {
   return useInfiniteQuery({
     queryKey: ["book-club", comicId],
     queryFn: ({ pageParam }) => getThoughts(comicId, { pageParam }),
@@ -33,5 +33,6 @@ export const useGetBookClubThoughts = (comicId: string) => {
       return lastPage.hasNextPage ? lastPage.currentPage + 1 : undefined;
     },
     initialPageParam: 1,
+    enabled: !!comicId,
   });
 };

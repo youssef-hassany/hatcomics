@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/db";
-import { NoUserError } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -9,7 +8,6 @@ export async function GET(
 ) {
   try {
     const { userId } = await auth();
-    if (!userId) NoUserError();
 
     const { thoughtId } = await params;
     if (!thoughtId) {
@@ -39,10 +37,12 @@ export async function GET(
             role: true,
           },
         },
-        likes: {
-          where: { userId: userId! }, // Only get current user's like
-          select: { userId: true },
-        },
+        ...(userId && {
+          likes: {
+            where: { userId: userId }, // Only get current user's like
+            select: { userId: true },
+          },
+        }),
 
         _count: {
           select: {

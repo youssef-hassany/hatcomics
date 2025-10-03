@@ -6,6 +6,7 @@ import PostLikeHandler from "../posts/PostLikeHandler";
 import AttachmentsDisplay from "../common/AttachmentsDisplay";
 import Link from "next/link";
 import { getTimeAgo } from "@/lib/date";
+import ComponentProtector from "../common/ComponentProtector";
 
 const ThoughtCard: React.FC<{ thought: ThoughtPreview }> = ({ thought }) => {
   const renderSpoilerContent = () => {
@@ -93,8 +94,10 @@ const ThoughtCard: React.FC<{ thought: ThoughtPreview }> = ({ thought }) => {
           {/* Engagement Actions */}
           <div className="flex items-center gap-6 max-w-md mt-3">
             {/* Likes */}
-            {/* @ts-expect-error: this error here won't affect anything because the type requires title which is not used in the component */}
-            <PostLikeHandler post={thought} />
+            <ComponentProtector>
+              {/* @ts-expect-error: this error here won't affect anything because the type requires title which is not used in the component */}
+              <PostLikeHandler post={thought} />
+            </ComponentProtector>
 
             {/* Comments */}
             <div className="flex items-center space-x-2 text-zinc-500 hover:text-blue-400 transition-colors group">

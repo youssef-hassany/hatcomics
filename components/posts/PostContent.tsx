@@ -101,8 +101,10 @@ const PostContent = ({ initialPost }: PostContentProps) => {
           </div>
 
           <div className="flex items-center gap-4 border-t border-zinc-300 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700 p-4">
-            {/* @ts-expect-error: this is completely fine */}
-            <PostLikeHandler post={post} />
+            <ComponentProtector>
+              {/* @ts-expect-error: this is completely fine */}
+              <PostLikeHandler post={post} />
+            </ComponentProtector>
 
             {/* @ts-expect-error: this is completely fine */}
             <BookmarkHandler post={post} />

@@ -3,6 +3,7 @@
 import ThoughtPageSkeleton from "@/components/book-club/ThoughtPageSkeleton";
 import { CommentsSection } from "@/components/comments";
 import AttachmentsDisplay from "@/components/common/AttachmentsDisplay";
+import ComponentProtector from "@/components/common/ComponentProtector";
 import PostActions from "@/components/posts/PostActions";
 import PostLikeHandler from "@/components/posts/PostLikeHandler";
 import Avatar from "@/components/ui/avatar";
@@ -67,8 +68,10 @@ export default function ThoughtPage() {
             {/* Engagement Actions */}
             <div className="flex items-center gap-6 max-w-md mt-3">
               {/* Likes */}
-              {/* @ts-expect-error: this error here won't affect anything because the type requires title which is not used in the component */}
-              <PostLikeHandler post={thought} />
+              <ComponentProtector>
+                {/* @ts-expect-error: this error here won't affect anything because the type requires title which is not used in the component */}
+                <PostLikeHandler post={thought} />
+              </ComponentProtector>
 
               {/* Comments */}
               <div className="flex items-center space-x-1 text-zinc-500">

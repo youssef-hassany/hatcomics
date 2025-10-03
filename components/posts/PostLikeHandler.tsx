@@ -2,7 +2,6 @@ import { usePostLike } from "@/hooks/posts/usePostLike";
 import { PostPreview } from "@/types/Post";
 import { Heart } from "lucide-react";
 import React, { useState } from "react";
-import ComponentProtector from "../common/ComponentProtector";
 
 const PostLikeHandler: React.FC<{ post: PostPreview }> = ({ post }) => {
   const { mutateAsync: toggleLike } = usePostLike();
@@ -32,19 +31,17 @@ const PostLikeHandler: React.FC<{ post: PostPreview }> = ({ post }) => {
   };
 
   return (
-    <ComponentProtector>
-      <button
-        onClick={handleLike}
-        className={`flex items-center gap-2 text-sm transition-colors cursor-pointer ${
-          isLiked
-            ? "text-orange-500 hover:text-orange-400"
-            : "text-zinc-400 hover:text-zinc-500"
-        }`}
-      >
-        <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
-        <span>{optimisticCount}</span>
-      </button>
-    </ComponentProtector>
+    <button
+      onClick={handleLike}
+      className={`flex items-center gap-2 text-sm transition-colors cursor-pointer ${
+        isLiked
+          ? "text-orange-500 hover:text-orange-400"
+          : "text-zinc-400 hover:text-zinc-500"
+      }`}
+    >
+      <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
+      <span>{optimisticCount}</span>
+    </button>
   );
 };
 

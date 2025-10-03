@@ -4,6 +4,7 @@ import Avatar from "../ui/avatar";
 import PostLikeHandler from "./PostLikeHandler";
 import BookmarkHandler from "./BookmarkHandler";
 import { PostPreview } from "@/types/Post";
+import ComponentProtector from "../common/ComponentProtector";
 
 const PostCard: React.FC<{ post: PostPreview }> = ({ post }) => {
   return (
@@ -40,7 +41,9 @@ const PostCard: React.FC<{ post: PostPreview }> = ({ post }) => {
         {/* Engagement Stats */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-6">
-            <PostLikeHandler post={post} />
+            <ComponentProtector>
+              <PostLikeHandler post={post} />
+            </ComponentProtector>
 
             <div className="flex items-center space-x-2 text-zinc-400">
               <MessageCircle size={20} />

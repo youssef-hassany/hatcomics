@@ -68,9 +68,11 @@ const BookClub: React.FC = () => {
         </div>
 
         {/* Create Post Button */}
-        <div className="mb-8">
-          <CreateThoughtForm comicId={comicId as string} />
-        </div>
+        {typeof comicId === "string" && (
+          <div className="mb-8">
+            <CreateThoughtForm comicId={comicId} />
+          </div>
+        )}
 
         {/* Initial loading skeleton */}
         {isLoading && (
