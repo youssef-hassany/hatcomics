@@ -12,7 +12,7 @@ const StatsPage = () => {
 
   console.log(stats);
 
-  if (isLoading) {
+  if (!user || isLoading) {
     return <>Loading...</>;
   }
 
