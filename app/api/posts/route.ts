@@ -145,7 +145,7 @@ export async function POST(req: NextRequest) {
       await notificationService.notifyFollowersOfNewPost(
         userId,
         post.id,
-        `/posts/${postId}`
+        `/posts/${post.id}`
       );
     }
 
