@@ -344,9 +344,11 @@ enum NotificationType {
   LIKE_COMMENT
   LIKE_REVIEW
   LIKE_ROADMAP
+  LIKE_LIST
   COMMENT_POST
   COMMENT_REVIEW
   COMMENT_ROADMAP
+  COMMENT_LIST
   REPLY_COMMENT
 }
 
@@ -355,6 +357,7 @@ enum EntityType {
   COMMENT
   REVIEW
   ROADMAP
+  LIST
 }
 
 enum BroadcastType {

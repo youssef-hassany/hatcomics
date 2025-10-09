@@ -20,12 +20,17 @@ export async function POST(request: NextRequest) {
     const image = formData.get("image") as File;
     const type = formData.get("type") as ListType;
 
-    const { fileUrl } = await uploadImageToR2FromServer(image, "lists");
+    let imageUrl;
+
+    if (image) {
+      const { fileUrl } = await uploadImageToR2FromServer(image, "lists");
+      imageUrl = fileUrl;
+    }
 
     const uploadedList = await listService.createList({
       title,
       userId,
-      image: fileUrl,
+      image: imageUrl,
       type,
     });
 

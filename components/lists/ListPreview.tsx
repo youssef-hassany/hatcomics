@@ -20,7 +20,7 @@ const ListPreview = ({ image, title, user, url }: Props) => {
       <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800 shadow-lg group-hover:shadow-orange-500/20 transition-all duration-500 group-hover:border-orange-500/50 group-hover:-translate-y-2">
         {/* Image */}
         <img
-          src={image}
+          src={image || "/hatcomics.png"}
           alt={title}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
         />

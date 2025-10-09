@@ -66,7 +66,7 @@ const CreateListForm = () => {
       setTitle("");
       setCoverImage(null);
       toast.success("List Created");
-      router.push(`/list/manage/${createdList.id}`);
+      router.push(`/lists/${createdList.id}/manage`);
     } catch (error) {
       console.error("Error Creating List:", error);
       toast.error("Error Creating List, Try Again");

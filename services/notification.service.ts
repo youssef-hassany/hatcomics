@@ -26,6 +26,9 @@ export class NotificationService {
       case EntityType.ROADMAP:
         type = NotificationType.LIKE_ROADMAP;
         break;
+      case EntityType.LIST:
+        type = NotificationType.LIKE_LIST;
+        break;
       default:
         type = NotificationType.LIKE_POST;
     }
