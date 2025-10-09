@@ -36,6 +36,7 @@ model User {
   sentNotifications     UserNotification[] @relation("NotificationActor")
   receivedNotifications UserNotification[] @relation("NotificationRecipient")
   broadcastReads        UserBroadcastRead[]
+  lists                 List[]
 }
 
 model Report {
@@ -74,6 +75,7 @@ model Comment {
   postId     String?
   reviewId   String?
   roadmapId  String?
+  listId  String?
   content    String
   attachment String?
   replyTo    String?
@@ -82,6 +84,7 @@ model Comment {
   post       Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
   review     Review?   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
   roadmap    Roadmap?  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  list       List?     @relation(fields: [listId], references: [id], onDelete: Cascade)
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   likes      Like[]
   
@@ -97,17 +100,20 @@ model Like {
   commentId String?
   reviewId  String?
   roadmapId String?
+  listId    String?
   createdAt DateTime  @default(now())
   comment   Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
   post      Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   review    Review?   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  roadmap   Roadmap?   @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  roadmap   Roadmap?  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  list      List?     @relation(fields: [listId], references: [id], onDelete: Cascade)
 
   @@unique([userId, postId])
   @@unique([userId, commentId])
   @@unique([userId, reviewId])
   @@unique([userId, roadmapId])
+  @@unique([userId, listId])
 }
 
 model Follow {
@@ -303,6 +309,36 @@ model UserBroadcastRead {
   @@map("user_broadcast_reads")
 }
 
+model List {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  createdBy   String
+  image       String?
+  type        ListType @default(flat)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  entries     ListEntry[]
+  creator     User     @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  likes       Like[]
+  comments    Comment[]
+  
+  @@index([createdBy])
+}
+
+model ListEntry {
+  id                      String  @id @default(cuid())
+  listId                  String
+  order                   Int?
+  title                   String
+  image                   String?
+  description             String?  // Generic description for any content type
+  
+  list        List       @relation(fields: [listId], references: [id], onDelete: Cascade)  
+  @@index([listId])
+}
+
 enum NotificationType {
   LIKE_POST
   LIKE_COMMENT
@@ -323,6 +359,8 @@ enum EntityType {
 
 enum BroadcastType {
   FOLLOWER_POST
+  FOLLOWER_REVIEW
+  FOLLOWER_LIST
   FOLLOWER_ROADMAP
   ADMIN_ANNOUNCEMENT
   SYSTEM_UPDATE
@@ -341,4 +379,9 @@ enum PostType {
   post
   draft
   thought
+}
+
+enum ListType {
+  flat
+  numbered
 }

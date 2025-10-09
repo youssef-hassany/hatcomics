@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import paginate from "@/lib/pagination";
 import { NoUserError } from "@/lib/utils";
+import { notificationService } from "@/services/notification.service";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -151,6 +152,13 @@ export async function POST(req: NextRequest) {
         id: userId,
       },
     });
+
+    // notify followers
+    notificationService.notifyFollowersOfNewReview(
+      userId,
+      review.id,
+      `/reviews/${review.id}`
+    );
 
     return NextResponse.json(
       { status: "success", data: review },

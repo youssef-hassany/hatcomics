@@ -189,6 +189,26 @@ export class NotificationService {
     });
   }
 
+  async notifyFollowersOfNewReview(
+    authorId: string,
+    reviewId: string,
+    url: string
+  ) {
+    await prisma.broadcastNotification.create({
+      data: {
+        title: "New review from someone you follow",
+        content: `Check out the latest review!`,
+        type: BroadcastType.FOLLOWER_REVIEW,
+        targetCriteria: {
+          type: "followers",
+          userId: authorId,
+          entityId: reviewId,
+        },
+        url: url ? url : `/reviews/${reviewId}`,
+      },
+    });
+  }
+
   async notifyFollowersOfNewRoadmap(
     authorId: string,
     roadmapId: string,
@@ -205,6 +225,26 @@ export class NotificationService {
           entityId: roadmapId,
         },
         url: url ? url : `/roadmaps/${roadmapId}`,
+      },
+    });
+  }
+
+  async notifyFollowersOfNewList(
+    authorId: string,
+    listId: string,
+    url: string | undefined
+  ) {
+    await prisma.broadcastNotification.create({
+      data: {
+        title: "New list from someone you follow",
+        content: `Check out the latest list!`,
+        type: BroadcastType.FOLLOWER_LIST,
+        targetCriteria: {
+          type: "followers",
+          userId: authorId,
+          entityId: listId,
+        },
+        url: url ? url : `/lists/${listId}`,
       },
     });
   }

@@ -2,7 +2,7 @@ import React from "react";
 import { Loader2 } from "lucide-react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "outline";
   isLoading?: boolean;
   children: React.ReactNode;
 }
@@ -22,6 +22,8 @@ export const Button: React.FC<ButtonProps> = ({
   const variantStyles = {
     primary: "bg-orange-600 hover:bg-orange-700",
     secondary: "bg-zinc-700 hover:bg-zinc-800",
+    outline:
+      "bg-transparent border-2 border-orange-700 text-orange-700 hover:bg-orange-700 hover:text-zinc-800",
   };
 
   const isDisabled = disabled || isLoading;
