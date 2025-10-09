@@ -145,7 +145,7 @@ class ListService {
   /**
    * Gets a single list with all its entries
    */
-  async getList(listId: string) {
+  async getList(listId: string, userId?: string) {
     const list = await prisma.list.findUnique({
       where: { id: listId },
       include: {
@@ -158,6 +158,12 @@ class ListService {
             comments: true,
           },
         },
+        ...(userId && {
+          likes: {
+            where: { userId }, // Only get current user's like
+            select: { userId: true },
+          },
+        }),
         creator: {
           select: {
             fullname: true,
@@ -173,7 +179,15 @@ class ListService {
       throw new Error("List not found");
     }
 
-    return list;
+    const data = list
+      ? {
+          ...list,
+          // Only check if logged in user has liked
+          isLikedByCurrentUser: userId ? (list.likes?.length || 0) > 0 : false,
+        }
+      : list;
+
+    return data;
   }
 
   /* ------- List Entry Methods ------- */

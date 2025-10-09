@@ -1,3 +1,5 @@
+import ComponentProtector from "@/components/common/ComponentProtector";
+import LikeHandler from "@/components/common/LikeHandler";
 import ShareButton from "@/components/common/ShareButton";
 import ListItems from "@/components/lists/ListItems";
 import PageHeader from "@/components/ui/PageHeader";
@@ -77,11 +79,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const ListPage = async ({ params }: Props) => {
-  const { id } = await params;
-  const list = await listService.getList(id);
-
   const { userId } = await auth();
   const visitor = await userService.getUserById(userId!);
+
+  const { id } = await params;
+  const list = await listService.getList(id, userId!);
 
   return (
     <div className="relative">
@@ -114,6 +116,17 @@ const ListPage = async ({ params }: Props) => {
           </Link>
         )}
       </div>
+
+      <ComponentProtector>
+        <div className="absolute top-48 md:top-40 left-4">
+          <LikeHandler
+            contentId={list.id}
+            contentType="list"
+            isLikedByCurrentUser={list.isLikedByCurrentUser}
+            likesInitialCount={list._count.likes}
+          />
+        </div>
+      </ComponentProtector>
     </div>
   );
 };

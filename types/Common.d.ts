@@ -1,1 +1,1 @@
-export type ContentType = "post" | "review" | "roadmap" | "list";
+export type ContentType = "post" | "review" | "roadmap" | "list" | "thought";
