@@ -5,7 +5,7 @@ import type {
   IndividualNotification,
   BroadcastNotification,
 } from "@/types/Notification";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useReadNotification } from "@/hooks/notifications/useReadNotification";
 
 type NotificationItemProps = {
@@ -30,11 +30,9 @@ const getActionIcon = (type: string) => {
 function NotificationItem({ notification }: NotificationItemProps) {
   const isIndividual = "actor" in notification;
 
-  const router = useRouter();
   const { mutateAsync: readNotification } = useReadNotification();
 
   const handleMarkAsRead = async () => {
-    router.push(notification.url);
     await readNotification({
       notificationId: notification.id,
       notificationType:
@@ -43,9 +41,10 @@ function NotificationItem({ notification }: NotificationItemProps) {
   };
 
   return (
-    <div
+    <Link
+      href={notification.url}
       onClick={handleMarkAsRead}
-      className={`p-4 rounded-lg border transition-all hover:border-zinc-700 cursor-pointer ${
+      className={`block p-4 rounded-lg border transition-all hover:border-zinc-700 cursor-pointer ${
         notification.isRead
           ? "bg-zinc-900/50 border-zinc-800"
           : "bg-zinc-900 border-orange-900/50"
@@ -129,7 +128,7 @@ function NotificationItem({ notification }: NotificationItemProps) {
         {/* Actions */}
         <div className="flex items-start gap-2"></div>
       </div>
-    </div>
+    </Link>
   );
 }
 
