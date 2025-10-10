@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const ListPage = async ({ params }: Props) => {
   const { userId } = await auth();
-  const visitor = await userService.getUserById(userId!);
+  const visitor = userId && (await userService.getUserById(userId));
 
   const { id } = await params;
   const list = await listService.getList(id, userId!);
@@ -103,7 +103,7 @@ const ListPage = async ({ params }: Props) => {
           contentType="list"
         />
 
-        {list.createdBy === visitor?.id && (
+        {visitor && list.createdBy === visitor?.id && (
           <Link
             href={`/lists/${list.id}/manage`}
             className="group relative inline-flex items-center gap-2 px-4 py-2 bg-zinc-800/50 backdrop-blur-sm rounded-xl border border-zinc-700/50 hover:border-orange-500/50 transition-all duration-300 hover:bg-orange-500/10 cursor-pointer"
