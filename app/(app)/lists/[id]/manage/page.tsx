@@ -16,7 +16,7 @@ const ManageListPage = async ({ params }: Props) => {
   const { id } = await params;
   const listData = await listService.getList(id, userId!);
 
-  if (visitor && visitor.id !== listData.createdBy) {
+  if (visitor && visitor.id !== listData?.createdBy) {
     return <NotAuthorized />;
   }
 
