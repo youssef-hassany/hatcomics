@@ -15,6 +15,7 @@ import BookmarkHandler from "./BookmarkHandler";
 import ComponentProtector from "../common/ComponentProtector";
 import { BanUserModal } from "../user/BanUserModal";
 import { CreateReportModal } from "../reports/CreateReportModal";
+import ShareButton from "../common/ShareButton";
 
 interface PostContentProps {
   initialPost: Post;
@@ -73,7 +74,7 @@ const PostContent = ({ initialPost }: PostContentProps) => {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col items-center gap-4">
               {post && (
                 <ComponentProtector>
                   <PostActions
@@ -84,6 +85,15 @@ const PostContent = ({ initialPost }: PostContentProps) => {
                     showEdit={loggedInUser?.id === post.userId}
                   />
                 </ComponentProtector>
+              )}
+
+              {post && (
+                <ShareButton
+                  contentPublisher={post.user.fullname}
+                  contentTitle={post.title}
+                  contentType="post"
+                  showText={false}
+                />
               )}
             </div>
           </div>

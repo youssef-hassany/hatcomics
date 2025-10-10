@@ -101,7 +101,6 @@ const ListPage = async ({ params }: Props) => {
           contentPublisher={list.creator.fullname}
           contentTitle={list.title}
           contentType="list"
-          url={`/${list.id}`}
         />
 
         {list.createdBy === visitor?.id && (

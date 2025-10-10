@@ -9,6 +9,7 @@ interface ShareButtonProps {
   url?: string;
   contentPublisher: string;
   contentType: ContentType;
+  showText?: boolean;
 }
 
 const ShareButton = ({
@@ -16,6 +17,7 @@ const ShareButton = ({
   url = typeof window !== "undefined" ? window.location.href : "",
   contentPublisher,
   contentType,
+  showText = true,
 }: ShareButtonProps) => {
   const [copied, setCopied] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -76,9 +78,11 @@ const ShareButton = ({
         title="Share"
       >
         <Share2 className="w-4 h-4 text-zinc-400 group-hover:text-orange-400 transition-colors duration-300" />
-        <span className="text-sm text-zinc-300 group-hover:text-white transition-colors duration-300 hidden sm:inline">
-          Share
-        </span>
+        {showText && (
+          <span className="text-sm text-zinc-300 group-hover:text-white transition-colors duration-300 hidden sm:inline">
+            Share
+          </span>
+        )}
       </button>
 
       {showDropdown && (

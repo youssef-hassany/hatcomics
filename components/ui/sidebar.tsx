@@ -23,6 +23,7 @@ import {
   Coffee,
   Map,
   Bell,
+  List,
 } from "lucide-react";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { usePathname } from "next/navigation";
@@ -86,6 +87,16 @@ export default function Sidebar() {
       url: "/posts",
       icon: (
         <Newspaper
+          size={20}
+          className="group-hover:text-orange-500 transition-colors"
+        />
+      ),
+    },
+    {
+      title: "Lists",
+      url: "/lists",
+      icon: (
+        <List
           size={20}
           className="group-hover:text-orange-500 transition-colors"
         />
@@ -269,101 +280,97 @@ export default function Sidebar() {
 
         {/* Sidebar */}
         <aside
-          className={`fixed left-0 top-0 h-full w-64 bg-zinc-900 border-r border-zinc-700 z-50 transform transition-transform duration-200 ease-in-out overflow-y-scroll no-scrollbar ${
+          className={`fixed left-0 top-0 h-full w-64 bg-zinc-900 border-r border-zinc-700 z-50 transform transition-transform duration-200 ease-in-out ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } md:translate-x-0`}
+          } md:translate-x-0 flex flex-col`}
         >
-          <div className="flex flex-col h-full">
-            {/* Logo section */}
-            <div className="flex items-center space-x-3 p-6 border-b border-zinc-700">
-              <Image
-                src="/hatcomics-logo.png"
-                width={48}
-                height={48}
-                className="w-12 h-12"
-                alt="HatComics"
-              />
-              <span className="text-xl font-bold text-white">HatComics</span>
-            </div>
+          {/* Logo section - Fixed at top */}
+          <div className="flex items-center space-x-3 p-6 border-b border-zinc-700 flex-shrink-0">
+            <Image
+              src="/hatcomics-logo.png"
+              width={48}
+              height={48}
+              className="w-12 h-12"
+              alt="HatComics"
+            />
+            <span className="text-xl font-bold text-white">HatComics</span>
+          </div>
 
-            {/* Navigation links */}
-            <nav className="flex-1 px-4 py-6">
-              <div className="space-y-2">
-                {links.map((link, idx) => {
-                  const active = isActive(link.url);
-                  return (
-                    <Link
-                      key={idx}
-                      onClick={() => setSidebarOpen(false)}
-                      href={link.url}
-                      className={`flex items-center justify-between px-3 py-2 rounded-lg transition-all group ${
-                        active
-                          ? "bg-orange-500/10 text-orange-500 border-r-2 border-orange-500"
-                          : "text-zinc-300 hover:text-white hover:bg-zinc-800"
-                      }`}
-                    >
-                      {/* Left side (icon + title) */}
-                      <div className="flex items-center space-x-3">
-                        <span className={active ? "text-orange-500" : ""}>
-                          {link.icon}
-                        </span>
-                        <span className={active ? "font-medium" : ""}>
-                          {link.title}
-                        </span>
-                      </div>
-
-                      {/* Right side (count badge) */}
-                      {typeof link.count === "number" && link.count > 0 && (
-                        <span className="ml-auto rounded-full bg-orange-600 px-2 py-0.5 text-xs font-medium text-white">
-                          {link.count > 99 ? "99+" : link.count}
-                        </span>
-                      )}
-                    </Link>
-                  );
-                })}
-
-                {(user?.role === "owner" || user?.role === "admin") && (
+          {/* Navigation links - Scrollable */}
+          <nav className="flex-1 overflow-y-auto px-4 py-6 no-scrollbar">
+            <div className="space-y-2">
+              {links.map((link, idx) => {
+                const active = isActive(link.url);
+                return (
                   <Link
+                    key={idx}
                     onClick={() => setSidebarOpen(false)}
-                    href="/comic-vine"
-                    className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-all group ${
-                      isActive("/comic-vine")
+                    href={link.url}
+                    className={`flex items-center justify-between px-3 py-2 rounded-lg transition-all group ${
+                      active
                         ? "bg-orange-500/10 text-orange-500 border-r-2 border-orange-500"
                         : "text-zinc-300 hover:text-white hover:bg-zinc-800"
                     }`}
                   >
-                    <span
-                      className={
-                        isActive("/comic-vine") ? "text-orange-500" : ""
-                      }
-                    >
-                      <BookOpen
-                        size={20}
-                        className="group-hover:text-orange-500 transition-colors"
-                      />
-                    </span>
-                    <span
-                      className={isActive("/comic-vine") ? "font-medium" : ""}
-                    >
-                      Comic Vine
-                    </span>
-                  </Link>
-                )}
-              </div>
-            </nav>
+                    {/* Left side (icon + title) */}
+                    <div className="flex items-center space-x-3">
+                      <span className={active ? "text-orange-500" : ""}>
+                        {link.icon}
+                      </span>
+                      <span className={active ? "font-medium" : ""}>
+                        {link.title}
+                      </span>
+                    </div>
 
-            {/* User section at bottom */}
-            <div className="p-4 border-t border-zinc-700">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-zinc-400">{user?.username}</span>
-                <UserButton
-                  appearance={{
-                    elements: {
-                      avatarBox: "w-8 h-8",
-                    },
-                  }}
-                />
-              </div>
+                    {/* Right side (count badge) */}
+                    {typeof link.count === "number" && link.count > 0 && (
+                      <span className="ml-auto rounded-full bg-orange-600 px-2 py-0.5 text-xs font-medium text-white">
+                        {link.count > 99 ? "99+" : link.count}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+
+              {(user?.role === "owner" || user?.role === "admin") && (
+                <Link
+                  onClick={() => setSidebarOpen(false)}
+                  href="/comic-vine"
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-all group ${
+                    isActive("/comic-vine")
+                      ? "bg-orange-500/10 text-orange-500 border-r-2 border-orange-500"
+                      : "text-zinc-300 hover:text-white hover:bg-zinc-800"
+                  }`}
+                >
+                  <span
+                    className={isActive("/comic-vine") ? "text-orange-500" : ""}
+                  >
+                    <BookOpen
+                      size={20}
+                      className="group-hover:text-orange-500 transition-colors"
+                    />
+                  </span>
+                  <span
+                    className={isActive("/comic-vine") ? "font-medium" : ""}
+                  >
+                    Comic Vine
+                  </span>
+                </Link>
+              )}
+            </div>
+          </nav>
+
+          {/* User section - Fixed at bottom */}
+          <div className="p-4 border-t border-zinc-700 flex-shrink-0">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-zinc-400">{user?.username}</span>
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "w-8 h-8",
+                  },
+                }}
+              />
             </div>
           </div>
         </aside>
