@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Upload, X, Image as ImageIcon, ArrowUpDown } from "lucide-react";
+import { Upload, X, Image as ImageIcon, ArrowUpDown, Plus } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useUpdateList } from "@/hooks/lists/useUpdateList";
@@ -11,6 +11,8 @@ import { useGetList } from "@/hooks/lists/useGetList";
 import PageLoadingSpinner from "../ui/PageLoadingSpinner";
 import ListItemsReorderComponent from "./ListItemsReorderComponent";
 import Toggle from "../ui/toggle";
+import Link from "next/link";
+import DeleteListModal from "./DeleteListModal";
 
 interface UpdateListFormProps {
   listId: string;
@@ -25,6 +27,7 @@ const UpdateListForm = ({ listId }: UpdateListFormProps) => {
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
   const [isReordering, setIsReordering] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const { data: listData, isLoading: isLoadingList } = useGetList(listId);
   const { mutateAsync: updateList, isPending: isUpdating } = useUpdateList();
@@ -224,7 +227,7 @@ const UpdateListForm = ({ listId }: UpdateListFormProps) => {
           />
 
           {/* Reorder Items Button */}
-          {listData?.entries && listData.entries.length > 1 && (
+          {listData?.entries && listData.entries.length > 1 ? (
             <div className="border-t border-zinc-700 pt-6">
               <Button
                 onClick={() => setIsReordering(true)}
@@ -234,6 +237,16 @@ const UpdateListForm = ({ listId }: UpdateListFormProps) => {
                 <ArrowUpDown className="h-4 w-4 mr-2" />
                 Manage List Items ({listData.entries.length})
               </Button>
+            </div>
+          ) : (
+            <div className="border-t border-zinc-700 pt-6">
+              <Link
+                href={`/lists/${listId}/add-item`}
+                className="w-full bg-zinc-700 border-zinc-600 text-white hover:bg-zinc-600 hover:border-orange-500"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Item
+              </Link>
             </div>
           )}
 
@@ -246,6 +259,15 @@ const UpdateListForm = ({ listId }: UpdateListFormProps) => {
             >
               Cancel
             </Button>
+
+            <Button
+              type="button"
+              onClick={() => setIsDeleteOpen(true)}
+              className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              Delete List
+            </Button>
+
             <Button
               onClick={handleSubmit}
               disabled={isUpdating || !title.trim() || !hasChanges}
@@ -256,6 +278,12 @@ const UpdateListForm = ({ listId }: UpdateListFormProps) => {
           </div>
         </div>
       </div>
+
+      <DeleteListModal
+        isOpen={isDeleteOpen}
+        listId={listId}
+        onClose={() => setIsDeleteOpen(false)}
+      />
     </div>
   );
 };

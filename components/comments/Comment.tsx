@@ -32,13 +32,14 @@ import { getTimeAgo } from "@/lib/date";
 import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { useBanUserStore } from "@/store/userBanStore";
 import { useReportStore } from "@/store/reportStore";
+import { ContentType } from "@/types/Common";
 
 interface CommentProps {
   comment: CommentType;
   onDelete?: (commentId: string) => void;
   isOwner?: boolean;
   referenceId?: string;
-  type: "post" | "review" | "roadmap";
+  type: ContentType;
   isReply?: boolean;
   parentComment?: CommentType; // Add parent comment data for replies
 }

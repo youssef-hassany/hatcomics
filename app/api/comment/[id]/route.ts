@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/db";
 import { uploadImageToR2FromServer } from "@/lib/upload-media";
+import { commentService } from "@/services/comment.service";
 import { notificationService } from "@/services/notification.service";
+import { ContentType } from "@/types/Common";
 import { auth } from "@clerk/nextjs/server";
+import { EntityType } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export const config = {
@@ -15,65 +18,35 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
+    const { id: contentId } = await params;
     const { userId } = await auth();
 
-    // Get all comments for the post
-    const comments = await prisma.comment.findMany({
-      where: {
-        postId: id,
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            fullname: true,
-            photo: true,
-          },
-        },
-        likes: {
-          select: {
-            id: true,
-            userId: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
-    });
+    // Get contentType from query parameters
+    const { searchParams } = new URL(request.url);
+    const contentType = searchParams.get("contentType") as ContentType;
 
-    // Separate top-level comments and replies
-    const topLevelComments = comments.filter((comment) => !comment.replyTo);
-    const replies = comments.filter((comment) => comment.replyTo);
+    if (!contentType) {
+      return NextResponse.json(
+        { status: "error", message: "Content type reuired" },
+        { status: 401 }
+      );
+    }
 
-    // Build nested structure
-    const commentsWithReplies = topLevelComments.map((comment) => {
-      const commentReplies = replies
-        .filter((reply) => reply.replyTo === comment.id)
-        .map((reply) => ({
-          ...reply,
-          isLikedByCurrentUser: userId
-            ? reply.likes.some((like) => like.userId === userId)
-            : false,
-        }))
-        .sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        ); // Replies in chronological order
+    if (!contentType) {
+      return NextResponse.json(
+        { status: "error", message: "contentType is required" },
+        { status: 400 }
+      );
+    }
 
-      return {
-        ...comment,
-        isLikedByCurrentUser: userId
-          ? comment.likes.some((like) => like.userId === userId)
-          : false,
-        replies: commentReplies,
-      };
+    const comments = await commentService.getComments({
+      contentId,
+      contentType,
+      userId,
     });
 
     return NextResponse.json(
-      { status: "success", data: commentsWithReplies },
+      { status: "success", data: comments },
       { status: 200 }
     );
   } catch (error) {
@@ -99,11 +72,12 @@ export async function POST(
       );
     }
 
-    const { id } = await params;
+    const { id: contentId } = await params;
 
     const formData = await request.formData();
 
     const content = formData.get("content") as string;
+    const contentType = formData.get("contentType") as ContentType;
     const attachment = formData.get("attachment") as File;
 
     let attachmentUrl;
@@ -116,30 +90,28 @@ export async function POST(
       attachmentUrl = fileUrl;
     }
 
-    await prisma.comment.create({
-      data: {
-        content,
-        attachment: attachmentUrl || null,
-        userId: userId,
-        postId: id,
-      },
+    const createdComment = await commentService.createComment({
+      attachmentUrl,
+      content,
+      contentId,
+      contentType,
+      userId,
     });
 
-    const post = await prisma.post.findFirst({
-      where: {
-        id,
-      },
-    });
+    const contentCreatorId = (createdComment.post?.userId ||
+      createdComment.review?.userId ||
+      createdComment.roadmap?.createdBy ||
+      createdComment.list?.createdBy) as string;
 
-    if (post && post.userId !== userId) {
-      await notificationService.createCommentNotification(
-        post.userId,
-        userId,
-        "POST",
-        post.id,
-        post.comicId ? `/book-club/${post.id}` : `/posts/${post.id}`
-      );
-    }
+    await notificationService.createCommentNotification(
+      contentCreatorId,
+      userId,
+      contentType.toUpperCase() as EntityType,
+      createdComment.id,
+      contentType === "thought"
+        ? `/book-club/${contentId}`
+        : `/${contentType}s/${contentId}`
+    );
 
     return NextResponse.json({
       status: "success",

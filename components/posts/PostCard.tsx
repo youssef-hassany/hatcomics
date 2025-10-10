@@ -29,7 +29,7 @@ const PostCard: React.FC<{ post: PostPreview }> = ({ post }) => {
         </div>
 
         {/* Post Title */}
-        <a href={`posts/${post.id}`} className="block mb-6">
+        <a href={`/posts/${post.id}`} className="block mb-6">
           <h2 className="text-2xl font-bold text-white leading-tight">
             {post.title}
           </h2>

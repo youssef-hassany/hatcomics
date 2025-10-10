@@ -5,10 +5,11 @@ import { useGetLoggedInUser } from "@/hooks/user/useGetLoggedInUser";
 import { Comment as CommentType } from "@/types/Comment";
 import { ChevronDown } from "lucide-react";
 import Comment from "./Comment";
+import { ContentType } from "@/types/Common";
 
 interface RepliesListProps {
   referenceId: string;
-  type: "post" | "review" | "roadmap";
+  type: ContentType;
   replies: CommentType[];
   parentComment?: CommentType; // Add parent comment for context
 }

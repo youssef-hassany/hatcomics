@@ -10,7 +10,8 @@ interface LikeMutationParams {
 class LikeService {
   async addLike(params: LikeMutationParams) {
     const { contentId, contentType, userId } = params;
-    const fieldName = `${contentType}Id`;
+    const fieldName =
+      contentType === "thought" ? "postId" : (`${contentType}Id` as const);
 
     await prisma.like.create({
       data: {
@@ -22,7 +23,8 @@ class LikeService {
 
   async removeLike(params: LikeMutationParams) {
     const { contentId, contentType, userId } = params;
-    const fieldName = `${contentType}Id` as const;
+    const fieldName =
+      contentType === "thought" ? "postId" : (`${contentType}Id` as const);
 
     await prisma.like.deleteMany({
       where: {

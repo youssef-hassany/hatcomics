@@ -1,5 +1,6 @@
 "use client";
 
+import { ContentType } from "@/types/Common";
 import { CreateReportModal } from "../reports/CreateReportModal";
 import { BanUserModal } from "../user/BanUserModal";
 import AddCommentForm from "./AddCommentForm";
@@ -7,7 +8,7 @@ import CommentsList from "./CommentsList";
 
 interface CommentsSectionProps {
   referenceId: string;
-  type: "post" | "review" | "roadmap";
+  type: ContentType;
 }
 
 const CommentsSection = ({ referenceId, type }: CommentsSectionProps) => {

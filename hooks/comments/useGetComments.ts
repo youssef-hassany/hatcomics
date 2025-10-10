@@ -1,26 +1,38 @@
+import { ContentType } from "@/types/Common";
 import { useQuery } from "@tanstack/react-query";
 
-type CommentType = "post" | "review" | "roadmap";
-
-const getComments = async (id: string | undefined, type: CommentType) => {
-  if (!id) return;
+const getComments = async (
+  contentId: string | undefined,
+  contentType: ContentType
+) => {
+  if (!contentId) return;
 
   try {
-    const endpoint =
-      type === "post" ? `/api/comment/${id}` : `/api/comment/${id}/${type}`;
+    const endpoint = `/api/comment/${contentId}?contentType=${encodeURIComponent(
+      contentType
+    )}`;
 
-    const response = await fetch(endpoint);
+    const response = await fetch(endpoint, {
+      method: "GET",
+    });
+
+    if (!response.ok) throw new Error("Error loading comments");
+
     const data = await response.json();
     return data.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
-export const useGetComments = (id: string | undefined, type: CommentType) => {
+export const useGetComments = (
+  contentId: string | undefined,
+  contentType: ContentType
+) => {
   return useQuery({
-    queryKey: ["comments", id, type],
-    queryFn: () => getComments(id, type),
-    enabled: !!id,
+    queryKey: ["comments", contentId],
+    queryFn: () => getComments(contentId, contentType),
+    enabled: !!contentId,
   });
 };

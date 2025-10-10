@@ -28,7 +28,7 @@ export async function POST(
       contentId,
       contentType === "thought"
         ? `/book-club/${contentId}`
-        : `/${contentType}/${contentId}`
+        : `/${contentType}s/${contentId}`
     );
 
     return NextResponse.json(

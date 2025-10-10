@@ -6,10 +6,11 @@ import { Image, Send, X } from "lucide-react";
 import { useState, useRef } from "react";
 import { Button } from "../ui/button";
 import ComponentProtector from "../common/ComponentProtector";
+import { ContentType } from "@/types/Common";
 
 interface AddCommentFormProps {
   referenceId: string;
-  type: "post" | "review" | "roadmap";
+  type: ContentType;
   commentId?: string;
   addReply?: boolean;
 }
@@ -38,10 +39,11 @@ const AddCommentForm = ({
     if (attachment) {
       formData.append("attachment", attachment);
     }
+    formData.append("contentType", type);
 
     try {
       await createCommentMutation.mutateAsync({
-        id: referenceId,
+        contentId: referenceId,
         commentId,
         formData,
         type,

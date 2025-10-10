@@ -1,36 +1,25 @@
+import { ContentType } from "@/types/Common";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-type CommentType = "post" | "review" | "roadmap";
-
 interface CreateCommentArgs {
-  id: string;
-  type: CommentType;
+  type: ContentType;
   commentId?: string;
   formData: FormData;
+  contentId: string;
 }
 
 const createComment = async ({
-  id,
-  type,
   commentId,
   formData,
+  contentId,
+  type,
 }: CreateCommentArgs) => {
   try {
-    let endpoint: string;
+    let endpoint = `/api/comment/${contentId}`;
 
-    if (type === "post") {
-      endpoint = `/api/comment/${id}${commentId ? `/reply/${commentId}` : ""}`;
-    } else if (type === "review") {
-      endpoint = `/api/comment/${id}${
-        commentId ? `/reply/${commentId}` : ""
-      }/review`;
-    } else if (type === "roadmap") {
-      endpoint = `/api/comment/${id}${
-        commentId ? `/reply/${commentId}` : ""
-      }/roadmap`;
-    } else {
-      throw new Error(`Unsupported comment type: ${type}`);
+    if (commentId) {
+      endpoint = `${endpoint}/reply/${commentId}`;
     }
 
     await fetch(endpoint, {
@@ -39,6 +28,7 @@ const createComment = async ({
     });
 
     toast.success(`${commentId ? "Reply" : "Comment"} added successfully`);
+    console.log(type);
   } catch (error) {
     console.error(error);
     toast.error(`failed to add ${commentId ? "Reply" : "Comment"}, try again.`);
@@ -54,7 +44,7 @@ export const useCreateComment = () => {
     mutationFn: createComment,
     onSettled: (_, __, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["comments", variables.id, variables.type],
+        queryKey: ["comments", variables.contentId],
       });
     },
   });

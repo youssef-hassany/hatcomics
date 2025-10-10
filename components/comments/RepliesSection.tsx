@@ -3,10 +3,11 @@
 import { Comment } from "@/types/Comment";
 import AddCommentForm from "./AddCommentForm";
 import RepliesList from "./RepliesList";
+import { ContentType } from "@/types/Common";
 
 interface RepliesSectionProps {
   referenceId: string;
-  type: "post" | "review" | "roadmap";
+  type: ContentType;
   commentId: string;
   replies: Comment[];
   showReplyForm?: boolean;

@@ -1,7 +1,8 @@
-import { prisma } from "@/lib/db";
 import { uploadImageToR2FromServer } from "@/lib/upload-media";
 import { NoUserError } from "@/lib/utils";
+import { commentService } from "@/services/comment.service";
 import { notificationService } from "@/services/notification.service";
+import { ContentType } from "@/types/Common";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -16,11 +17,12 @@ export async function POST(
       return;
     }
 
-    const { id: postId, commentId } = await params;
+    const { id: contentId, commentId } = await params;
 
     const formData = await request.formData();
 
     const content = formData.get("content") as string;
+    const contentType = formData.get("contentType") as ContentType;
     const attachment = formData.get("attachment") as File;
 
     let attachmentUrl;
@@ -33,21 +35,16 @@ export async function POST(
       attachmentUrl = fileUrl;
     }
 
-    const reply = await prisma.comment.create({
-      data: {
-        content,
-        attachment: attachmentUrl || null,
-        userId: userId!,
-        postId: postId,
-        replyTo: commentId,
-      },
+    const reply = await commentService.createComment({
+      content,
+      attachmentUrl: attachmentUrl,
+      userId: userId!,
+      contentId: contentId,
+      replyTo: commentId,
+      contentType,
     });
 
-    const originalComment = await prisma.comment.findUnique({
-      where: {
-        id: commentId,
-      },
-    });
+    const originalComment = await commentService.getCommentById(commentId);
 
     if (originalComment && originalComment.userId !== userId) {
       await notificationService.createReplyNotification(
@@ -55,7 +52,7 @@ export async function POST(
         userId,
         commentId,
         reply.id,
-        `/posts/${postId}`
+        `/${contentType}s/${contentId}`
       );
     }
 

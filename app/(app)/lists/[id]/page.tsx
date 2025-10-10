@@ -1,3 +1,4 @@
+import { CommentsSection } from "@/components/comments";
 import ComponentProtector from "@/components/common/ComponentProtector";
 import LikeHandler from "@/components/common/LikeHandler";
 import ShareButton from "@/components/common/ShareButton";
@@ -86,7 +87,7 @@ const ListPage = async ({ params }: Props) => {
   const list = await listService.getList(id, userId!);
 
   return (
-    <div className="relative">
+    <div className="relative min-h-screen bg-zinc-900">
       <PageHeader
         Icon={List}
         title={list.title}
@@ -100,7 +101,7 @@ const ListPage = async ({ params }: Props) => {
           contentPublisher={list.creator.fullname}
           contentTitle={list.title}
           contentType="list"
-          url={`www.hat-comics.com/lists/${list.id}`}
+          url={`/${list.id}`}
         />
 
         {list.createdBy === visitor?.id && (
@@ -127,6 +128,8 @@ const ListPage = async ({ params }: Props) => {
           />
         </div>
       </ComponentProtector>
+
+      {list && <CommentsSection referenceId={list.id} type="list" />}
     </div>
   );
 };

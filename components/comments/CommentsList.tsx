@@ -6,10 +6,11 @@ import { Comment as CommentType } from "@/types/Comment";
 import { MessageCircle } from "lucide-react";
 import Comment from "./Comment";
 import CommentSkeleton from "./CommentSkeleton";
+import { ContentType } from "@/types/Common";
 
 interface CommentsListProps {
   referenceId: string;
-  type: "post" | "review" | "roadmap";
+  type: ContentType;
 }
 
 const CommentsList = ({ referenceId, type }: CommentsListProps) => {
