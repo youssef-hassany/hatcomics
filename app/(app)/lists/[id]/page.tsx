@@ -86,6 +86,21 @@ const ListPage = async ({ params }: Props) => {
   const { id } = await params;
   const list = await listService.getList(id, userId!);
 
+  if (!list) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-zinc-800">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-zinc-100 mb-4">
+            List Not Found
+          </h1>
+          <p className="text-zinc-400">
+            The List you are looking for does not exist.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative min-h-screen bg-zinc-900">
       <PageHeader

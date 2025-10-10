@@ -175,10 +175,6 @@ class ListService {
       },
     });
 
-    if (!list) {
-      throw new Error("List not found");
-    }
-
     const data = list
       ? {
           ...list,
