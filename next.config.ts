@@ -6,14 +6,17 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "img.clerk.com",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "images.clerk.dev",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "*.clerk.com",
+        pathname: "/**",
       },
       {
         protocol: "https",
