@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Release" ALTER COLUMN "issueNumber" SET DATA TYPE TEXT,
+ALTER COLUMN "volumeNumber" SET DATA TYPE TEXT;

@@ -20,6 +20,17 @@ export async function GET() {
             photo: true,
             points: true,
             role: true,
+            badges: {
+              select: {
+                isApplied: true,
+                badgeDefinition: {
+                  select: {
+                    title: true,
+                    url: true,
+                  },
+                },
+              },
+            },
           },
         },
         likes: {
@@ -55,13 +66,13 @@ export async function GET() {
 
     return NextResponse.json(
       { status: "success", data: posts },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       { status: "error", message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

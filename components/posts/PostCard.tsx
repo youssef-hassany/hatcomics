@@ -5,49 +5,54 @@ import PostLikeHandler from "./PostLikeHandler";
 import BookmarkHandler from "./BookmarkHandler";
 import { PostPreview } from "@/types/Post";
 import ComponentProtector from "../common/ComponentProtector";
+import UserInfo from "../ui/user-info";
+import { resolveActiveBadge } from "@/lib/active-badge-resolver";
 
 const PostCard: React.FC<{ post: PostPreview }> = ({ post }) => {
   return (
-    <div className="group relative bg-gradient-to-br from-zinc-800/90 to-zinc-900/90 rounded-xl p-6 border border-zinc-700/50 transition-all duration-300 backdrop-blur-sm overflow-hidden">
-      {/* Subtle gradient overlay on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-600/0 transition-all duration-300 rounded-xl pointer-events-none" />
-
-      <div className="relative z-10">
+    <div className="group relative bg-zinc-800/60 backdrop-blur-sm rounded-lg p-4 border border-zinc-700/50 hover:border-zinc-600 hover:bg-zinc-800/80 transition-all duration-300 h-full">
+      <div className="flex flex-col h-full">
         {/* User Info */}
-        <div className="flex items-center mb-5">
+        <div className="flex items-center mb-3">
           <Avatar
             url={post.user.photo || "/placeholder-avatar.png"}
             username={post.user.username}
+            className="w-8 h-8"
           />
 
-          <div className="ml-3 flex-1">
-            <h3 className="text-zinc-100 font-semibold text-base">
-              {post.user.fullname}
-            </h3>
-            <p className="text-zinc-500 text-sm">@{post.user.username}</p>
-          </div>
+          <span className="ml-2">
+            <UserInfo
+              fullname={post.user.fullname}
+              points={post.user.points}
+              username={post.user.username}
+              activeBadge={resolveActiveBadge(
+                post.user.points,
+                post.user.badges,
+              )}
+            />
+          </span>
         </div>
 
         {/* Post Title */}
-        <a href={`/posts/${post.id}`} className="block mb-6">
-          <h2 className="text-2xl font-bold text-white leading-tight">
+        <a href={`/posts/${post.id}`} className="block mb-auto">
+          <h2 className="text-base sm:text-lg font-bold text-white leading-snug line-clamp-3 group-hover:text-orange-400 transition-colors">
             {post.title}
           </h2>
         </a>
 
         {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-zinc-700 to-transparent mb-5" />
+        <div className="h-px bg-zinc-700/50 my-3" />
 
         {/* Engagement Stats */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-3">
             <ComponentProtector>
               <PostLikeHandler post={post} />
             </ComponentProtector>
 
-            <div className="flex items-center space-x-2 text-zinc-400">
-              <MessageCircle size={20} />
-              <span className="text-sm font-medium">
+            <div className="flex items-center space-x-1 text-zinc-400">
+              <MessageCircle size={16} />
+              <span className="text-xs font-medium">
                 {post._count.comments}
               </span>
             </div>
@@ -57,10 +62,10 @@ const PostCard: React.FC<{ post: PostPreview }> = ({ post }) => {
 
           <a
             href={`/posts/${post.id}`}
-            className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center gap-2 active:scale-95"
+            className="bg-linear-to-r from-orange-500 to-orange-600 text-white px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-300 flex items-center gap-1 hover:shadow-lg hover:shadow-orange-500/20 active:scale-95"
           >
-            <span className="hidden sm:inline">Read More</span>
-            <ChevronRight className="w-4 h-4" />
+            Read
+            <ChevronRight className="w-3 h-3" />
           </a>
         </div>
       </div>

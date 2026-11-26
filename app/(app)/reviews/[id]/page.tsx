@@ -21,6 +21,17 @@ async function getReviewData(reviewId: string) {
             photo: true,
             points: true,
             role: true,
+            badges: {
+              select: {
+                isApplied: true,
+                badgeDefinition: {
+                  select: {
+                    title: true,
+                    url: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -143,19 +154,21 @@ export default async function ReviewPage({
     notFound();
   }
 
-  // Transform the data to match the Review type expectations
-  const transformedReview = {
+  // Transform the data to match the Review type expectations.
+  const transformedReview: Review = {
     ...review,
     user: {
       ...review.user,
-      photo: review.user.photo ?? undefined, // Convert null to undefined
+      photo: review.user.photo ?? undefined,
+      badges: review.user.badges ?? [],
     },
+    description: review.description ?? undefined,
     createdAt: review.createdAt.toISOString(),
     updatedAt: review.updatedAt.toISOString(),
     comic: {
       ...review.comic,
-      image: review.comic.image ?? undefined, // Convert null to undefined
-      description: review.comic.description ?? undefined, // Convert null to undefined
+      image: review.comic.image ?? undefined,
+      description: review.comic.description ?? undefined,
       createdAt: review.comic.createdAt.toISOString(),
       updatedAt: review.comic.updatedAt.toISOString(),
     },
@@ -165,7 +178,7 @@ export default async function ReviewPage({
       likes: 0,
       comments: 0,
     },
-  } as Review;
+  };
 
   const structuredData = generateStructuredData(review);
 

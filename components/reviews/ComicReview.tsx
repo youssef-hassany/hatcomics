@@ -10,6 +10,8 @@ import ShareButton from "./ShareButton";
 import ReviewLikeHandler from "./ReviewLikeHandler";
 import { starGenerator } from "@/lib/utils";
 import { Review } from "@/types/Review";
+import UserInfo from "../ui/user-info";
+import { resolveActiveBadge } from "@/lib/active-badge-resolver";
 
 interface ComicReviewProps {
   review: Review;
@@ -101,7 +103,7 @@ const ComicReview = ({
         <Star
           key={`full-${i}`}
           className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-400 fill-current`}
-        />
+        />,
       );
     }
 
@@ -111,7 +113,7 @@ const ComicReview = ({
           key="half"
           className="w-4 h-4 fill-orange-400 text-orange-400"
           style={{ clipPath: "inset(0 50% 0 0)" }}
-        />
+        />,
       );
     }
 
@@ -133,7 +135,7 @@ const ComicReview = ({
       {/* Comic Info Section - Clickable */}
       <Link href={`/comics/${review.comic.id}`} className="block">
         <div className="flex items-center gap-3 mb-4 pb-4 border-b border-zinc-700 hover:bg-zinc-750 transition-colors duration-200 rounded-lg p-2 -m-2">
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             {review.comic.image ? (
               <img
                 src={review.comic.image}
@@ -166,7 +168,7 @@ const ComicReview = ({
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-start gap-3 flex-1 min-w-0">
           {/* User Avatar */}
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <Avatar
               url={review.user.photo || "/placeholder-avatar.png"}
               username={review.user.username}
@@ -177,9 +179,18 @@ const ComicReview = ({
           {/* User Info & Rating */}
           <div className="flex-1 min-w-0">
             <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 mb-1">
-              <h4 className="font-semibold text-zinc-100 truncate text-sm sm:text-base">
+              {/* <h4 className="font-semibold text-zinc-100 truncate text-sm sm:text-base">
                 {review.user.fullname}
-              </h4>
+              </h4> */}
+              <UserInfo
+                fullname={review.user.fullname}
+                username={review.user.username}
+                points={review.user.points}
+                activeBadge={resolveActiveBadge(
+                  review.user.points,
+                  review.user.badges,
+                )}
+              />
 
               <div className="flex items-center gap-1 text-xs text-zinc-500">
                 <Calendar className="w-3 h-3" />
@@ -202,7 +213,7 @@ const ComicReview = ({
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           <ShareButton
             url={
               typeof window !== "undefined"
@@ -304,7 +315,7 @@ const ComicReview = ({
 
           <div className="flex items-center space-x-2 text-zinc-400">
             <MessageCircle size={20} />
-            <span className="text-sm">{review._count.comments}</span>
+            <span className="text-sm">{review._count?.comments}</span>
           </div>
         </div>
 

@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { userId } = await auth();
@@ -23,6 +23,17 @@ export async function GET(
             photo: true,
             points: true,
             role: true,
+            badges: {
+              select: {
+                isApplied: true,
+                badgeDefinition: {
+                  select: {
+                    title: true,
+                    url: true,
+                  },
+                },
+              },
+            },
           },
         },
         ...(userId && {
@@ -47,13 +58,13 @@ export async function GET(
 
     return NextResponse.json(
       { status: "success", data: reviews },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       { status: "error", message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -37,6 +37,27 @@ model User {
   receivedNotifications UserNotification[] @relation("NotificationRecipient")
   broadcastReads        UserBroadcastRead[]
   lists                 List[]
+  badges                Badge[]
+}
+
+model Badge {
+  id              String          @id @default(cuid())
+  userId          String
+  badgeDefId      String
+  isApplied       Boolean         @default(false)
+  addedAt         DateTime        @default(now())
+  rewardedTo      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeDefinition BadgeDefinition @relation(fields: [badgeDefId], references: [id])
+
+  @@unique([userId, badgeDefId])
+}
+
+model BadgeDefinition {
+  id        String   @id @default(cuid())
+  name      String   @unique   // "spider-man"
+  title     String             // "Spider-Man"
+  url       String             // "/spider-man.png"
+  badges    Badge[]
 }
 
 model Report {
@@ -150,29 +171,64 @@ model Comic {
   readingLinksData   ReadingLink[]
   thoughts           Post[]   // Posts with comicId are thoughts
   roadmapEntry       RoadmapEntry[]
+  releases           Release[]
 
   @@index([publisher])
   @@index([isBeginnerFriendly])
   @@index([averageRating])
 }
 
+model Release {
+  id            String      @id @default(cuid())
+  comicId       String
+  releaseType   ReleaseType
+  title         String
+
+  issueNumber   String?        // an issue can be: 1.1, 1A, 2BC, annual
+  volumeNumber  String?        // might be like issues sometimes
+  releaseDate   DateTime?
+  coverImage    String?
+
+  description   String?
+
+  pageCount     Int?
+
+  averageRating Float?
+  totalReviews  Int         @default(0)
+
+  comic         Comic       @relation(fields: [comicId], references: [id], onDelete: Cascade)
+
+  reviews       Review[]
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([comicId])
+  @@index([releaseType])
+  @@index([releaseDate])
+}
+
+
 model Review {
   id          String   @id @default(cuid())
   userId      String
   comicId     String
+  releaseId   String?
   rating      Float
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   spoiler     Boolean  @default(false)
   comic       Comic    @relation(fields: [comicId], references: [id], onDelete: Cascade)
+  release     Release?  @relation(fields: [releaseId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   likes       Like[]
   comments    Comment[]
 
 
-  @@unique([userId, comicId])
+  @@unique([userId, comicId, releaseId])
   @@index([comicId])
+  @@index([releaseId])
   @@index([rating])
 }
 
@@ -387,4 +443,13 @@ enum PostType {
 enum ListType {
   flat
   numbered
+}
+
+enum ReleaseType {
+  issue
+  volume
+  tpb
+  omnibus
+  collection
+  book
 }

@@ -9,7 +9,7 @@ export async function GET() {
     if (!userId) {
       return NextResponse.json(
         { status: "error", message: "User not authenticated or doesn't exist" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -41,7 +41,7 @@ export async function GET() {
       orderBy: {
         createdAt: "desc",
       },
-      take: 3,
+      take: 5,
     });
 
     return NextResponse.json(
@@ -49,13 +49,13 @@ export async function GET() {
         status: "success",
         data: posts,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       { status: "error", message: `Internal server error: ${error}` },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

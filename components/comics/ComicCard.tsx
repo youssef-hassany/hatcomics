@@ -1,8 +1,7 @@
 import { ComicPreview } from "@/types/Comic";
-import { Book, ExternalLink, Star } from "lucide-react";
+import { Book, Star } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { Button } from "../ui/button";
 
 interface Props {
   comic: ComicPreview;
@@ -11,8 +10,7 @@ interface Props {
 
 const ComicCard = ({ comic, onSelect }: Props) => {
   const renderStars = (rating: number | null) => {
-    if (rating === null)
-      return <span className="text-zinc-400">No ratings</span>;
+    if (rating === null) return null;
 
     const stars = [];
     const fullStars = Math.floor(rating);
@@ -20,7 +18,7 @@ const ComicCard = ({ comic, onSelect }: Props) => {
 
     for (let i = 0; i < fullStars; i++) {
       stars.push(
-        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+        <Star key={i} className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
       );
     }
 
@@ -28,7 +26,7 @@ const ComicCard = ({ comic, onSelect }: Props) => {
       stars.push(
         <Star
           key="half"
-          className="w-4 h-4 fill-yellow-400 text-yellow-400"
+          className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400"
           style={{ clipPath: "inset(0 50% 0 0)" }}
         />
       );
@@ -36,115 +34,104 @@ const ComicCard = ({ comic, onSelect }: Props) => {
 
     const emptyStars = 5 - Math.ceil(rating);
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<Star key={`empty-${i}`} className="w-4 h-4 text-zinc-400" />);
+      stars.push(
+        <Star key={`empty-${i}`} className="w-2.5 h-2.5 text-zinc-500" />
+      );
     }
 
-    return (
-      <div className="flex items-center gap-1">
-        {stars}
-        <span className="text-zinc-300 text-sm ml-1">
-          ({rating.toFixed(1)})
-        </span>
-      </div>
-    );
+    return <div className="flex items-center gap-0.5">{stars}</div>;
   };
 
   return (
-    <div className="bg-zinc-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden border border-zinc-700">
+    <Link
+      href={onSelect ? "#" : `/comics/${comic.id}`}
+      onClick={(e) => {
+        if (onSelect) {
+          e.preventDefault();
+          onSelect(comic);
+        }
+      }}
+      className="group block bg-zinc-800/50 rounded-lg overflow-hidden hover:bg-zinc-800 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/10"
+    >
       {/* Comic Cover */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-zinc-700">
+      <div className="relative aspect-[2/3] overflow-hidden bg-zinc-900">
         <img
           src={comic.image}
           alt={comic.name}
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.style.display = "none";
             target.nextElementSibling?.classList.remove("hidden");
           }}
         />
-        <div className="hidden absolute inset-0 flex items-center justify-center bg-zinc-700">
-          <Book className="w-12 h-12 text-zinc-500" />
+        <div className="hidden absolute inset-0 flex items-center justify-center bg-zinc-900">
+          <Book className="w-8 h-8 text-zinc-700" />
         </div>
 
-        {/* Beginner Friendly Badge */}
-        {comic.isBeginnerFriendly && (
-          <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg">
-            Beginner <span className="hidden md:inline">Friendly</span>
-          </div>
-        )}
+        {/* Badges - Always Visible */}
+        <div className="absolute top-2 left-2 right-2 flex items-start justify-between gap-1">
+          {/* Beginner Friendly Badge */}
+          {comic.isBeginnerFriendly && (
+            <div className="bg-emerald-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold shadow-md">
+              Beginner
+            </div>
+          )}
 
-        {/* Rating Badge */}
-        {comic.averageRating && (
-          <div className="absolute top-3 right-3 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center gap-1">
-            <Star className="w-3 h-3 fill-white" />
-            {comic.averageRating.toFixed(1)}
-          </div>
-        )}
+          {/* Rating Badge */}
+          {comic.averageRating && (
+            <div className="bg-yellow-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold shadow-md flex items-center gap-0.5 ml-auto">
+              <Star className="w-2.5 h-2.5 fill-white" />
+              {comic.averageRating.toFixed(1)}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Comic Details */}
-      <div className="p-4">
-        <h3 className="font-bold text-lg text-white mb-2 line-clamp-2 leading-tight">
+      {/* Comic Details - Compact but Complete */}
+      <div className="p-2">
+        {/* Comic Title */}
+        <h3 className="font-bold text-sm text-white line-clamp-2 leading-tight mb-1 group-hover:text-orange-400 transition-colors">
           {comic.name}
         </h3>
 
         {/* Publisher */}
         {comic.publisher && (
-          <p className="text-orange-600 font-medium text-sm mb-2">
+          <p className="text-orange-500 text-xs font-medium mb-2 truncate">
             {comic.publisher}
           </p>
         )}
 
-        {/* Metadata */}
-        <div className="space-y-2 mb-4">
-          {/* Number of Issues */}
-          {!comic.ongoing && !comic.isGraphicNovel && (
-            <div className="flex items-center gap-2 text-zinc-400 text-xs">
+        {/* Metadata - Always Visible */}
+        <div className="space-y-1">
+          {/* Issue Count / Type */}
+          <div className="flex items-center text-zinc-400 text-[10px]">
+            {!comic.ongoing && !comic.isGraphicNovel && (
               <span>📚 {comic.numberOfIssues} issues</span>
-            </div>
-          )}
-
-          {comic.ongoing && (
-            <div className="flex items-center gap-2 text-zinc-400 text-xs">
-              <span>📚 Ongoing</span>
-            </div>
-          )}
-
-          {comic.isGraphicNovel && (
-            <div className="flex items-center gap-2 text-zinc-400 text-xs">
-              <span>📚 Graphic Novel</span>
-            </div>
-          )}
+            )}
+            {comic.ongoing && <span>📚 Ongoing</span>}
+            {comic.isGraphicNovel && <span>📚 Graphic Novel</span>}
+          </div>
 
           {/* Reviews */}
-          <div className="flex items-center gap-2 text-zinc-400 text-xs">
+          <div className="flex items-center text-zinc-400 text-[10px]">
             <span>💬 {comic.totalReviews} reviews</span>
           </div>
 
-          {/* Rating */}
-          <div className="flex items-center gap-2 text-zinc-400 text-xs">
-            {renderStars(comic.averageRating)}
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="space-y-2">
-          {/* View Details Button */}
-          {onSelect ? (
-            <Button onClick={() => onSelect(comic)}>Add Comic</Button>
+          {/* Star Rating */}
+          {comic.averageRating ? (
+            <div className="flex items-center gap-1">
+              {renderStars(comic.averageRating)}
+              <span className="text-zinc-400 text-[10px] ml-0.5">
+                ({comic.averageRating.toFixed(1)})
+              </span>
+            </div>
           ) : (
-            <Link
-              href={`/comics/${comic.id}`}
-              className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-sm font-medium cursor-pointer"
-            >
-              <span>View Details</span>
-              <ExternalLink className="w-3 h-3" />
-            </Link>
+            <div className="text-zinc-500 text-[10px]">No ratings yet</div>
           )}
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

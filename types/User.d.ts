@@ -1,3 +1,5 @@
+import { RawBadge } from "./badge-types";
+
 export type Role =
   | "owner"
   | "admin"
@@ -16,6 +18,7 @@ export interface User {
   email: string;
   rank?: number;
   isBanned: boolean;
+  badges: RawBadge[];
 }
 
 export interface UserProfile {
@@ -32,4 +35,5 @@ export interface UserProfile {
   followingCount: number;
   bio: string;
   isBanned: boolean;
+  badges: RawBadge[];
 }

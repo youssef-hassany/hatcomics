@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ username: string }> }
+  { params }: { params: Promise<{ username: string }> },
 ) {
   try {
     const { userId } = await auth();
@@ -13,7 +13,7 @@ export async function GET(
     if (!username) {
       return NextResponse.json(
         { status: "error", message: "Username is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -37,13 +37,24 @@ export async function GET(
           },
         },
         isBanned: true,
+        badges: {
+          select: {
+            isApplied: true,
+            badgeDefinition: {
+              select: {
+                title: true,
+                url: true,
+              },
+            },
+          },
+        },
       },
     });
 
     if (!user) {
       return NextResponse.json(
         { status: "error", message: "User not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -85,13 +96,13 @@ export async function GET(
             : false,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error fetching user profile:", error);
     return NextResponse.json(
       { status: "error", message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -99,7 +110,7 @@ export async function GET(
 // Helper function to check if viewing own profile
 async function checkIfOwnProfile(
   clerkId: string,
-  profileUserId: string
+  profileUserId: string,
 ): Promise<boolean> {
   const loggedInUser = await prisma.user.findFirst({
     where: { clerkId },
@@ -110,7 +121,7 @@ async function checkIfOwnProfile(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ username: string }> }
+  { params }: { params: Promise<{ username: string }> },
 ) {
   try {
     const { username } = await params;
@@ -130,7 +141,7 @@ export async function PATCH(
           status: "error",
           message: "Access Denied",
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -142,7 +153,7 @@ export async function PATCH(
           status: "error",
           message: "Username must only contain letters, numbers, '.' and '_'",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -159,13 +170,13 @@ export async function PATCH(
 
     return NextResponse.json(
       { status: "success", message: "User data updated successfully" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error fetching user profile:", error);
     return NextResponse.json(
       { status: "error", message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

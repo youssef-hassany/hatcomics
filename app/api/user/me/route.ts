@@ -8,7 +8,7 @@ export async function GET() {
     if (!userId) {
       return NextResponse.json(
         { status: "error", message: "User Unauthorized" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -22,13 +22,24 @@ export async function GET() {
         points: true,
         role: true,
         isBanned: true,
+        badges: {
+          select: {
+            isApplied: true,
+            badgeDefinition: {
+              select: {
+                title: true,
+                url: true,
+              },
+            },
+          },
+        },
       },
     });
 
     if (!currentUser) {
       return NextResponse.json(
         { status: "error", message: "user not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -51,13 +62,13 @@ export async function GET() {
 
     return NextResponse.json(
       { status: "success", user: currentUser },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("GET /user error:", error);
     return NextResponse.json(
       { status: "error", message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

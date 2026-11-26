@@ -9,7 +9,7 @@ const ReviewLikeHandler: React.FC<{ review: Review }> = ({ review }) => {
 
   const [isLiked, setIsLiked] = useState(review.isLikedByCurrentUser || false);
   const [optimisticCount, setOptimisticCount] = useState(
-    review._count.likes || 0
+    review._count?.likes || 0,
   );
 
   const handleLike = async () => {

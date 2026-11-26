@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
+import { Bangers, Barlow } from "next/font/google";
 import {
   Star,
   Users,
@@ -16,92 +17,148 @@ import {
 import { SignUpButton } from "@clerk/nextjs";
 import Link from "next/link";
 
+// Comic lettering for headlines, a sturdy condensed sans for reading text
+const display = Bangers({ subsets: ["latin"], weight: "400" });
+const body = Barlow({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+// Halftone dot pattern, like printed comic ink
+const halftone = (color: string, size: number) => ({
+  backgroundImage: `radial-gradient(${color} 1.6px, transparent 1.7px)`,
+  backgroundSize: `${size}px ${size}px`,
+});
+
+// Starburst clip-path for the "free" sticker
+const burst = (() => {
+  const n = 14;
+  const pts: string[] = [];
+  for (let i = 0; i < n * 2; i++) {
+    const r = i % 2 ? 38 : 50;
+    const a = (Math.PI * i) / n;
+    pts.push(
+      `${(50 + r * Math.cos(a)).toFixed(1)}% ${(50 + r * Math.sin(a)).toFixed(1)}%`,
+    );
+  }
+  return `polygon(${pts.join(",")})`;
+})();
+
+// Shared button look: thick ink outline + hard shadow that "presses" on click
+const btn =
+  "inline-flex items-center justify-center gap-2 border-4 border-black px-7 py-3 text-2xl tracking-wide transition-transform motion-reduce:transition-none hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none";
+
 const ComicLandingPage = () => {
   const [isHovered, setIsHovered] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
 
   const features = [
     {
       icon: <Pen className="w-6 h-6" />,
       title: "Write & Share",
       description:
-        "Create engaging Posts about your favorite comics and share your thoughts with the community",
+        "Post about the books you love, from a long review to a quick reaction to this week's issue.",
+      fill: "bg-yellow-400",
+      span: "lg:col-span-2",
     },
     {
       icon: <Star className="w-6 h-6" />,
       title: "Rate & Review",
       description:
-        "Review comics, rate them, and help others discover their next great read",
+        "Rate what you read and help someone else pick their next one.",
+      fill: "bg-white",
+      span: "",
     },
     {
       icon: <Users className="w-6 h-6" />,
       title: "Connect",
       description:
-        "Follow fellow comic enthusiasts and build your network of like-minded readers",
+        "Follow readers with your taste and see what they're reading.",
+      fill: "bg-sky-300",
+      span: "",
     },
     {
       icon: <BookOpen className="w-6 h-6" />,
       title: "Discover",
       description:
-        "Explore new titles, track your reading list, and never miss a great comic again",
+        "Find new titles and keep a reading list so nothing slips past you.",
+      fill: "bg-orange-500",
+      span: "lg:col-span-2",
+    },
+  ];
+
+  const bubbles = [
+    {
+      icon: <Shield className="w-8 h-8 text-green-700" />,
+      title: "Moderated",
+      text: "Discussions stay respectful, whatever you're a fan of.",
+      tail: "left-12",
+      tilt: "-rotate-1",
+    },
+    {
+      icon: <Zap className="w-8 h-8 text-yellow-600" />,
+      title: "Works everywhere",
+      text: "Phone, tablet or desktop, it loads fast and stays out of your way.",
+      tail: "left-1/2",
+      tilt: "rotate-1",
+    },
+    {
+      icon: <Globe className="w-8 h-8 text-orange-600" />,
+      title: "Worldwide",
+      text: "Readers from all over the world are already talking comics.",
+      tail: "right-12",
+      tilt: "-rotate-1",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-900 text-zinc-100 overflow-x-hidden">
-      {/* Hero Section */}
-      <section className="px-6 py-20">
+    <div
+      className={`${body.className} min-h-screen bg-[#101014] text-zinc-100 overflow-x-hidden`}
+    >
+      {/* Hero */}
+      <section
+        className="px-6 py-20 lg:py-28 border-b-4 border-black"
+        style={halftone("rgba(255,255,255,0.07)", 16)}
+      >
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div
-              className={`transform transition-all duration-1000 ${
-                isVisible
-                  ? "translate-x-0 opacity-100"
-                  : "-translate-x-10 opacity-0"
-              }`}
-            >
-              <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight text-zinc-100">
-                Your Ultimate
-                <span className="block text-orange-600">Comic Universe</span>
+            <div>
+              <h1
+                className={`${display.className} text-6xl lg:text-8xl leading-[0.95] tracking-wide mb-8 -rotate-1`}
+                style={{ textShadow: "4px 4px 0 #ea580c, 7px 7px 0 #000" }}
+              >
+                Your ultimate comic universe
               </h1>
-              <p className="text-xl text-zinc-400 mb-8 leading-relaxed">
-                Join the most vibrant community of comic book enthusiasts. Write
-                reviews, share your passion, and discover your next favorite
-                series in a platform built by fans, for fans.
+
+              {/* Narration caption box */}
+              <p className="relative max-w-xl bg-yellow-300 text-black border-4 border-black shadow-[6px_6px_0_0_#000] px-5 py-4 text-lg font-medium leading-snug mb-10">
+                Write reviews, rate what you read, and find your next favorite
+                series through people who actually read comics. Built by fans,
+                for fans.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button className="group bg-orange-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-orange-700 transition-all transform hover:scale-105 flex items-center justify-center">
-                  <SignUpButton>Start Your Journey</SignUpButton>
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+
+              <SignUpButton>
+                <button
+                  className={`${display.className} ${btn} group bg-orange-600 text-white shadow-[6px_6px_0_0_#000]`}
+                >
+                  Start your journey
+                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform motion-reduce:transition-none" />
                 </button>
-                {/* <button className="border-2 border-zinc-600 text-zinc-300 px-8 py-3 rounded-lg text-lg font-medium hover:bg-zinc-800 transition-all">
-                  Explore Comics
-                </button> */}
-              </div>
+              </SignUpButton>
             </div>
 
-            {/* Interactive Comic Covers */}
-            <div
-              className={`relative transform transition-all duration-1000 delay-300 ${
-                isVisible
-                  ? "translate-x-0 opacity-100"
-                  : "translate-x-10 opacity-0"
-              }`}
-            >
+            {/* Cover fan */}
+            <div className="relative">
               <div
                 className="relative w-full h-96 flex items-center justify-center cursor-pointer"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
+                onClick={() => setIsHovered((v) => !v)}
               >
-                {/* Comic Cover 1 */}
+                {/* Cover 1 */}
                 <div
-                  className={`absolute w-40 h-60 rounded-lg shadow-xl transform transition-all duration-700 ease-out ${
+                  className={`absolute w-40 h-60 border-[3px] border-zinc-100 bg-zinc-100 shadow-[6px_6px_0_0_#ea580c] transform transition-all duration-500 ease-out motion-reduce:transition-none ${
                     isHovered
-                      ? "-translate-x-20 -rotate-12 z-10"
+                      ? "-translate-x-24 -rotate-12 z-10"
                       : "translate-x-2 rotate-3 z-30"
                   }`}
                 >
@@ -110,17 +167,15 @@ const ComicLandingPage = () => {
                     alt="Ultimate Spider-Man Comic Cover"
                     width={160}
                     height={240}
-                    className="w-full h-full object-cover rounded-lg shadow-lg"
+                    className="w-full h-full object-cover"
                     priority
                   />
                 </div>
 
-                {/* Comic Cover 2 (Center) */}
+                {/* Cover 2 (center) */}
                 <div
-                  className={`absolute w-40 h-60 rounded-lg shadow-xl transform transition-all duration-700 ease-out ${
-                    isHovered
-                      ? "translate-y-0 rotate-0 z-30"
-                      : "translate-x-0 rotate-0 z-20"
+                  className={`absolute w-40 h-60 border-[3px] border-zinc-100 bg-zinc-100 shadow-[6px_6px_0_0_#ea580c] transform transition-all duration-500 ease-out motion-reduce:transition-none ${
+                    isHovered ? "z-30" : "z-20"
                   }`}
                 >
                   <Image
@@ -128,16 +183,16 @@ const ComicLandingPage = () => {
                     alt="Batman Year One Comic Cover"
                     width={160}
                     height={240}
-                    className="w-full h-full object-cover rounded-lg shadow-lg"
+                    className="w-full h-full object-cover"
                     priority
                   />
                 </div>
 
-                {/* Comic Cover 3 */}
+                {/* Cover 3 */}
                 <div
-                  className={`absolute w-40 h-60 rounded-lg shadow-xl transform transition-all duration-700 ease-out ${
+                  className={`absolute w-40 h-60 border-[3px] border-zinc-100 bg-zinc-100 shadow-[6px_6px_0_0_#ea580c] transform transition-all duration-500 ease-out motion-reduce:transition-none ${
                     isHovered
-                      ? "translate-x-20 rotate-12 z-10"
+                      ? "translate-x-24 rotate-12 z-10"
                       : "-translate-x-2 -rotate-3 z-10"
                   }`}
                 >
@@ -146,168 +201,200 @@ const ComicLandingPage = () => {
                     alt="Spawn Comic Cover"
                     width={160}
                     height={240}
-                    className="w-full h-full object-cover rounded-lg shadow-lg"
+                    className="w-full h-full object-cover"
                     priority
                   />
                 </div>
 
-                {/* Hover instruction */}
-                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
-                  <p className="text-sm text-zinc-500 animate-pulse">
-                    Hover to explore
-                  </p>
+                {/* Starburst sticker */}
+                <div
+                  className="absolute -top-2 right-2 sm:right-10 z-40 w-28 h-28 rotate-12 pointer-events-none"
+                  aria-hidden="true"
+                >
+                  <div
+                    className="absolute inset-0 bg-black"
+                    style={{ clipPath: burst }}
+                  />
+                  <div
+                    className={`${display.className} absolute inset-[5px] bg-yellow-300 text-black flex items-center justify-center text-center text-2xl leading-[0.9]`}
+                    style={{ clipPath: burst }}
+                  >
+                    Free
+                    <br />
+                    to join!
+                  </div>
                 </div>
+
+                {/* Hover / tap hint */}
+                <p className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-black text-zinc-200 border-2 border-zinc-100 px-3 py-0.5 text-sm italic whitespace-nowrap">
+                  Hover or tap the covers
+                </p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="px-6 py-20">
+      {/* Features: laid out like a comic page */}
+      <section
+        id="features"
+        className="px-6 py-20 bg-zinc-100 text-black border-b-4 border-black"
+        style={halftone("rgba(0,0,0,0.09)", 12)}
+      >
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-zinc-100">
-              Everything You Need to
-              <span className="block text-orange-600">Explore Comics</span>
-            </h2>
-            <p className="text-xl text-zinc-400 max-w-3xl mx-auto">
-              From writing detailed reviews to connecting with fellow fans, our
-              platform provides all the tools you need to dive deep into the
-              comic book universe.
-            </p>
-          </div>
+          <h2
+            className={`${display.className} text-5xl lg:text-6xl tracking-wide mb-4`}
+          >
+            Read it. Rate it. Talk about it.
+          </h2>
+          <p className="text-xl text-zinc-700 max-w-2xl mb-12 font-medium">
+            From detailed reviews to following fellow fans, here&apos;s what you
+            can do on HatComics.
+          </p>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="group p-6 rounded-xl bg-zinc-800 border border-zinc-700 hover:border-orange-300 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                className={`${feature.fill} ${feature.span} border-4 border-black shadow-[7px_7px_0_0_#000] p-6 flex flex-col justify-between min-h-[220px]`}
               >
-                <div className="w-12 h-12 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-600 group-hover:text-white transition-all">
-                  {feature.icon}
+                <div>
+                  <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center mb-4">
+                    {feature.icon}
+                  </div>
+                  <h3
+                    className={`${display.className} text-4xl tracking-wide mb-2`}
+                  >
+                    {feature.title}
+                  </h3>
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-zinc-100">
-                  {feature.title}
-                </h3>
-                <p className="text-zinc-400">{feature.description}</p>
+                <p className="text-lg font-medium leading-snug">
+                  {feature.description}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Community Section */}
-      <section id="community" className="px-6 py-20 bg-zinc-800">
+      {/* Community: speech bubbles */}
+      <section
+        id="community"
+        className="px-6 py-20 bg-orange-600 border-b-4 border-black"
+        style={halftone("rgba(0,0,0,0.18)", 14)}
+      >
         <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-zinc-100">
-            Join Our Growing Community
+          <h2
+            className={`${display.className} text-5xl lg:text-6xl tracking-wide text-white mb-4`}
+            style={{ textShadow: "4px 4px 0 #000" }}
+          >
+            Join the community
           </h2>
-          <p className="text-xl text-zinc-400 mb-12 max-w-3xl mx-auto">
-            Connect with comic book enthusiasts from around the world. Share
-            your passion, discover new stories, and be part of something
-            amazing.
+          <p className="text-xl text-white max-w-2xl mx-auto mb-14 font-medium">
+            Share what you&apos;re reading, find new stories, and argue about
+            who wins the fight.
           </p>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <div className="p-6 rounded-xl bg-zinc-800 border border-zinc-700">
-              <Shield className="w-12 h-12 mx-auto mb-4 text-green-600" />
-              <h3 className="text-xl font-semibold mb-2 text-zinc-100">
-                Safe Community
-              </h3>
-              <p className="text-zinc-400">
-                Moderated discussions and respectful environment for all fans
-              </p>
-            </div>
-            <div className="p-6 rounded-xl bg-zinc-800 border border-zinc-700">
-              <Zap className="w-12 h-12 mx-auto mb-4 text-yellow-600" />
-              <h3 className="text-xl font-semibold mb-2 text-zinc-100">
-                Fast & Responsive
-              </h3>
-              <p className="text-zinc-400">
-                Lightning-fast platform that works seamlessly on all devices
-              </p>
-            </div>
-            <div className="p-6 rounded-xl bg-zinc-800 border border-zinc-700">
-              <Globe className="w-12 h-12 mx-auto mb-4 text-orange-600" />
-              <h3 className="text-xl font-semibold mb-2 text-zinc-100">
-                Global Reach
-              </h3>
-              <p className="text-zinc-400">
-                Connect with comic fans from every corner of the world
-              </p>
-            </div>
+          <div className="grid md:grid-cols-3 gap-10 mb-16">
+            {bubbles.map((b, i) => (
+              <div
+                key={i}
+                className={`relative bg-white text-black border-4 border-black shadow-[6px_6px_0_0_#000] rounded-[2rem] px-6 py-7 text-left ${b.tilt}`}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  {b.icon}
+                  <h3 className={`${display.className} text-3xl tracking-wide`}>
+                    {b.title}
+                  </h3>
+                </div>
+                <p className="text-lg font-medium leading-snug">{b.text}</p>
+                {/* bubble tail */}
+                <span
+                  aria-hidden="true"
+                  className={`absolute -bottom-[14px] ${b.tail} w-6 h-6 bg-white border-r-4 border-b-4 border-black rotate-45`}
+                />
+              </div>
+            ))}
           </div>
 
-          <button className="group bg-orange-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-orange-700 transition-all transform hover:scale-105 flex items-center justify-center mx-auto">
-            <SignUpButton>Join the Community</SignUpButton>
-            <Heart className="ml-2 w-5 h-5 group-hover:text-red-300 transition-colors" />
-          </button>
+          <SignUpButton>
+            <button
+              className={`${display.className} ${btn} group bg-black text-yellow-300 shadow-[6px_6px_0_0_#fff]`}
+            >
+              Join the community
+              <Heart className="w-6 h-6 group-hover:text-red-400 transition-colors" />
+            </button>
+          </SignUpButton>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="px-6 py-20">
+      {/* CTA */}
+      <section
+        className="px-6 py-24 border-b-4 border-black"
+        style={halftone("rgba(255,255,255,0.07)", 16)}
+      >
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-zinc-100">
-            Ready to Start Your
-            <span className="block text-orange-600">Comic Journey?</span>
-          </h2>
-          <p className="text-xl text-zinc-400 mb-8">
-            Join thousands of comic enthusiasts who have already made HatComics
-            their home for all things comics.
+          <p className="inline-block bg-yellow-300 text-black border-4 border-black shadow-[4px_4px_0_0_#000] px-4 py-1 text-base font-semibold italic mb-8 -rotate-2">
+            Meanwhile, at HatComics...
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-orange-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-orange-700 transition-all transform hover:scale-105">
-              <SignUpButton>Create Free Account</SignUpButton>
-            </button>
+          <h2
+            className={`${display.className} text-5xl lg:text-7xl leading-[0.95] tracking-wide mb-6`}
+            style={{ textShadow: "4px 4px 0 #ea580c, 6px 6px 0 #000" }}
+          >
+            Ready to start your comic journey?
+          </h2>
+          <p className="text-xl text-zinc-300 mb-10 max-w-2xl mx-auto">
+            HatComics is where comic fans come to talk about what they&apos;re
+            reading. Make an account and post your first review.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-5 justify-center">
+            <SignUpButton>
+              <button
+                className={`${display.className} ${btn} bg-orange-600 text-white shadow-[6px_6px_0_0_#000]`}
+              >
+                Create free account
+              </button>
+            </SignUpButton>
             <Link
               href="/about"
-              className="border-2 border-zinc-600 text-zinc-300 px-8 py-3 rounded-lg text-lg font-medium hover:bg-zinc-800 transition-all"
+              className={`${display.className} ${btn} bg-transparent text-zinc-100 !border-zinc-100 shadow-[6px_6px_0_0_#ea580c] hover:bg-zinc-900`}
             >
-              Learn More
+              Learn more
             </Link>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="px-6 py-12 bg-zinc-800 border-t border-zinc-700">
+      <footer className="px-6 py-12 bg-black">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <Image
-                src="/hatcomics-logo.png"
-                width={80}
-                height={80}
-                className="w-20 h-20"
-                alt="HatComics"
-              />
-            </div>
-            <div className="flex space-x-6 text-zinc-400">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <Image
+              src="/hatcomics-logo.png"
+              width={80}
+              height={80}
+              className="w-20 h-20"
+              alt="HatComics"
+            />
+            <div className="flex space-x-6 text-zinc-400 text-lg">
               <Link
                 href="/about?view=privacy"
-                className="hover:text-zinc-100 transition-colors"
+                className="hover:text-orange-500 transition-colors"
               >
                 Privacy
               </Link>
-
               <Link
                 href="/about?view=terms"
-                className="hover:text-zinc-100 transition-colors"
+                className="hover:text-orange-500 transition-colors"
               >
                 Terms
               </Link>
-
               <a
                 href="mailto:hatcomicsorg@gmail.com"
-                className="hover:text-zinc-100 transition-colors"
+                className="hover:text-orange-500 transition-colors"
               >
                 Contact
               </a>
-              {/* <a href="#" className="hover:text-zinc-100 transition-colors">
-                Support
-              </a> */}
             </div>
           </div>
           <div className="text-center text-zinc-500 mt-8">

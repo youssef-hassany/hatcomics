@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { userId } = await auth();
@@ -12,7 +12,7 @@ export async function GET(
     if (!userId) {
       return NextResponse.json(
         { status: "error", message: "User not authenticated or doesn't exist" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -32,6 +32,17 @@ export async function GET(
             photo: true,
             points: true,
             role: true,
+            badges: {
+              select: {
+                isApplied: true,
+                badgeDefinition: {
+                  select: {
+                    title: true,
+                    url: true,
+                  },
+                },
+              },
+            },
           },
         },
         ...(userId && {
@@ -59,20 +70,20 @@ export async function GET(
 
     return NextResponse.json(
       { status: "success", data: review },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       { status: "error", message: `Internal server error: ${error}` },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -82,7 +93,7 @@ export async function DELETE(
     if (!userId) {
       return NextResponse.json(
         { status: "error", message: "User not authenticated or doesn't exist" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -106,7 +117,7 @@ export async function DELETE(
     if (!reviewToDelete) {
       return NextResponse.json(
         { status: "error", message: "Review not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -118,7 +129,7 @@ export async function DELETE(
     if (!currentUser || currentUser.id !== reviewToDelete.userId) {
       return NextResponse.json(
         { status: "error", message: "You can only delete your own reviews" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -173,13 +184,13 @@ export async function DELETE(
 
     return NextResponse.json(
       { status: "success", message: "Review deleted successfully" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       { status: "error", message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

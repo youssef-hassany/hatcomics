@@ -22,7 +22,7 @@ export async function GET() {
           totalReviews: "desc",
         },
       ],
-      take: 5,
+      take: 10,
     });
 
     return NextResponse.json(

@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     if (!userId) {
       return NextResponse.json(
         { status: "error", message: "User not authenticated or doesn't exist" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -33,6 +33,17 @@ export async function GET(request: NextRequest) {
             photo: true,
             points: true,
             role: true,
+            badges: {
+              select: {
+                isApplied: true,
+                badgeDefinition: {
+                  select: {
+                    title: true,
+                    url: true,
+                  },
+                },
+              },
+            },
           },
         },
         likes: {
@@ -71,13 +82,13 @@ export async function GET(request: NextRequest) {
         currentPage: data.meta.currentPage,
         totalPages: data.meta.totalPages,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       { status: "error", message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -94,7 +105,7 @@ export async function POST(req: NextRequest) {
           status: "error",
           message: "Missing required fields: userId, content, or title",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -105,7 +116,7 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { status: "error", message: "User not authenticated or doesn't exist" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -145,19 +156,19 @@ export async function POST(req: NextRequest) {
       await notificationService.notifyFollowersOfNewPost(
         userId,
         post.id,
-        `/posts/${post.id}`
+        `/posts/${post.id}`,
       );
     }
 
     return NextResponse.json(
       { status: "success", data: post },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       { status: "error", message: `Internal server error: ${error}` },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
