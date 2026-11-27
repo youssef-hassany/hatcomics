@@ -53,6 +53,9 @@ export async function GET() {
       where: {
         comicId: null,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     const posts = recentPosts.map((post) => ({
